@@ -259,11 +259,30 @@
     '/reviews': 'Ownify┃Reviews',
     '/what':    'Ownify┃What'
   };
-  function enforceTitle() {
-    var want = ONF_TITLES[location.pathname.replace(/\/$/, '')];
-    if (want && document.title !== want) document.title = want;
+  function onfWantTitle() {
+    return ONF_TITLES[location.pathname.replace(/\/$/, '')];
   }
-  setInterval(enforceTitle, 800);
+  var titleDesc = Object.getOwnPropertyDescriptor(Document.prototype, 'title');
+  // ⑦-1 쓰기 가로채기: 우피가 제목을 바꿔 써도 매핑된 페이지에선 즉시 우리 제목으로 치환
+  //     (잘못된 제목이 탭에 그려질 틈이 없음 → 깜빡임 제거)
+  try {
+    Object.defineProperty(document, 'title', {
+      configurable: true,
+      get: function () { return titleDesc.get.call(document); },
+      set: function (v) { titleDesc.set.call(document, onfWantTitle() || v); }
+    });
+  } catch (e) {}
+  // ⑦-2 <title> 노드를 직접 고치는 경우 대비: 변경 감지 즉시 교정
+  function enforceTitle() {
+    var want = onfWantTitle();
+    if (want && titleDesc.get.call(document) !== want) titleDesc.set.call(document, want);
+  }
+  var titleEl = document.querySelector('title');
+  if (titleEl) {
+    new MutationObserver(enforceTitle).observe(titleEl, { childList: true, characterData: true, subtree: true });
+  }
+  // ⑦-3 라우트 변경 직후 반영용 백스톱
+  setInterval(enforceTitle, 500);
   enforceTitle();
 
 })();
