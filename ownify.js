@@ -1,6 +1,6 @@
 /* ============================================================
    OWNIFY 홈페이지 커스텀 JS (www.ownify.co.kr, 우피/Oopy)
-   - 정본은 이 파일(GitHub immplee/ONF_Web). 우피 <head>에는
+   - 정본은 이 파일(GitHub immplee/ONF_Homepage). 우피 <head>에는
      jsDelivr <script> 한 줄만 넣는다.
    - 역할: ① 스크롤 등장 애니메이션(ownify.css의 .onf-reveal와 세트)
            ② 인스타 버튼 "준비 중" 알림

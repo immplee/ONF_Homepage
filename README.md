@@ -1,4 +1,4 @@
-# ONF_Web — OWNIFY 홈페이지 커스텀 코드
+# ONF_Homepage — OWNIFY 홈페이지 커스텀 코드
 
 [www.ownify.co.kr](https://www.ownify.co.kr) (우피/Oopy)에 들어가는 커스텀 CSS·JS의 **정본 저장소**.
 
@@ -16,8 +16,8 @@
 ## 우피에 넣는 코드 (설정 → 사용자 정의 코드 → `<head>`)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/immplee/ONF_Web@main/ownify.css">
-<script defer src="https://cdn.jsdelivr.net/gh/immplee/ONF_Web@main/ownify.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@main/ownify.css">
+<script defer src="https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@main/ownify.js"></script>
 ```
 
 ## 수정 → 반영 절차
@@ -25,17 +25,17 @@
 1. `ownify.css` / `ownify.js` 수정
 2. commit & push:
    ```bash
-   W="/Users/peter/Library/Mobile Documents/com~apple~CloudDocs/Ownify/ONF_Web"
+   W="/Users/peter/Library/Mobile Documents/com~apple~CloudDocs/Ownify/ONF_Homepage"
    git -C "$W" add -A && git -C "$W" commit -m "<요약>" && git -C "$W" push
    ```
 3. **jsDelivr 캐시 비우기** (`@main` 주소는 최대 12시간 캐시됨 — purge 안 하면 반영이 늦다):
    ```bash
-   curl -s "https://purge.jsdelivr.net/gh/immplee/ONF_Web@main/ownify.css"
-   curl -s "https://purge.jsdelivr.net/gh/immplee/ONF_Web@main/ownify.js"
+   curl -s "https://purge.jsdelivr.net/gh/immplee/ONF_Homepage@main/ownify.css"
+   curl -s "https://purge.jsdelivr.net/gh/immplee/ONF_Homepage@main/ownify.js"
    ```
 4. 홈페이지에서 강력 새로고침(⌘⇧R)으로 확인
 
 ## 주의
 
-- 이 폴더는 Ownify 프로젝트 안에 있지만 **별도 git 저장소**(`immplee/ONF_Web`)다. Ownify repo(비공개)에는 gitignore 화이트리스트 때문에 자동으로 안 잡힌다. ONF_Archive와 같은 패턴.
+- 이 폴더는 Ownify 프로젝트 안에 있지만 **별도 git 저장소**(`immplee/ONF_Homepage`)다. Ownify repo(비공개)에는 gitignore 화이트리스트 때문에 자동으로 안 잡힌다. ONF_Archive와 같은 패턴.
 - `ownify.css` 맨 아래 `data-block-id` 규칙들은 우피에서 해당 블록을 지우고 다시 만들면 id가 바뀌므로 함께 갱신해야 한다.
