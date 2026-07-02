@@ -24,10 +24,12 @@ html, body {
 }
 
 /* 한국어 줄바꿈: 음절이 아니라 단어(어절) 단위로 끊어 자연스럽게.
-   (좁은 화면에서 "영-어"처럼 단어 중간이 잘리는 것 방지) */
-.notion-page-content, .onf-footer, .onf-band {
-  word-break: keep-all;
-  overflow-wrap: break-word;
+   노션이 span마다 break-word를 직접 넣으므로 자식까지 !important로 덮는다.
+   (긴 영문 단어·URL은 overflow-wrap이 안전하게 줄바꿈) */
+.notion-page-content, .notion-page-content *,
+.onf-footer, .onf-footer *, .onf-band span {
+  word-break: keep-all !important;
+  overflow-wrap: break-word !important;
 }
 
 
