@@ -178,7 +178,7 @@
     if (!sns.querySelector('.onf-sns-k')) {
       var a = document.createElement('a');
       a.className = 'onf-sns-item onf-sns-k';
-      a.href = 'http://pf.kakao.com/_xcBxaPX';   // 오니파이 카카오톡 채널
+      a.href = 'http://pf.kakao.com/_xcBxaPX/chat';   // 오니파이 카카오톡 채널 1:1 채팅 직행
       a.target = '_blank';
       a.rel = 'noopener';
       a.innerHTML = '<img alt="카카오톡 채널" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjI0IiBmaWxsPSIjRkFFMTAwIi8+PHBhdGggZD0iTTUwIDI0Yy0xNi42IDAtMzAgMTAuNy0zMCAyMy44IDAgOC41IDUuNiAxNS45IDE0IDIwLjFsLTIuOSAxMC43Yy0uMjYuOTYuODQgMS43MiAxLjY2IDEuMTdsMTIuOS04LjZjMS40LjE0IDIuOS4yMiA0LjQuMjIgMTYuNiAwIDMwLTEwLjcgMzAtMjMuOFM2Ni42IDI0IDUwIDI0eiIgZmlsbD0iIzNDMUUxRSIvPjwvc3ZnPg==">';
