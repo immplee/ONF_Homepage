@@ -597,6 +597,12 @@ html, body {
   min-height: 480px !important;
   padding-bottom: 0 !important;
 }
+/* 커버 배너가 있으면(투명 탑바 상태) 커버 높이만큼 빼서 여전히 무스크롤 유지
+   (커버 총높이 = --page-cover-height(30vh) + 탑바 100px, 커버 확장 섹션 참고) */
+body.onf-clear-top .notion-page-content:has([data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]) {
+  height: calc(100vh - var(--page-cover-height, 30vh) - 100px) !important;
+  min-height: 380px !important;
+}
 /* 우피가 페이지 끝에 넣는 빈 푸터의 여백 제거(아래 틈의 원인) */
 .notion-page-content:has([data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]) .oopy-footer {
   margin: 0 !important;
