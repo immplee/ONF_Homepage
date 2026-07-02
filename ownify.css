@@ -903,13 +903,13 @@ body.onf-nav-split.onf-scrolled .notion-topbar ~ div:has(a[href]) {
 
 
 /* ---------- 모바일 지도 폴백 (ownify.js ⑧과 세트) ---------- */
-/* 모바일 UA(body.onf-mobile-map)에선 네이버 지도 iframe이 빈 화면이라
-   iframe을 숨기고, 탭하면 네이버지도가 열리는 지도 이미지로 대체 */
+/* PC·모바일 공통(body.onf-map-custom): 기존 iframe을 숨기고 API 지도로 대체.
+   API 실패 시엔 탭하면 네이버지도가 열리는 지도 이미지 폴백 표시 */
 .onf-map-mobile { display: none; }
-body.onf-mobile-map [data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] div:has(iframe) {
+body.onf-map-custom [data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] div:has(iframe) {
   display: none !important;
 }
-body.onf-mobile-map .onf-map-mobile {
+body.onf-map-custom .onf-map-mobile {
   display: block;
   position: relative;
   width: 100%;
@@ -947,3 +947,26 @@ body.onf-map-api-on .onf-map-api {
   border-radius: 22px;
   overflow: hidden;
 }
+
+/* 지도 우하단 '네이버지도에서 보기' 버튼 (ownify.js ⑧과 세트) */
+[data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] {
+  position: relative !important;
+}
+.onf-map-link {
+  display: none;
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 5;
+  background: #F1EADE;
+  color: #6F4A2F !important;
+  font-family: 'Paperlogy', 'Apple SD Gothic Neo', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 999px;
+  text-decoration: none !important;
+  box-shadow: 0 4px 14px rgba(58, 36, 21, .22);
+}
+body.onf-map-api-on .onf-map-link { display: block; }
+.onf-map-link:hover { background: #EADFCD; }

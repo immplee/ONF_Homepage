@@ -285,10 +285,10 @@
   setInterval(enforceTitle, 500);
   enforceTitle();
 
-  /* ---------- ⑧ 모바일 지도 (네이버 지도 API + 이미지 폴백) ---------- */
-  // 네이버 지도 "iframe"은 모바일 UA를 앱 연동 페이지로 리다이렉트해 빈 박스가 된다.
-  // → 모바일에선 네이버 지도 API(Dynamic Map)로 진짜 지도를 그린다.
-  //   API 로드/인증 실패 시엔 "탭하면 네이버지도가 열리는" 이미지 폴백 유지.
+  /* ---------- ⑧ 오시는길 지도 (네이버 지도 API, PC·모바일 공통) ---------- */
+  // 기존 iframe 임베드는 ①모바일 UA에서 렌더 거부(앱 연동 리다이렉트) ②PC에서도
+  // 왼쪽 패널을 CSS로 잘라내는 편법이라, 공식 지도 API(Dynamic Map)로 전 기기 통일(2026-07-02).
+  //   API 로드/인증 실패 시엔 "탭하면 네이버지도가 열리는" 이미지 폴백 자동 표시.
   //   Client ID는 도메인 제한(ownify.co.kr)이라 공개돼도 무방. (ownify.css 규칙과 세트)
   var ONF_PLACE = { lat: 37.5102816, lng: 127.0966326 };   // 오니파이(롯데웰빙센터)
   // 인증 실패 시 네이버가 이 전역 함수를 호출 → API 지도 제거하고 이미지 폴백 유지
@@ -307,11 +307,20 @@
     new naver.maps.Marker({ position: pos, map: map, title: '오니파이' });
     document.body.classList.add('onf-map-api-on');
   }
-  function ensureMobileMap() {
-    if (!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
+  function ensureCustomMap() {
     var block = document.querySelector('[data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]');
     if (!block) return;
-    document.body.classList.add('onf-mobile-map');
+    document.body.classList.add('onf-map-custom');
+    // 지도 우하단 '네이버지도에서 보기' 버튼 (플레이스 사진·리뷰·길찾기로 연결)
+    if (!block.querySelector('.onf-map-link')) {
+      var l = document.createElement('a');
+      l.className = 'onf-map-link';
+      l.href = 'https://map.naver.com/p/entry/place/2094664237';
+      l.target = '_blank';
+      l.rel = 'noopener';
+      l.textContent = '네이버지도에서 보기 →';
+      block.appendChild(l);
+    }
     // ⑧-1 이미지 폴백 (항상 깔아두고, API 지도가 성공하면 CSS가 이미지를 숨김)
     if (!block.querySelector('.onf-map-mobile')) {
       var a = document.createElement('a');
@@ -336,7 +345,7 @@
     };
     document.head.appendChild(s);
   }
-  setInterval(ensureMobileMap, 1000);
-  ensureMobileMap();
+  setInterval(ensureCustomMap, 1000);
+  ensureCustomMap();
 
 })();
