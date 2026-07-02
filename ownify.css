@@ -434,8 +434,6 @@ html, body {
   font-weight: 800 !important;
   font-size: 18px !important;
   letter-spacing: .01em;
-  /* 글자 전체 글로우 (shine 대체 강조효과 — 크림 글자가 은은하게 빛남) */
-  text-shadow: 0 0 6px rgba(255, 247, 238, .4), 0 0 14px rgba(255, 247, 238, .22);
   transition: transform .25s;
 }
 .onf-band:hover { background: #e0761f; }
@@ -687,10 +685,24 @@ body.onf-clear-top .notion-page-content:has([data-block-id="2a11866f-119c-4e50-9
 }
 /* ③ 큰 제목 — 안쪽 span까지 지정해야 함: 전역 "모든 글자 400" 규칙(1번 섹션)이
    span을 400으로 눌러서 h2에만 준 800이 화면에 안 나오던 문제의 해결 지점 */
+/* 줄바꿈 금지: 컬럼폭보다 크면 화면폭에 비례해 자동 축소(2.7vw≈데스크톱 컬럼에 맞는 비율).
+   수 px 넘치는 건 width:max-content로 컬럼 사이 여백에 흡수 */
 [data-block-id="38fd6a62-96ae-805c-bf03-ce9ff458002c"] h2,
 [data-block-id="38fd6a62-96ae-805c-bf03-ce9ff458002c"] h2 * {
-  font-size: var(--hero-title-size) !important;
+  font-size: min(var(--hero-title-size), 2.7vw) !important;
   font-weight: var(--hero-title-weight) !important;
+  white-space: nowrap !important;
+}
+[data-block-id="38fd6a62-96ae-805c-bf03-ce9ff458002c"] h2 {
+  width: max-content !important;
+  max-width: none !important;
+}
+/* 모바일(컬럼 세로 스택)에선 전체 폭 기준으로 축소 비율 재계산 */
+@media (max-width: 768px) {
+  [data-block-id="38fd6a62-96ae-805c-bf03-ce9ff458002c"] h2,
+  [data-block-id="38fd6a62-96ae-805c-bf03-ce9ff458002c"] h2 * {
+    font-size: min(var(--hero-title-size), 5.8vw) !important;
+  }
 }
 /* ④ 잠실역 도보 안내 */
 [data-block-id="6ac9cfaa-6db5-42a6-b718-e0ec836cdceb"],

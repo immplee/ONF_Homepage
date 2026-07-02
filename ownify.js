@@ -120,9 +120,17 @@
   /* ---------- ④ 탑바 우측 상담 CTA ---------- */
   // 로고(왼쪽 40px)와 대칭인 오른쪽 40px 위치. 문구·화살표는 본문 띠 배너(.onf-band)와 동일.
   // 스타일은 ownify.css 11번 섹션(.onf-top-cta)과 세트. 1100px 이하에선 CSS가 숨김.
+  // 홈(/)에는 본문 띠 배너가 있으므로 하위 페이지(/how·/where 등)에서만 표시 (2026-07-02 Peter 지시).
   function ensureTopCta() {
     var bar = document.querySelector('.notion-topbar');
-    if (!bar || bar.querySelector('.onf-top-cta')) return;
+    if (!bar) return;
+    var isHome = location.pathname === '/' || location.pathname === '';
+    var existing = bar.querySelector('.onf-top-cta');
+    if (isHome) {                     // 홈이면 있던 것도 제거(SPA 이동 대응)
+      if (existing) existing.remove();
+      return;
+    }
+    if (existing) return;
     var a = document.createElement('a');
     a.className = 'onf-top-cta';
     a.href = 'https://own-ify.notion.site/309d6a6296ae80ebbedfe2bfdeabc5db?pvs=105'; // 상담 신청서(띠 배너와 동일)
