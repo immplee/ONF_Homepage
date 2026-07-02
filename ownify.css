@@ -228,6 +228,21 @@ html, body {
   opacity: .5 !important;
 }
 
+/* 네이버 지도 임베드: 왼쪽 검색/장소 패널(레일 62px + 패널 391px = 453px)을
+   잘라내서 지도만 보이게. iframe을 453px 넓혀 왼쪽으로 밀면
+   네이버가 패널을 감안해 잡아둔 지도 중심(핀)이 보이는 영역의 정중앙에 옴.
+   (패널을 접어둔 방문자에겐 핀이 왼쪽으로 치우쳐 보이는 한계는 감수 — 기본값은 열림) */
+.notion-page-content div:has(> iframe[src*="map.naver.com"]) {
+  overflow: hidden !important;
+  border-radius: 22px !important;
+  box-shadow: 0 14px 40px rgba(111, 74, 47, .18) !important;
+}
+.notion-page-content iframe[src*="map.naver.com"] {
+  width: calc(100% + 453px) !important;
+  max-width: none !important;
+  margin-left: -453px !important;
+}
+
 
 /* ---------- 4. 이미지 ---------- */
 
