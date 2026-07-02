@@ -154,6 +154,11 @@
     '/how':   'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@bfa2eee/assets/cover-how.webp',
     '/where': 'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@bfa2eee/assets/cover-where.webp'
   };
+  // 페이지별 세로 초점(object-position) — 기본은 CSS의 center 47%.
+  // /where 리셉션은 벽 OWNIFY 로고가 탑바 메뉴와 겹치지 않게 초점을 위로(35%).
+  var ONF_COVER_POS = {
+    '/where': 'center 35%'
+  };
   function updateClearTop() {
     document.body.classList.toggle('onf-clear-top', !!document.querySelector('.page_cover'));
     // 우피는 좁은 창(≈780px 이하)에서 탑바를 둘로 나눈다: 기존 탑바는 h=0으로 숨고,
@@ -171,12 +176,17 @@
     document.body.classList.toggle('onf-sub', !home);
     if (!home) {
       var c = document.querySelector('.page_cover');
-      var want = ONF_COVERS[location.pathname.replace(/\/$/, '')] || ONF_COVER;
+      var path = location.pathname.replace(/\/$/, '');
+      var want = ONF_COVERS[path] || ONF_COVER;
       // SPA 이동으로 같은 img가 재사용될 수 있어 "적용한 URL"을 기억해 비교
       if (c && c.tagName === 'IMG' && c.dataset.onfCanon !== want) {
         c.dataset.onfCanon = want;
         c.removeAttribute('srcset');
         c.src = want;
+      }
+      // 페이지별 초점 보정 (인라인 !important가 CSS 공통값 47%를 덮음)
+      if (c && ONF_COVER_POS[path]) {
+        c.style.setProperty('object-position', ONF_COVER_POS[path], 'important');
       }
     }
   }
