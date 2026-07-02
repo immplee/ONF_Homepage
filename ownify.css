@@ -481,7 +481,7 @@ html, body {
 /* 큰 제목: 위 워드마크에 밀착(-10px) + 아래 첫 단락과의 간격은
    단락끼리 간격과 동일하게 16px(합산 32px) (2026-07-02 Peter 지시) */
 [data-block-id="390d6a62-96ae-8009-9189-dea12457fad9"] {
-  margin: -10px 0 16px !important;
+  margin: -6px 0 16px !important;   /* 워드마크와의 간격: -10 → -6 (2026-07-02 한 눈금 벌림) */
   padding: 0 !important;
 }
 [data-block-id="390d6a62-96ae-8009-9189-dea12457fad9"] h2 {
@@ -607,54 +607,21 @@ html, body {
   .onf-footer-logo { width: 160px; align-self: flex-start; }  /* 세로 스택에선 왼쪽 정렬 유지 */
 }
 
-/* 오시는길(/where)은 지도가 화면을 꽉 채우는 무스크롤 페이지라 푸터 제외
-   (지도 임베드 블록 id 기준 — 11번 섹션과 같은 id) */
-.notion-scroller:has([data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]) .onf-footer {
-  display: none !important;
-}
 
-
-/* ---------- 11. 오시는길(/where) — 네이버 지도 풀스크린 ---------- */
-/* 화면 구성이 "헤더(100px) + 주소 한 줄 + 지도"로 딱 떨어지게:
-   지도가 남은 높이를 전부 차지하고 좌·우·아래 여백 없이 꽉 참(스크롤 없음).
+/* ---------- 11. 오시는길(/where) — 2열: 왼쪽 지도 + 오른쪽 안내 ---------- */
+/* 2026-07-02 개편: 커버 배너 + 2열(왼쪽 = 지도 임베드 / 오른쪽 = 주소·오시는길 사진).
+   지도는 왼쪽 열 폭을 100% 채우고 화면 높이만큼 시원하게.
    ⚠️ 지도 왼쪽 흰 패널은 네이버 도메인(iframe 내부)이라 색 변경 불가.
    ⚠️ 임베드 블록을 지웠다 다시 만들면 data-block-id 갱신 필요. */
-.notion-page-content:has([data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]) {
-  height: calc(100vh - 100px) !important;
-  min-height: 480px !important;
-  padding-bottom: 0 !important;
-}
-/* 커버 배너가 있으면(투명 탑바 상태) 커버 높이만큼 빼서 여전히 무스크롤 유지
-   (커버 총높이 = --page-cover-height(30vh) + 탑바 100px, 커버 확장 섹션 참고) */
-body.onf-clear-top .notion-page-content:has([data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]) {
-  height: calc(100vh - var(--page-cover-height, 30vh) - 100px) !important;
-  min-height: 380px !important;
-}
-/* 우피가 페이지 끝에 넣는 빈 푸터의 여백 제거(아래 틈의 원인) */
-.notion-page-content:has([data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]) .oopy-footer {
-  margin: 0 !important;
-}
-/* 지도 블록: 남은 높이 전부 + 화면 전체 폭(본문 컬럼 밖으로 확장) */
 [data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] {
-  flex-grow: 1 !important;
-  height: auto !important;
-  min-height: 0 !important;
-  width: 100vw !important;
-  max-width: 100vw !important;
-  margin: 10px 0 0 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  height: calc(100vh - 240px) !important;   /* 탑바·여백 제외한 화면 높이만큼 */
+  min-height: 480px !important;
 }
 [data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] div { height: 100% !important; }
 [data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] iframe { width: 100% !important; height: 100% !important; }
-
-/* 지도 위 여백 축소(2026-07-02): 제목·주소 여백 조이고 맨 위 빈 블록 숨김
-   → 지도가 약 100px 위로 올라옴 */
-.notion-page-content:has([data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]) > .notion-text-block {
-  margin-top: 8px !important;
-  margin-bottom: 8px !important;
-}
-[data-block-id="382d6a62-96ae-80f9-ba2d-cfbf3498dbcc"] { /* 오시는길 맨 위 빈 블록 */
-  display: none !important;
-}
 
 /* ---------- 11. 탑바 우측 상담 CTA (ownify.js ④와 세트) ---------- */
 /* 로고(왼쪽 40px)와 대칭 위치. 글자 굵기 600 = 탑메뉴와 동일 */
