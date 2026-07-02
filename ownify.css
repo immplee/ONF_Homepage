@@ -934,3 +934,16 @@ body.onf-mobile-map .onf-map-mobile {
   border-radius: 999px;
   white-space: nowrap;
 }
+
+
+/* ---------- 모바일 네이버 지도 API (ownify.js ⑧-2와 세트) ---------- */
+/* API 지도가 성공하면(body.onf-map-api-on) 이미지 폴백을 숨기고 진짜 지도 표시 */
+.onf-map-api { display: none; }
+body.onf-map-api-on .onf-map-mobile { display: none !important; }
+body.onf-map-api-on .onf-map-api {
+  display: block;
+  width: 100%;
+  height: 100% !important;
+  border-radius: 22px;
+  overflow: hidden;
+}

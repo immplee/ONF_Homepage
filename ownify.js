@@ -285,25 +285,56 @@
   setInterval(enforceTitle, 500);
   enforceTitle();
 
-  /* ---------- ⑧ 모바일 지도 폴백 ---------- */
-  // 네이버 지도는 모바일 UA 접속을 앱 연동 페이지로 리다이렉트하는데 그 페이지가
-  // iframe 렌더링을 막아 모바일에선 빈 박스가 된다 → 모바일에선 iframe 대신
-  // "탭하면 네이버지도가 열리는" 지도 이미지를 보여준다. (ownify.css 폴백 규칙과 세트)
+  /* ---------- ⑧ 모바일 지도 (네이버 지도 API + 이미지 폴백) ---------- */
+  // 네이버 지도 "iframe"은 모바일 UA를 앱 연동 페이지로 리다이렉트해 빈 박스가 된다.
+  // → 모바일에선 네이버 지도 API(Dynamic Map)로 진짜 지도를 그린다.
+  //   API 로드/인증 실패 시엔 "탭하면 네이버지도가 열리는" 이미지 폴백 유지.
+  //   Client ID는 도메인 제한(ownify.co.kr)이라 공개돼도 무방. (ownify.css 규칙과 세트)
+  var ONF_PLACE = { lat: 37.5102816, lng: 127.0966326 };   // 오니파이(롯데웰빙센터)
+  // 인증 실패 시 네이버가 이 전역 함수를 호출 → API 지도 제거하고 이미지 폴백 유지
+  window.navermap_authFailure = function () {
+    document.body.classList.remove('onf-map-api-on');
+    var d = document.querySelector('.onf-map-api');
+    if (d) d.remove();
+  };
+  function buildApiMap(block) {
+    if (!window.naver || !naver.maps || block.querySelector('.onf-map-api')) return;
+    var d = document.createElement('div');
+    d.className = 'onf-map-api';
+    block.appendChild(d);
+    var pos = new naver.maps.LatLng(ONF_PLACE.lat, ONF_PLACE.lng);
+    var map = new naver.maps.Map(d, { center: pos, zoom: 16 });
+    new naver.maps.Marker({ position: pos, map: map, title: '오니파이' });
+    document.body.classList.add('onf-map-api-on');
+  }
   function ensureMobileMap() {
     if (!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
     var block = document.querySelector('[data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]');
     if (!block) return;
     document.body.classList.add('onf-mobile-map');
-    if (block.querySelector('.onf-map-mobile')) return;
-    var a = document.createElement('a');
-    a.className = 'onf-map-mobile';
-    a.href = 'https://map.naver.com/p/entry/place/2094664237';   // 오니파이 네이버 플레이스
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.innerHTML =
-      '<img alt="오니파이 위치 지도" src="https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@fb90fba/assets/ownify-naver-map.png">' +
-      '<span>지도를 탭하면 네이버지도가 열려요</span>';
-    block.appendChild(a);
+    // ⑧-1 이미지 폴백 (항상 깔아두고, API 지도가 성공하면 CSS가 이미지를 숨김)
+    if (!block.querySelector('.onf-map-mobile')) {
+      var a = document.createElement('a');
+      a.className = 'onf-map-mobile';
+      a.href = 'https://map.naver.com/p/entry/place/2094664237';   // 오니파이 네이버 플레이스
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.innerHTML =
+        '<img alt="오니파이 위치 지도" src="https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@fb90fba/assets/ownify-naver-map.png">' +
+        '<span>지도를 탭하면 네이버지도가 열려요</span>';
+      block.appendChild(a);
+    }
+    // ⑧-2 네이버 지도 API 로드 (1회) 후 지도 생성
+    if (window.naver && window.naver.maps) { buildApiMap(block); return; }
+    if (window.__onfMapsLoading) return;
+    window.__onfMapsLoading = true;
+    var s = document.createElement('script');
+    s.src = 'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=vkgwjbsdel';
+    s.onload = function () {
+      var b = document.querySelector('[data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]');
+      if (b) buildApiMap(b);
+    };
+    document.head.appendChild(s);
   }
   setInterval(ensureMobileMap, 1000);
   ensureMobileMap();
