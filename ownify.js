@@ -140,12 +140,14 @@
   function updateClearTop() {
     document.body.classList.toggle('onf-clear-top', !!document.querySelector('.page_cover'));
   }
-  // 우피는 창이 아니라 .notion-scroller 안에서 스크롤됨 → capture로 내부 스크롤 감지
+  // 스크롤 위치 감지: 기본은 창(window) 스크롤, 일부 레이아웃은 .notion-scroller 내부 스크롤
+  // (capture라 둘 다 이 리스너로 들어옴 — 그 외 내부 스크롤 요소는 무시)
   document.addEventListener('scroll', function (e) {
-    var t = e.target;
-    if (t && t.classList && t.classList.contains('notion-scroller')) {
-      document.body.classList.toggle('onf-scrolled', t.scrollTop > 40);
-    }
+    var t = e.target, y;
+    if (t === document) y = window.scrollY;
+    else if (t.classList && t.classList.contains('notion-scroller')) y = t.scrollTop;
+    else return;
+    document.body.classList.toggle('onf-scrolled', y > 40);
   }, true);
   // 페이지 이동(SPA)으로 커버 유무가 바뀔 수 있어 본문 변경 때마다 갱신
   new MutationObserver(function () {
