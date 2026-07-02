@@ -622,3 +622,39 @@ html, body {
 [data-block-id="382d6a62-96ae-80f9-ba2d-cfbf3498dbcc"] { /* 오시는길 맨 위 빈 블록 */
   display: none !important;
 }
+
+/* ---------- 11. 탑바 우측 상담 CTA (ownify.js ④와 세트) ---------- */
+/* 로고(왼쪽 40px)와 대칭 위치. 글자 굵기 600 = 탑메뉴와 동일 */
+.notion-topbar a.onf-top-cta {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #D2691E;
+  color: #FFF7EE !important;   /* 탑바 링크 오렌지 규칙(2번 섹션)보다 우선 */
+  border-radius: 16px;
+  padding: 11px 18px;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(58, 36, 21, .18);
+  transition: background .2s, transform .2s;
+  z-index: 5;
+}
+.notion-topbar a.onf-top-cta:hover {
+  background: #e0761f;
+  transform: translateY(-50%) scale(1.04);
+}
+/* 화살표: 로고용 48px 규칙(.notion-topbar img)을 이기고 16px로 (흔들림 애니메이션은 .onf-band-arrow 공용) */
+.notion-topbar .onf-top-cta img.onf-band-arrow {
+  height: 16px !important;
+  width: auto !important;
+}
+/* 좁은 화면에선 메뉴와 겹치므로 숨김(모바일 레이아웃 전환점과 동일) */
+@media (max-width: 1100px) {
+  .notion-topbar a.onf-top-cta { display: none !important; }
+}
