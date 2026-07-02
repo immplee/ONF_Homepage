@@ -249,4 +249,17 @@
     clearInterval(snsK);
   }, 400);
 
+  /* ---------- ⑦ 브라우저 탭 제목 ---------- */
+  // 우피가 페이지 이동 때마다 탭 제목을 노션 페이지 제목으로 다시 쓰므로 주기적으로 강제.
+  // 페이지를 추가하려면 아래 맵에 경로: 제목 한 줄만 추가.
+  var ONF_TITLES = {
+    '/how': 'Ownify┃How'
+  };
+  function enforceTitle() {
+    var want = ONF_TITLES[location.pathname.replace(/\/$/, '')];
+    if (want && document.title !== want) document.title = want;
+  }
+  setInterval(enforceTitle, 800);
+  enforceTitle();
+
 })();
