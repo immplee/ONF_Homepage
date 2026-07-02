@@ -182,6 +182,24 @@
       a.target = '_blank';
       a.rel = 'noopener';
       a.innerHTML = '<img alt="카카오톡 채널" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjI0IiBmaWxsPSIjRkFFMTAwIi8+PHBhdGggZD0iTTUwIDI0Yy0xNi42IDAtMzAgMTAuNy0zMCAyMy44IDAgOC41IDUuNiAxNS45IDE0IDIwLjFsLTIuOSAxMC43Yy0uMjYuOTYuODQgMS43MiAxLjY2IDEuMTdsMTIuOS04LjZjMS40LjE0IDIuOS4yMiA0LjQuMjIgMTYuNiAwIDMwLTEwLjcgMzAtMjMuOFM2Ni42IDI0IDUwIDI0eiIgZmlsbD0iIzNDMUUxRSIvPjwvc3ZnPg==">';
+      // PC에선 카카오 1:1 채팅이 앱 전용(웹 미지원)이라 QR 팝업으로 안내. 모바일은 바로 채팅.
+      a.addEventListener('click', function (ev) {
+        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
+        ev.preventDefault();
+        var old = document.querySelector('.onf-qr');
+        if (old) { old.remove(); return; }
+        var o = document.createElement('div');
+        o.className = 'onf-qr';
+        o.innerHTML =
+          '<div class="onf-qr-card">' +
+            '<p class="onf-qr-title">카카오톡 상담</p>' +
+            '<img src="https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@fb90fba/assets/kakao-chat-qr.png" alt="카카오톡 채팅 QR">' +
+            '<p class="onf-qr-hint">휴대폰 카메라로 QR을 찍으면<br>오니파이와의 카카오톡 채팅이 바로 열려요</p>' +
+            '<a href="http://pf.kakao.com/_xcBxaPX/chat" target="_blank" rel="noopener">카카오 계정으로 웹에서 열기 →</a>' +
+          '</div>';
+        o.addEventListener('click', function (e2) { if (e2.target === o) o.remove(); });
+        document.body.appendChild(o);
+      });
       sns.appendChild(a);
     }
     clearInterval(snsK);
