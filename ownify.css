@@ -193,16 +193,15 @@ html, body {
 .notion-callout-block a, .notion-callout-block a span {
   color: #F3EADB !important;
 }
-/* 카드 안 태그(인라인 코드)는 크림 칩 + 브라운 글자로 반전 (다크 카드에서 또렷하게) */
-.notion-callout-block [class*="CalloutBlock_content"] code {
+/* 카드 안 태그(인라인 코드 — 우피는 span[style*=SFMono]로 렌더링)는
+   크림 칩 + 브라운 글자로 반전 (다크 카드에서 또렷하게) */
+.notion-callout-block [class*="CalloutBlock_content"] code,
+.notion-callout-block [class*="CalloutBlock_content"] code span,
+.notion-callout-block [class*="CalloutBlock_content"] span[style*="SFMono"] {
   color: #6F4A2F !important;
   background: #F1EADE !important;
   border-radius: 6px !important;
   padding: 2px 8px !important;
-}
-.notion-callout-block [class*="CalloutBlock_content"] code span {
-  color: #6F4A2F !important;
-  background: none !important;
 }
 
 /* 카드 안 링크 밑줄·배경 제거 */
