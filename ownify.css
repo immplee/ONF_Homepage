@@ -791,6 +791,13 @@ body.onf-clear-top .page_cover {
   mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
 }
 
+/* 하위 페이지(body.onf-sub — ownify.js ⑤가 토글)는 배너를 낮은 띠로:
+   탑바 100px + 이미지 200px = 300px. 콘텐츠가 첫 화면에 바로 보인다.
+   하단 페이드는 위 규칙 그대로 물려받아 크림 배경과 자연스럽게 이어짐. */
+body.onf-clear-top.onf-sub .page_cover {
+  height: 300px !important;
+}
+
 
 /* ---------- 카카오톡 상담 QR 팝업 (PC 전용 — ownify.js ⑥과 세트) ---------- */
 /* PC에선 카카오 1:1 채팅이 앱 전용이라, 카카오 버튼 클릭 시 QR 카드를 띄운다.
