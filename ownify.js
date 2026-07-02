@@ -152,6 +152,11 @@
   var ONF_COVER = 'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@00a4ef6/assets/cover-banner.webp';
   function updateClearTop() {
     document.body.classList.toggle('onf-clear-top', !!document.querySelector('.page_cover'));
+    // 우피가 좁은 창에서 메뉴를 탑바 밖 별도 줄로 빼면 로고(img)가 탑바에서 사라진다 →
+    // 그 상태를 body.onf-nav-split로 표시(ownify.css 분리 상태 규칙과 세트: 투명 탑바
+    // 해제·CTA 숨김). CTA 화살표 img는 로고가 아니므로 제외.
+    var bar = document.querySelector('.notion-topbar');
+    document.body.classList.toggle('onf-nav-split', !!bar && !bar.querySelector('img:not(.onf-band-arrow)'));
     var home = location.pathname === '/' || location.pathname === '';
     document.body.classList.toggle('onf-sub', !home);
     if (!home) {
@@ -178,6 +183,8 @@
     else return;
     document.body.classList.toggle('onf-scrolled', y > scrolledThreshold());
   }, true);
+  // 창 크기가 바뀌면 메뉴 분리 여부도 바뀔 수 있어 리사이즈 때도 갱신
+  window.addEventListener('resize', function () { setTimeout(updateClearTop, 50); });
   // 페이지 이동(SPA)으로 커버 유무가 바뀔 수 있어 본문 변경 때마다 갱신
   new MutationObserver(function () {
     updateClearTop();
