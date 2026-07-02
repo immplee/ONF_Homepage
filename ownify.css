@@ -539,6 +539,7 @@ html, body {
   font-size: 14px;
   line-height: 1.95;
   min-width: 0;
+  word-break: keep-all;   /* 한국어 단어 단위 줄바꿈 */
 }
 /* 사업자 정보 줄 (항목 사이 넉넉한 간격, 좁으면 자동 줄바꿈) */
 .onf-footer-biz {
