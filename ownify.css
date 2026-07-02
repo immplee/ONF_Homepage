@@ -435,7 +435,7 @@ html, body {
   font-size: 18px !important;
   letter-spacing: .01em;
   /* 글자 전체 글로우 (shine 대체 강조효과 — 크림 글자가 은은하게 빛남) */
-  text-shadow: 0 0 8px rgba(255, 247, 238, .95), 0 0 18px rgba(255, 247, 238, .65), 0 0 34px rgba(255, 247, 238, .4);
+  text-shadow: 0 0 6px rgba(255, 247, 238, .4), 0 0 14px rgba(255, 247, 238, .22);
   transition: transform .25s;
 }
 .onf-band:hover { background: #e0761f; }
