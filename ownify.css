@@ -503,13 +503,14 @@ html, body {
 }
 
 /* ---------- 10. 사이트 푸터 (오렌지 밴드 — ownify.js가 주입) ---------- */
-/* 구조는 ownify.js ③ 참고. 페이지 끝까지 스크롤하면 아래에서 위로 떠오른다. */
+/* 구조는 ownify.js ③ 참고. 페이지 끝까지 스크롤하면 아래에서 위로 떠오른다.
+   위치: .notion-page-content "뒤"(형제, .notion-scroller 안)라서 width:100%면 풀폭.
+   ⚠️ 100vw+left:50% 트릭 금지 — 본문 컨테이너가 모바일에서 flex 중앙정렬이라 어긋남. */
 
 .onf-footer {
   position: relative;
-  width: 100vw;               /* 본문 컬럼 밖 화면 전체 폭 (onf-band와 같은 기법) */
-  left: 50%;
-  margin: 90px 0 0 -50vw;
+  width: 100%;
+  margin: 90px 0 0;
   box-sizing: border-box;
   background: #D2691E;
   padding: 60px 48px 48px;
@@ -570,10 +571,10 @@ html, body {
 }
 
 /* 푸터가 페이지 맨 끝에 딱 붙게: 본문 하단 여백·우피 빈 푸터 여백 제거 */
-.notion-page-content:has(.onf-footer) {
+.notion-scroller:has(.onf-footer) .notion-page-content {
   padding-bottom: 0 !important;
 }
-.notion-page-content:has(.onf-footer) .oopy-footer {
+.notion-scroller:has(.onf-footer) .oopy-footer {
   margin: 0 !important;
 }
 
@@ -591,7 +592,7 @@ html, body {
 
 /* 오시는길(/where)은 지도가 화면을 꽉 채우는 무스크롤 페이지라 푸터 제외
    (지도 임베드 블록 id 기준 — 11번 섹션과 같은 id) */
-.notion-page-content:has([data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]) .onf-footer {
+.notion-scroller:has([data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]) .onf-footer {
   display: none !important;
 }
 

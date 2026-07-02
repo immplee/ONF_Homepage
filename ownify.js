@@ -87,13 +87,21 @@
   }, { threshold: .15 });
 
   function ensureFooter() {
+    // 본문 "안"이 아니라 "바로 뒤"(형제)에 둔다 — 본문 컨테이너는 모바일에서
+    // flex 중앙정렬이라 안에 넣으면 풀폭 배치가 어긋남 (ownify.css 10번 참고)
     var content = document.querySelector('.notion-page-content');
-    if (!content || content.querySelector('.onf-footer')) return;
-    var f = document.createElement('footer');
-    f.className = 'onf-footer';
-    f.innerHTML = FOOTER_HTML;
-    content.appendChild(f);
-    footIo.observe(f);
+    if (!content) return;
+    var f = document.querySelector('.onf-footer');
+    if (!f) {
+      f = document.createElement('footer');
+      f.className = 'onf-footer';
+      f.innerHTML = FOOTER_HTML;
+      content.insertAdjacentElement('afterend', f);
+      footIo.observe(f);
+    } else if (f.previousElementSibling !== content) {
+      // 페이지 이동으로 본문이 새로 그려져 순서가 틀어졌으면 재배치
+      content.insertAdjacentElement('afterend', f);
+    }
   }
 
   // 본문이 다시 그려질 때마다 확인 (연속 변경은 rAF로 한 번에 처리)
