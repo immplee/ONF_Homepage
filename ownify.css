@@ -544,12 +544,12 @@ html, body {
   position: relative;
   z-index: 5;
 }
-/* 텍스트를 "화면 맨 위 ~ 띠 CTA 위"의 세로 정중앙으로 (2026-07-02 Peter 지시).
-   transform이라 띠 CTA 등 아래 내용 위치는 그대로. -113px = 실측 보정값
-   (커버 실높이 474px 기준, 위 여백 152 = 아래 여백 152). 모바일은 제외. */
+/* 텍스트를 "로고 아래 ~ 띠 CTA 위"의 세로 정중앙으로 (2026-07-02 Peter 지시, 기준 변경).
+   transform이라 띠 CTA 등 아래 내용 위치는 그대로. -76px = 실측 보정값
+   (로고 하단 74px·띠 상단 552px 기준, 위 여백 115 = 아래 여백 115). 모바일은 제외. */
 @media (min-width: 769px) {
   .notion-page-content > .notion-column_list-block[data-block-id="3883a92c-8e3f-4bcf-a07e-0f1080420dbb"] {
-    transform: translateY(-113px) !important;
+    transform: translateY(-76px) !important;
   }
 }
 
