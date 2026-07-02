@@ -1,0 +1,496 @@
+/* ============================================================
+   OWNIFY 홈페이지 커스텀 CSS (www.ownify.co.kr, 우피/Oopy)
+   ------------------------------------------------------------
+   - 정본은 이 파일(GitHub immplee/ONF_Web). 우피 <head>에는
+     jsDelivr <link> 한 줄만 넣는다. (우피 10,240자 제한 회피)
+   - 수정 후 반영: git push → jsDelivr 캐시 purge (README 참고)
+   - 색상 팔레트:
+       배경 크림   #F1EADE
+       카드 베이지 #EADFCD (호버 #E4D6C0, 테두리 #D8C8B0)
+       포인트 오렌지 #D2691E (호버 #b9591a / 밴드 호버 #e0761f)
+       구분선 브라운 #B59A7B
+   ============================================================ */
+
+
+/* ---------- 0. 서체 · 기본 ---------- */
+
+/* Paperlogy 웹폰트 (fonts-archive CDN, dynamic subset) */
+@import url("https://cdn.jsdelivr.net/gh/fonts-archive/Paperlogy/subsets/Paperlogy-dynamic-subset.css");
+
+/* 가로 스크롤 방지 (clip 미지원 브라우저 대비 hidden 폴백) */
+html, body {
+  overflow-x: hidden !important;
+  overflow-x: clip !important;
+}
+
+
+/* ---------- 1. 타이포그래피 ---------- */
+
+/* 전 영역 기본 서체: Paperlogy, 기본 굵기 400 */
+.notion-page-content, .notion-page-content *,
+.notion-page-block, .page-title,
+.notion-topbar, .notion-topbar a, .notion-topbar a *, .notion-topbar span,
+.notion-topbar ~ div a, .notion-topbar ~ div a *, .notion-topbar ~ div span {
+  font-family: 'Paperlogy', 'Apple SD Gothic Neo', sans-serif !important;
+  font-weight: 400 !important;
+}
+
+/* 제목류는 800 */
+.notion-page-content h1, .notion-page-content h2,
+.notion-page-content .notion-header-block,
+.notion-page-content .notion-sub_header-block,
+.page-title {
+  font-weight: 800 !important;
+}
+
+/* 상단바·서브 네비 메뉴는 600 (위 400 규칙보다 뒤에 있어야 함) */
+.notion-topbar a, .notion-topbar a *, .notion-topbar span,
+.notion-topbar ~ div a, .notion-topbar ~ div a *, .notion-topbar ~ div span {
+  font-weight: 600 !important;
+}
+
+
+/* ---------- 2. 상단바(탑바) ---------- */
+
+/* 크림색 배경, 높이 100px */
+.notion-topbar {
+  background-color: #F1EADE !important;
+  height: 100px !important;
+  min-height: 100px !important;
+}
+
+/* 탑바 안 링크·아이콘 전부 오렌지 */
+.notion-topbar a, .notion-topbar span, .notion-topbar svg, .notion-topbar i,
+.notion-topbar ~ div a, .notion-topbar ~ div span, .notion-topbar ~ div i {
+  color: #D2691E !important;
+  fill: #D2691E !important;
+}
+
+/* 내부 래퍼도 100px에 맞춰 세로 중앙 정렬 */
+.notion-topbar > div {
+  height: 100px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* 로고 이미지 크기 */
+.notion-topbar img {
+  height: 48px !important;
+}
+
+/* 우측 빈 슬롯 제거 */
+.notion-topbar > div:last-child:empty {
+  display: none !important;
+}
+
+/* 탑바~본문 사이 경계선·그림자 전부 제거 (이음새 없애기) */
+.notion-topbar, .notion-topbar > div,
+.notion-topbar + div, .notion-topbar + div > div,
+.notion-topbar ~ div, .notion-topbar ~ div > div {
+  border: none !important;
+  box-shadow: none !important;
+  margin-bottom: 0 !important;
+}
+.notion-page-content {
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+/* 레이아웃: 로고는 왼쪽 고정, 메뉴는 정중앙 (우피 기본 grid → flex 재배치) */
+.notion-topbar[style*="grid-template"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+}
+.notion-topbar[style*="grid-template"] > div:nth-child(2) {
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 60px !important;
+}
+.notion-topbar[style*="grid-template"] > div:first-child {
+  position: absolute !important;
+  left: 40px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+/* 현재 메뉴 밑줄(인디케이터) 위치: 글자 바로 아래로 */
+.notion-topbar a > div {
+  top: calc(50% + 16px) !important;
+  bottom: auto !important;
+}
+
+/* 좁은 화면: 로고 왼쪽·메뉴 오른쪽으로 풀어주기 */
+@media (max-width: 1100px) {
+  .notion-topbar[style*="grid-template"] {
+    justify-content: flex-start !important;
+  }
+  .notion-topbar[style*="grid-template"] > div:first-child {
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+  }
+  .notion-topbar[style*="grid-template"] > div:nth-child(2) {
+    margin-left: auto !important;
+    margin-right: 40px !important;
+    gap: 36px !important;
+  }
+}
+
+/* 서브 네비게이션 줄(탑바 아래 링크 줄)도 크림색 배경 */
+.notion-topbar ~ div:has(a) {
+  background-color: #F1EADE !important;
+}
+
+/* 모바일: 네비 글자 줄이고 한 줄 꽉 차게 배치 */
+@media (max-width: 768px) {
+  .notion-topbar a, .notion-topbar a *,
+  .notion-topbar ~ div a, .notion-topbar ~ div a *, .notion-topbar ~ div span {
+    font-size: 14px !important;
+    white-space: nowrap !important;
+    letter-spacing: .06em !important;
+  }
+  .notion-topbar ~ div:has(a) {
+    display: flex !important;
+    gap: 0 !important;
+    justify-content: space-between !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    overflow-x: visible !important;
+  }
+  .notion-topbar ~ div:has(a) > * {
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+  }
+}
+
+
+/* ---------- 3. 본문 공통 요소 ---------- */
+
+/* 콜아웃 → 베이지 카드 (호버 시 살짝 떠오름) */
+.notion-callout-block [class*="CalloutBlock_content"] {
+  background-color: #EADFCD !important;
+  border: 1.5px solid #D8C8B0 !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding-top: 33px !important;
+  padding-bottom: 33px !important;
+  position: relative !important;
+  transition: background-color .2s, box-shadow .2s, transform .2s !important;
+}
+.notion-callout-block [class*="CalloutBlock_content"]:hover {
+  background-color: #E4D6C0 !important;
+  box-shadow: 0 6px 18px rgba(58, 36, 21, .14) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* 카드 안 링크 밑줄·배경 제거 */
+.notion-callout-block a, .notion-callout-block a:hover,
+.notion-callout-block a span,
+.notion-callout-block [class*="CalloutBlock_content"] div {
+  text-decoration: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  background: none !important;
+}
+
+/* 카드 안에 링크가 있으면 카드 전체를 클릭 영역으로 확장 */
+.notion-callout-block [class*="CalloutBlock_content"] a::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+}
+
+/* 구분선: 브라운 톤 */
+.notion-hr, hr {
+  border-color: #B59A7B !important;
+  opacity: .5 !important;
+}
+
+
+/* ---------- 4. 이미지 ---------- */
+
+/* 크기: 화면 높이의 45%를 넘지 않게, 가운데 정렬 */
+.notion-page-content .notion-image-block img,
+.notion-page-content [class*="image"] img {
+  max-height: 45vh !important;
+  width: auto !important;
+  object-fit: contain !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  display: block !important;
+}
+
+/* 둥근 모서리 + 그림자 */
+.notion-page-content .notion-image-block img {
+  border-radius: 22px !important;
+  box-shadow: 0 14px 40px rgba(111, 74, 47, .18) !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* 이미지 뒤 오렌지 글로우(radial gradient + blur) */
+.notion-page-content .notion-image-block {
+  position: relative !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+.notion-page-content .notion-image-block::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 -18% !important;
+  background: radial-gradient(ellipse at center 60%,
+    rgba(210, 105, 30, .55) 0%,
+    rgba(210, 105, 30, .32) 40%,
+    rgba(210, 105, 30, 0) 75%) !important;
+  filter: blur(30px) !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+
+/* ---------- 5. 페이지 레이아웃 ---------- */
+
+/* 노션 페이지 제목·아이콘·컨트롤 숨김 (홈은 자체 히어로 사용) */
+.notion-page-block:first-child, .page-title,
+.notion-page-controls, .page-icon {
+  display: none !important;
+}
+
+/* 첫 번째 단(컬럼) 블록 = 히어로 영역: 여백·세로 중앙 정렬 */
+.notion-page-content > .notion-column_list-block:first-of-type {
+  margin-top: 40px !important;
+}
+.notion-page-content > .notion-column_list-block:first-of-type .notion-text-block:first-child {
+  margin-bottom: 30px !important;
+}
+.notion-page-content > .notion-column_list-block:first-of-type .notion-header-block {
+  margin-top: .15em !important;
+}
+.notion-page-content > .notion-column_list-block:first-of-type [class*="css-"] {
+  align-items: center !important;
+}
+.notion-page-content > .notion-column_list-block:first-of-type .notion-column {
+  justify-content: center !important;
+}
+
+/* 본문 텍스트·제목: 가운데 정렬, 넉넉한 줄간격 */
+.notion-page-content > .notion-text-block,
+.notion-page-content > .notion-header-block {
+  text-align: center !important;
+}
+.notion-page-content > .notion-header-block h1,
+.notion-page-content > .notion-header-block h2,
+.notion-page-content > .notion-text-block .css-1g4vl24 {
+  justify-content: center !important;
+  text-align: center !important;
+}
+.notion-page-content > .notion-text-block {
+  line-height: 2 !important;
+  font-size: 17px !important;
+  margin: 16px auto !important;
+  max-width: 620px !important;
+}
+
+
+/* ---------- 6. 스크롤 등장 애니메이션 (ownify.js와 세트) ---------- */
+
+/* JS가 .onf-reveal을 붙이고, 화면에 들어오면 .onf-show 추가 */
+.onf-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .6s, transform .6s;
+}
+.onf-reveal.onf-show {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ---------- 7. SNS 플로팅 버튼 (우하단) ---------- */
+/* 구조: 체크박스 토글 → :checked 시 아이템 2개가 위로 팝업 */
+
+.onf-sns {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9999;
+  width: 60px;
+  height: 60px;
+  font-family: inherit;
+}
+.onf-sns-cb { display: none; }  /* 토글용 숨김 체크박스 */
+
+/* 메인 버튼 */
+.onf-sns-btn {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 22px;
+  background: #D2691E;
+  color: #F1EADE;
+  font-weight: 800;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+  box-shadow: 0 6px 18px rgba(58, 36, 21, .28);
+  transition: transform .2s, background .2s;
+  overflow: hidden;
+}
+.onf-sns-btn img {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+}
+.onf-sns-btn:hover {
+  background: #b9591a;
+  transform: scale(1.05);
+}
+
+/* 펼쳐지는 아이템(카카오채널·인스타) — 평소엔 숨김 */
+.onf-sns-item {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(.3) rotate(90deg);
+  transition: transform .4s cubic-bezier(.34, 1.56, .64, 1), opacity .25s;
+  box-shadow: 0 6px 16px rgba(58, 36, 21, .24);
+  z-index: 2;
+  overflow: hidden;
+}
+.onf-sns-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.onf-sns-b {  /* 두 번째 아이템이 button 태그라서 기본 스타일 제거 */
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+}
+
+/* 열렸을 때: 위로 튀어오르며 등장 (살짝 기울였다가 호버 시 정렬) */
+.onf-sns-cb:checked ~ .onf-sns-a {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-64px) rotate(-8deg);
+}
+.onf-sns-cb:checked ~ .onf-sns-b {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-120px) rotate(8deg);
+  transition-delay: .06s;
+}
+.onf-sns-cb:checked ~ .onf-sns-a:hover {
+  transform: translateY(-64px) rotate(0) scale(1.08);
+}
+.onf-sns-cb:checked ~ .onf-sns-b:hover {
+  transform: translateY(-120px) rotate(0) scale(1.08);
+}
+
+
+/* ---------- 8. 풀폭 CTA 밴드 (오렌지 띠 배너) ---------- */
+
+.onf-band {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;               /* 본문 폭을 벗어나 화면 전체 폭으로 */
+  left: 50%;
+  margin: 34px 0 34px -50vw;
+  box-sizing: border-box;
+  background: #D2691E;
+  padding: 14px 20px;
+  text-decoration: none;
+  font-family: inherit;
+  transition: background .25s;
+}
+.onf-band span {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #FFF7EE !important;
+  font-weight: 800 !important;
+  font-size: 18px !important;
+  letter-spacing: .01em;
+  text-shadow: 0 2px 7px rgba(0, 0, 0, .45);
+  transition: transform .25s;
+}
+.onf-band:hover { background: #e0761f; }
+.onf-band:hover span { transform: scale(1.06); }
+
+/* 주기적으로 지나가는 반짝임(shine) 효과 */
+.onf-band::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .45), transparent);
+  transform: skewX(-20deg);
+  animation: onfShine 3.6s ease-in-out infinite;
+}
+@keyframes onfShine {
+  0% { left: -60%; }
+  55%, 100% { left: 130%; }
+}
+
+/* 화살표 아이콘 좌우 흔들림 */
+.onf-band-arrow {
+  height: 20px;
+  vertical-align: -4px;
+  animation: onfArrow 1.4s ease-in-out infinite;
+}
+@keyframes onfArrow {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+}
+
+
+/* ---------- 9. 특정 블록 미세 조정 (data-block-id) ---------- */
+/* 블록을 지우고 다시 만들면 id가 바뀌므로 여기도 갱신해야 함 */
+
+/* 히어로 위 소제목(자간 넓힘) */
+[data-block-id^="6cbfb9fe"] {
+  letter-spacing: 6px !important;
+  margin-bottom: 0 !important;
+}
+
+/* 히어로 큰 제목: 여백 제거 + 최대 굵기 */
+[data-block-id="390d6a62-96ae-8009-9189-dea12457fad9"] {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+[data-block-id="390d6a62-96ae-8009-9189-dea12457fad9"] h2,
+[data-block-id="390d6a62-96ae-8009-9189-dea12457fad9"] span {
+  font-weight: 900 !important;
+}
+
+/* 숨김 처리한 블록 */
+[data-block-id="390d6a62-96ae-8046-923b-d1c930d4a0b7"] {
+  display: none !important;
+}
