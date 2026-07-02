@@ -71,8 +71,9 @@
         '<p class="onf-footer-legal">본 사이트 모든 자료의 저작권 및 지적재산권 일체는 OWNIFY에 귀속되며, 사전 서면 동의 없는 무단 출력·복제·공유·2차 이용을 금합니다.</p>' +
         '<p class="onf-footer-copy">© 2026 OWNIFY. All rights reserved.</p>' +
       '</div>' +
+      // 이미지는 jsDelivr 커밋 고정 URL 원칙(README) — 로고 파일을 바꾸면 커밋 해시도 갱신할 것
       '<img class="onf-footer-logo" alt="OWNIFY" ' +
-        'src="https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@main/assets/ownify-logo-cream.svg">' +
+        'src="https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@66d00f3/assets/ownify-logo-cream.svg">' +
     '</div>';
 
   // 화면에 15% 들어오면 .onf-show → 아래에서 위로 떠오르는 등장
