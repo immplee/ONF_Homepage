@@ -156,11 +156,17 @@
   };
   function updateClearTop() {
     document.body.classList.toggle('onf-clear-top', !!document.querySelector('.page_cover'));
-    // 우피가 좁은 창에서 메뉴를 탑바 밖 별도 줄로 빼면 로고(img)가 탑바에서 사라진다 →
-    // 그 상태를 body.onf-nav-split로 표시(ownify.css 분리 상태 규칙과 세트: 투명 탑바
-    // 해제·CTA 숨김). CTA 화살표 img는 로고가 아니므로 제외.
-    var bar = document.querySelector('.notion-topbar');
-    document.body.classList.toggle('onf-nav-split', !!bar && !bar.querySelector('img:not(.onf-band-arrow)'));
+    // 우피는 좁은 창(≈780px 이하)에서 탑바를 둘로 나눈다: 기존 탑바는 h=0으로 숨고,
+    // "모바일 탑바(로고+햄버거, 메뉴 링크 없음)" + "메뉴 스트립(형제 div)"이 나타난다.
+    // → 화면에 보이는 탑바에 메뉴 링크가 없으면 분리 상태 = body.onf-nav-split
+    //   (ownify.css 분리 상태 규칙과 세트: 메뉴 스트립을 로고 아래로 + CTA 숨김)
+    var bars = document.querySelectorAll('.notion-topbar');
+    var visibleBar = null;
+    for (var bi = 0; bi < bars.length; bi++) {
+      if (bars[bi].offsetHeight > 0) { visibleBar = bars[bi]; break; }
+    }
+    var menuLinks = visibleBar ? visibleBar.querySelectorAll('a[href]').length : 9;
+    document.body.classList.toggle('onf-nav-split', !!visibleBar && menuLinks <= 1);
     var home = location.pathname === '/' || location.pathname === '';
     document.body.classList.toggle('onf-sub', !home);
     if (!home) {
