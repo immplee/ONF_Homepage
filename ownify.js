@@ -146,10 +146,14 @@
   // 커버(.page_cover)가 있는 페이지: 탑바를 커버 위에 투명하게 얹고(body.onf-clear-top),
   // 스크롤을 내리면 크림 배경으로 복귀(body.onf-scrolled). ownify.css 커버 섹션과 세트.
   // 하위 페이지엔 body.onf-sub도 함께 토글 — 배너를 낮은 띠로 줄임(ownify.css 커버 섹션과 세트).
-  // 하위 페이지 커버는 노션에 뭐가 걸려 있든 "정본 배너"로 강제 통일 —
-  // 이미지는 아래 ONF_COVER 한 곳만 바꾸면 전 하위 페이지에 일괄 반영.
+  // 하위 페이지 커버는 노션에 뭐가 걸려 있든 코드가 정한 배너로 강제 —
+  // 페이지별 지정은 ONF_COVERS, 그 외 하위 페이지는 ONF_COVER(기본)로 통일.
   // (세로 위치·높이 통일은 ownify.css의 body.onf-sub .page_cover 규칙이 담당)
   var ONF_COVER = 'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@00a4ef6/assets/cover-banner.webp';
+  var ONF_COVERS = {
+    '/how':   'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@bfa2eee/assets/cover-how.webp',
+    '/where': 'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@bfa2eee/assets/cover-where.webp'
+  };
   function updateClearTop() {
     document.body.classList.toggle('onf-clear-top', !!document.querySelector('.page_cover'));
     // 우피가 좁은 창에서 메뉴를 탑바 밖 별도 줄로 빼면 로고(img)가 탑바에서 사라진다 →
@@ -161,10 +165,12 @@
     document.body.classList.toggle('onf-sub', !home);
     if (!home) {
       var c = document.querySelector('.page_cover');
-      if (c && c.tagName === 'IMG' && c.dataset.onfCanon !== '1') {
-        c.dataset.onfCanon = '1';
+      var want = ONF_COVERS[location.pathname.replace(/\/$/, '')] || ONF_COVER;
+      // SPA 이동으로 같은 img가 재사용될 수 있어 "적용한 URL"을 기억해 비교
+      if (c && c.tagName === 'IMG' && c.dataset.onfCanon !== want) {
+        c.dataset.onfCanon = want;
         c.removeAttribute('srcset');
-        c.src = ONF_COVER;
+        c.src = want;
       }
     }
   }
