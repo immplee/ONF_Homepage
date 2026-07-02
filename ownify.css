@@ -681,16 +681,19 @@ html, body {
 /* ★ 아래 :root의 숫자만 바꾸면 각 줄 크기가 바뀐다 (push 후 몇 분 내 반영) */
 /* ⚠️ 블록 id는 2026-07-02 히어로 기준 — 노션에서 해당 줄을 지웠다 다시 쓰면 id 갱신 필요 */
 :root {
-  --hero-kicker-size: 16px;   /* ① "1:1 프리미엄 영어회화, 오니파이" */
+  --hero-kicker-size: 17px;   /* ① "1:1 프리미엄 영어회화, 오니파이" */
+  --hero-kicker-weight: 700;  /* ① 굵기 (2026-07-02 굵게) */
   --hero-copy-size: 16px;     /* ② "외워도 늘지 않던 영어. …" */
   --hero-title-size: 40px;    /* ③ "지금, 당신만의 영어를 시작해 보세요!" */
   --hero-title-weight: 800;   /* ③ 굵기 — Paperlogy 800 (Peter 지정) */
-  --hero-metro-size: 16px;    /* ④ "잠실역 도보 10분" */
+  --hero-metro-size: 17px;    /* ④ "잠실역 도보 10분" */
+  --hero-metro-weight: 700;   /* ④ 굵기 (2026-07-02 굵게) */
 }
 /* ① 소제목 */
 [data-block-id="38fd6a62-96ae-80df-a867-e22d2edc86d7"],
 [data-block-id="38fd6a62-96ae-80df-a867-e22d2edc86d7"] * {
   font-size: var(--hero-kicker-size) !important;
+  font-weight: var(--hero-kicker-weight) !important;  /* 전역 400 규칙보다 우선(span까지) */
 }
 /* ② 설명 문장 */
 [data-block-id="d3adc428-75e1-404d-9388-cd864a0b40c0"],
@@ -722,6 +725,7 @@ html, body {
 [data-block-id="6ac9cfaa-6db5-42a6-b718-e0ec836cdceb"],
 [data-block-id="6ac9cfaa-6db5-42a6-b718-e0ec836cdceb"] * {
   font-size: var(--hero-metro-size) !important;
+  font-weight: var(--hero-metro-weight) !important;  /* 전역 400 규칙보다 우선(span까지) */
 }
 
 
