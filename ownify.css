@@ -567,6 +567,7 @@ html, body {
   max-width: 40vw;
   flex-shrink: 0;
   display: block;
+  align-self: center;   /* 회사 정보 블록 기준 세로 정중앙 */
 }
 
 /* 푸터가 페이지 맨 끝에 딱 붙게: 본문 하단 여백·우피 빈 푸터 여백 제거 */
@@ -586,7 +587,7 @@ html, body {
     gap: 28px;
   }
   .onf-footer-biz { column-gap: 18px; }
-  .onf-footer-logo { width: 160px; }
+  .onf-footer-logo { width: 160px; align-self: flex-start; }  /* 세로 스택에선 왼쪽 정렬 유지 */
 }
 
 /* 오시는길(/where)은 지도가 화면을 꽉 채우는 무스크롤 페이지라 푸터 제외
