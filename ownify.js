@@ -163,4 +163,22 @@
   }).observe(document.body, { childList: true, subtree: true });
   updateClearTop();
 
+  /* ---------- ⑥ SNS 플로팅에 카카오톡 채널 추가 ---------- */
+  // SNS 위젯 HTML은 우피 head에 인라인이라(레포 밖) 카카오 항목은 여기서 주입.
+  // 위치·등장 애니메이션은 ownify.css 7번 섹션(.onf-sns-k)과 세트 — 메인 버튼 바로 위 첫 슬롯.
+  var snsK = setInterval(function () {
+    var sns = document.querySelector('.onf-sns');
+    if (!sns) return;
+    if (!sns.querySelector('.onf-sns-k')) {
+      var a = document.createElement('a');
+      a.className = 'onf-sns-item onf-sns-k';
+      a.href = 'http://pf.kakao.com/_xcBxaPX';   // 오니파이 카카오톡 채널
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.innerHTML = '<img alt="카카오톡 채널" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjI0IiBmaWxsPSIjRkFFMTAwIi8+PHBhdGggZD0iTTUwIDI0Yy0xNi42IDAtMzAgMTAuNy0zMCAyMy44IDAgOC41IDUuNiAxNS45IDE0IDIwLjFsLTIuOSAxMC43Yy0uMjYuOTYuODQgMS43MiAxLjY2IDEuMTdsMTIuOS04LjZjMS40LjE0IDIuOS4yMiA0LjQuMjIgMTYuNiAwIDMwLTEwLjcgMzAtMjMuOFM2Ni42IDI0IDUwIDI0eiIgZmlsbD0iIzNDMUUxRSIvPjwvc3ZnPg==">';
+      sns.appendChild(a);
+    }
+    clearInterval(snsK);
+  }, 400);
+
 })();

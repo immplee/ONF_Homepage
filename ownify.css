@@ -386,23 +386,33 @@ html, body {
   background: transparent;
 }
 
-/* 열렸을 때: 위로 튀어오르며 등장 (살짝 기울였다가 호버 시 정렬) */
-.onf-sns-cb:checked ~ .onf-sns-a {
+/* 열렸을 때: 위로 튀어오르며 등장 (살짝 기울였다가 호버 시 정렬)
+   순서(아래→위): 카카오톡 채널(-64, ownify.js ⑥이 주입) → 블로그(-120) → 인스타(-176) */
+.onf-sns-cb:checked ~ .onf-sns-k {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(-64px) rotate(-8deg);
 }
-.onf-sns-cb:checked ~ .onf-sns-b {
+.onf-sns-cb:checked ~ .onf-sns-a {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(-120px) rotate(8deg);
   transition-delay: .06s;
 }
-.onf-sns-cb:checked ~ .onf-sns-a:hover {
+.onf-sns-cb:checked ~ .onf-sns-b {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-176px) rotate(-8deg);
+  transition-delay: .12s;
+}
+.onf-sns-cb:checked ~ .onf-sns-k:hover {
   transform: translateY(-64px) rotate(0) scale(1.08);
 }
-.onf-sns-cb:checked ~ .onf-sns-b:hover {
+.onf-sns-cb:checked ~ .onf-sns-a:hover {
   transform: translateY(-120px) rotate(0) scale(1.08);
+}
+.onf-sns-cb:checked ~ .onf-sns-b:hover {
+  transform: translateY(-176px) rotate(0) scale(1.08);
 }
 
 
