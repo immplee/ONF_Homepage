@@ -701,9 +701,16 @@ html, body {
   height: 16px !important;
   width: auto !important;
 }
-/* 좁은 화면에선 메뉴와 겹치므로 숨김(모바일 레이아웃 전환점과 동일) */
-@media (max-width: 1100px) {
+/* 표시 조건: 900px 이상 + 메뉴가 탑바 안에 있을 때(분리 전).
+   900~1100px에선 아래 규칙이 메뉴를 왼쪽으로 밀어 CTA 자리를 확보한다. */
+@media (max-width: 899px) {
   .notion-topbar a.onf-top-cta { display: none !important; }
+}
+body.onf-nav-split .notion-topbar a.onf-top-cta { display: none !important; }
+@media (min-width: 900px) and (max-width: 1100px) {
+  .notion-topbar[style*="grid-template"] > div:nth-child(2) {
+    margin-right: 250px !important;   /* 2번 섹션의 40px 대신 — CTA(약 190px+여백) 공간 */
+  }
 }
 
 /* ---------- 12. 홈 히어로 문구 크기·굵기 조절판 ---------- */
@@ -793,9 +800,13 @@ body.onf-clear-top .page_cover {
 
 /* 하위 페이지(body.onf-sub — ownify.js ⑤가 토글)는 배너를 낮은 띠로:
    탑바 100px + 이미지 200px = 300px. 콘텐츠가 첫 화면에 바로 보인다.
-   하단 페이드는 위 규칙 그대로 물려받아 크림 배경과 자연스럽게 이어짐. */
+   하단 페이드는 위 규칙 그대로 물려받아 크림 배경과 자연스럽게 이어짐.
+   세로 위치(object-position)도 강제 통일 — 노션에서 페이지마다 커버 위치를
+   다르게 잡아도 하위 페이지는 항상 같은 crop (이미지 통일은 ownify.js ⑤ ONF_COVER). */
 body.onf-clear-top.onf-sub .page_cover {
   height: 300px !important;
+  object-fit: cover !important;
+  object-position: center 47% !important;
 }
 
 
@@ -845,25 +856,23 @@ body.onf-clear-top.onf-sub .page_cover {
   text-decoration: none;
 }
 
-/* ---------- 좁은 화면(≤1100px): 투명 탑바 해제 ---------- */
-/* 우피는 화면이 좁아지면 메뉴를 탑바 "밖" 별도 줄로 빼는데, 투명 오버레이는
-   탑바에만 적용돼 커버 위에 크림 메뉴 띠가 뜨고 로고와 줄이 어긋난다(2026-07-02 실측).
-   → 좁은 화면에선 평범한 크림 헤더(메뉴 줄 포함)로 복귀하고 커버는 그 아래부터. */
-@media (max-width: 1100px) {
-  body.onf-clear-top .notion-topbar {
-    position: static !important;
-    background-color: #F1EADE !important;
-  }
-  /* 커버 확장(+240px)도 해제 — 원래 높이로 */
-  body.onf-clear-top .page_cover {
-    height: var(--page-cover-height, 216px) !important;
-  }
-  body.onf-clear-top.onf-sub .page_cover {
-    height: 200px !important;
-  }
-  /* 홈 히어로 텍스트 끌어올림·중앙 보정도 해제(커버가 헤더 아래로 내려가므로) */
-  .notion-page-content > .notion-column_list-block[data-block-id="3883a92c-8e3f-4bcf-a07e-0f1080420dbb"] {
-    margin-top: 40px !important;
-    transform: none !important;
-  }
+
+/* ---------- 메뉴 분리 상태(body.onf-nav-split): 투명 탑바 해제 ---------- */
+/* 우피는 창이 좁아지면 JS로 메뉴를 탑바 밖 별도 줄로 뺀다(로고가 탑바에서 빠짐).
+   그 상태에선 투명 오버레이가 메뉴 줄을 못 덮어 커버 위에 크림 띠가 뜨므로,
+   폭 숫자 대신 ownify.js ⑤가 감지해 body.onf-nav-split을 켠다(2026-07-03 방식 교체). */
+body.onf-nav-split.onf-clear-top .notion-topbar {
+  position: static !important;
+  background-color: #F1EADE !important;
+}
+body.onf-nav-split.onf-clear-top .page_cover {
+  height: var(--page-cover-height, 216px) !important;  /* 커버 확장(+240px) 해제 */
+}
+body.onf-nav-split.onf-clear-top.onf-sub .page_cover {
+  height: 200px !important;
+}
+/* 홈 히어로 텍스트 끌어올림·중앙 보정도 해제(커버가 헤더 아래로 내려가므로) */
+body.onf-nav-split .notion-page-content > .notion-column_list-block[data-block-id="3883a92c-8e3f-4bcf-a07e-0f1080420dbb"] {
+  margin-top: 40px !important;
+  transform: none !important;
 }

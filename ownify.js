@@ -146,10 +146,22 @@
   // 커버(.page_cover)가 있는 페이지: 탑바를 커버 위에 투명하게 얹고(body.onf-clear-top),
   // 스크롤을 내리면 크림 배경으로 복귀(body.onf-scrolled). ownify.css 커버 섹션과 세트.
   // 하위 페이지엔 body.onf-sub도 함께 토글 — 배너를 낮은 띠로 줄임(ownify.css 커버 섹션과 세트).
+  // 하위 페이지 커버는 노션에 뭐가 걸려 있든 "정본 배너"로 강제 통일 —
+  // 이미지는 아래 ONF_COVER 한 곳만 바꾸면 전 하위 페이지에 일괄 반영.
+  // (세로 위치·높이 통일은 ownify.css의 body.onf-sub .page_cover 규칙이 담당)
+  var ONF_COVER = 'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@00a4ef6/assets/cover-banner.webp';
   function updateClearTop() {
     document.body.classList.toggle('onf-clear-top', !!document.querySelector('.page_cover'));
     var home = location.pathname === '/' || location.pathname === '';
     document.body.classList.toggle('onf-sub', !home);
+    if (!home) {
+      var c = document.querySelector('.page_cover');
+      if (c && c.tagName === 'IMG' && c.dataset.onfCanon !== '1') {
+        c.dataset.onfCanon = '1';
+        c.removeAttribute('srcset');
+        c.src = ONF_COVER;
+      }
+    }
   }
   // 색칠(젖빛 유리) 전환 기준: 커버 배너가 탑바 뒤에서 완전히 벗어나는 지점
   // (배너 높이 - 탑바 100px). 커버 없는 페이지는 40px.
