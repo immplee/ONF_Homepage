@@ -494,3 +494,10 @@ html, body {
 [data-block-id="390d6a62-96ae-8046-923b-d1c930d4a0b7"] {
   display: none !important;
 }
+
+/* 홈 본문 맨 아래 자동 생긴 '오시는길' 하위페이지 링크 블록 숨김
+   (오시는길은 상단 Where 메뉴로만 진입 — 노션에서 이 블록을 지우면 페이지도
+   삭제되므로 블록은 두고 CSS로만 숨긴다) */
+.notion-page-content a[href="/0d3d6a62-96ae-82b3-9b45-81d75762dbc3"] {
+  display: none !important;
+}
