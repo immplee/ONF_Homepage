@@ -622,3 +622,13 @@ html, body {
 }
 [data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] div { height: 100% !important; }
 [data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] iframe { width: 100% !important; height: 100% !important; }
+
+/* 지도 위 여백 축소(2026-07-02): 제목·주소 여백 조이고 맨 위 빈 블록 숨김
+   → 지도가 약 100px 위로 올라옴 */
+.notion-page-content:has([data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]) > .notion-text-block {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+[data-block-id="382d6a62-96ae-80f9-ba2d-cfbf3498dbcc"] { /* 오시는길 맨 위 빈 블록 */
+  display: none !important;
+}
