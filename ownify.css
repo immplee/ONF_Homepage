@@ -529,6 +529,14 @@ html, body {
   position: relative;
   z-index: 5;
 }
+/* 텍스트를 "화면 맨 위 ~ 띠 CTA 위"의 세로 정중앙으로 (2026-07-02 Peter 지시).
+   transform이라 띠 CTA 등 아래 내용 위치는 그대로. -113px = 실측 보정값
+   (커버 실높이 474px 기준, 위 여백 152 = 아래 여백 152). 모바일은 제외. */
+@media (min-width: 769px) {
+  .notion-page-content > .notion-column_list-block[data-block-id="3883a92c-8e3f-4bcf-a07e-0f1080420dbb"] {
+    transform: translateY(-113px) !important;
+  }
+}
 
 /* 홈 본문 맨 아래 자동 생긴 '오시는길' 하위페이지 링크 블록 숨김
    (오시는길은 상단 Where 메뉴로만 진입 — 노션에서 이 블록을 지우면 페이지도
