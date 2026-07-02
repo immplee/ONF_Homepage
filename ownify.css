@@ -502,7 +502,100 @@ html, body {
   display: none !important;
 }
 
-/* ---------- 10. 오시는길(/where) — 네이버 지도 풀스크린 ---------- */
+/* ---------- 10. 사이트 푸터 (오렌지 밴드 — ownify.js가 주입) ---------- */
+/* 구조는 ownify.js ③ 참고. 페이지 끝까지 스크롤하면 아래에서 위로 떠오른다. */
+
+.onf-footer {
+  position: relative;
+  width: 100vw;               /* 본문 컬럼 밖 화면 전체 폭 (onf-band와 같은 기법) */
+  left: 50%;
+  margin: 90px 0 0 -50vw;
+  box-sizing: border-box;
+  background: #D2691E;
+  padding: 60px 48px 48px;
+  font-family: 'Paperlogy', 'Apple SD Gothic Neo', sans-serif;
+  /* 등장 전: 아래에 숨어 있다가 */
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+/* 화면에 들어오면 위로 떠오르며 등장 (JS가 .onf-show 부착) */
+.onf-footer.onf-show {
+  opacity: 1;
+  transform: none;
+}
+
+/* 내부: 좌측 회사 정보 / 우측 로고 */
+.onf-footer-in {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+}
+.onf-footer-info {
+  color: #F1EADE;
+  font-size: 14px;
+  line-height: 1.95;
+  min-width: 0;
+}
+/* 사업자 정보 줄 (항목 사이 넉넉한 간격, 좁으면 자동 줄바꿈) */
+.onf-footer-biz {
+  margin: 0 0 16px;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 30px;
+  row-gap: 2px;
+  font-weight: 600;
+}
+/* 지적재산권 고지 + 카피라이트 */
+.onf-footer-legal {
+  margin: 0;
+  font-size: 12.5px;
+  opacity: .85;
+  max-width: 640px;
+}
+.onf-footer-copy {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  opacity: .7;
+}
+.onf-footer-logo {
+  width: 210px;
+  max-width: 40vw;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* 푸터가 페이지 맨 끝에 딱 붙게: 본문 하단 여백·우피 빈 푸터 여백 제거 */
+.notion-page-content:has(.onf-footer) {
+  padding-bottom: 0 !important;
+}
+.notion-page-content:has(.onf-footer) .oopy-footer {
+  margin: 0 !important;
+}
+
+/* 모바일: 세로 스택, 로고는 아래 왼쪽 */
+@media (max-width: 768px) {
+  .onf-footer { padding: 44px 24px 40px; }
+  .onf-footer-in {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+  }
+  .onf-footer-biz { column-gap: 18px; }
+  .onf-footer-logo { width: 160px; }
+}
+
+/* 오시는길(/where)은 지도가 화면을 꽉 채우는 무스크롤 페이지라 푸터 제외
+   (지도 임베드 블록 id 기준 — 11번 섹션과 같은 id) */
+.notion-page-content:has([data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]) .onf-footer {
+  display: none !important;
+}
+
+
+/* ---------- 11. 오시는길(/where) — 네이버 지도 풀스크린 ---------- */
 /* 화면 구성이 "헤더(100px) + 주소 한 줄 + 지도"로 딱 떨어지게:
    지도가 남은 높이를 전부 차지하고 좌·우·아래 여백 없이 꽉 참(스크롤 없음).
    ⚠️ 지도 왼쪽 흰 패널은 네이버 도메인(iframe 내부)이라 색 변경 불가.

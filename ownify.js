@@ -4,6 +4,7 @@
      jsDelivr <script> 한 줄만 넣는다.
    - 역할: ① 스크롤 등장 애니메이션(ownify.css의 .onf-reveal와 세트)
            ② 인스타 버튼 "준비 중" 알림
+           ③ 사이트 푸터 주입(ownify.css의 .onf-footer와 세트)
    ============================================================ */
 (function () {
 
@@ -51,5 +52,59 @@
       clearInterval(it);
     }
   }, 300);
+
+  /* ---------- ③ 사이트 푸터 주입 ---------- */
+  // 모든 페이지 본문 맨 끝에 회사 정보 + 로고 푸터를 붙인다.
+  // 스타일·등장 애니메이션은 ownify.css 10번 섹션(.onf-footer)과 세트.
+  // 우피(노션)는 페이지를 이동하면 본문을 통째로 다시 그리므로,
+  // MutationObserver로 "푸터가 사라졌으면 다시 붙이기"를 계속 보장한다.
+
+  var FOOTER_HTML =
+    '<div class="onf-footer-in">' +
+      '<div class="onf-footer-info">' +
+        '<p class="onf-footer-biz">' +
+          '<span>상호명 : 오니파이</span>' +
+          '<span>대표 : 이민우</span>' +
+          '<span>사업자등록번호 : 804-17-02878</span>' +
+          '<span>서울특별시 송파구 올림픽로 240, 2층 214호 (잠실동, 롯데웰빙센터)</span>' +
+        '</p>' +
+        '<p class="onf-footer-legal">본 사이트 모든 자료의 저작권 및 지적재산권 일체는 OWNIFY에 귀속되며, 사전 서면 동의 없는 무단 출력·복제·공유·2차 이용을 금합니다.</p>' +
+        '<p class="onf-footer-copy">© 2026 OWNIFY. All rights reserved.</p>' +
+      '</div>' +
+      '<img class="onf-footer-logo" alt="OWNIFY" ' +
+        'src="https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@main/assets/ownify-logo-cream.svg">' +
+    '</div>';
+
+  // 화면에 15% 들어오면 .onf-show → 아래에서 위로 떠오르는 등장
+  var footIo = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('onf-show');
+        footIo.unobserve(e.target);
+      }
+    });
+  }, { threshold: .15 });
+
+  function ensureFooter() {
+    var content = document.querySelector('.notion-page-content');
+    if (!content || content.querySelector('.onf-footer')) return;
+    var f = document.createElement('footer');
+    f.className = 'onf-footer';
+    f.innerHTML = FOOTER_HTML;
+    content.appendChild(f);
+    footIo.observe(f);
+  }
+
+  // 본문이 다시 그려질 때마다 확인 (연속 변경은 rAF로 한 번에 처리)
+  var footPending = false;
+  new MutationObserver(function () {
+    if (footPending) return;
+    footPending = true;
+    requestAnimationFrame(function () {
+      footPending = false;
+      ensureFooter();
+    });
+  }).observe(document.body, { childList: true, subtree: true });
+  ensureFooter();
 
 })();
