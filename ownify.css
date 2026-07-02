@@ -23,6 +23,13 @@ html, body {
   overflow-x: clip !important;
 }
 
+/* 한국어 줄바꿈: 음절이 아니라 단어(어절) 단위로 끊어 자연스럽게.
+   (좁은 화면에서 "영-어"처럼 단어 중간이 잘리는 것 방지) */
+.notion-page-content, .onf-footer, .onf-band {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 
 /* ---------- 1. 타이포그래피 ---------- */
 
@@ -750,11 +757,25 @@ body.onf-nav-split .notion-topbar a.onf-top-cta { display: none !important; }
   width: max-content !important;
   max-width: none !important;
 }
-/* 모바일(컬럼 세로 스택)에선 전체 폭 기준으로 축소 비율 재계산 */
+/* 모바일(≤768px): 우피는 좁은 화면에서도 노션 2열을 나란히 유지해 히어로 텍스트가
+   반쪽 폭(실측 131px/500px 화면)에 갇힌다 → 세로 스택으로 전환해 전체 폭 사용.
+   큰 제목은 한 줄 강제를 풀고 어절 단위로 자연 줄바꿈(보통 2줄). */
 @media (max-width: 768px) {
+  [data-block-id="3883a92c-8e3f-4bcf-a07e-0f1080420dbb"] > div {
+    flex-direction: column !important;
+  }
+  [data-block-id="3883a92c-8e3f-4bcf-a07e-0f1080420dbb"] > div > div {
+    width: 100% !important;
+  }
   [data-block-id="38fd6a62-96ae-805c-bf03-ce9ff458002c"] h2,
   [data-block-id="38fd6a62-96ae-805c-bf03-ce9ff458002c"] h2 * {
-    font-size: min(var(--hero-title-size), 5.8vw) !important;
+    font-size: min(var(--hero-title-size), 6.5vw) !important;
+    white-space: normal !important;     /* 한 줄 강제 해제 */
+    word-break: keep-all;
+  }
+  [data-block-id="38fd6a62-96ae-805c-bf03-ce9ff458002c"] h2 {
+    width: auto !important;
+    max-width: 100% !important;
   }
 }
 /* ④ 잠실역 도보 안내 */
