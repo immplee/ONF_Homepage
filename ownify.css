@@ -691,3 +691,27 @@ html, body {
 [data-block-id="6ac9cfaa-6db5-42a6-b718-e0ec836cdceb"] * {
   font-size: var(--hero-metro-size) !important;
 }
+
+
+/* ---------- 커버 배너를 화면 맨 위(탑바 뒤)까지 확장 ---------- */
+/* 커버(.page_cover)가 있는 페이지에서 ownify.js ⑤가 body에 클래스를 토글:
+   .onf-clear-top = 탑바를 커버 위에 투명하게 얹음
+   .onf-scrolled  = 스크롤을 내리면 크림 배경 복귀 (가독성) */
+
+body.onf-clear-top .notion-topbar {
+  position: absolute !important;   /* 흐름에서 빼서 커버가 화면 맨 위부터 시작 */
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 100 !important;
+  background-color: transparent !important;
+  transition: background-color .25s !important;
+}
+body.onf-clear-top.onf-scrolled .notion-topbar {
+  background-color: #F1EADE !important;
+}
+
+/* 커버를 탑바 높이(100px)만큼 키워 기존 노출 면적 유지 */
+body.onf-clear-top .page_cover {
+  height: calc(var(--page-cover-height, 216px) + 100px) !important;
+}
