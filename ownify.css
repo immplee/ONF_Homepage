@@ -422,7 +422,12 @@ html, body {
   padding: 14px 20px;
   text-decoration: none;
   font-family: inherit;
-  transition: background .25s;
+  transition: background .25s, box-shadow .25s;
+  /* 밴드 주변으로 번지는 오렌지 글로우 (shine 대체 강조효과) */
+  box-shadow: 0 0 26px rgba(210, 105, 30, .55), 0 0 64px rgba(210, 105, 30, .35);
+}
+.onf-band:hover {
+  box-shadow: 0 0 34px rgba(210, 105, 30, .7), 0 0 88px rgba(210, 105, 30, .45);
 }
 .onf-band span {
   position: relative;
