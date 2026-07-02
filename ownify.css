@@ -422,12 +422,7 @@ html, body {
   padding: 14px 20px;
   text-decoration: none;
   font-family: inherit;
-  transition: background .25s, box-shadow .25s;
-  /* 밴드 주변으로 번지는 오렌지 글로우 (shine 대체 강조효과) */
-  box-shadow: 0 0 26px rgba(210, 105, 30, .55), 0 0 64px rgba(210, 105, 30, .35);
-}
-.onf-band:hover {
-  box-shadow: 0 0 34px rgba(210, 105, 30, .7), 0 0 88px rgba(210, 105, 30, .45);
+  transition: background .25s;
 }
 .onf-band span {
   position: relative;
@@ -439,7 +434,8 @@ html, body {
   font-weight: 800 !important;
   font-size: 18px !important;
   letter-spacing: .01em;
-  text-shadow: 0 2px 7px rgba(0, 0, 0, .45);
+  /* 글자 전체 글로우 (shine 대체 강조효과 — 크림 글자가 은은하게 빛남) */
+  text-shadow: 0 0 8px rgba(255, 247, 238, .95), 0 0 18px rgba(255, 247, 238, .65), 0 0 34px rgba(255, 247, 238, .4);
   transition: transform .25s;
 }
 .onf-band:hover { background: #e0761f; }
