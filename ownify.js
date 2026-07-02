@@ -285,4 +285,27 @@
   setInterval(enforceTitle, 500);
   enforceTitle();
 
+  /* ---------- ⑧ 모바일 지도 폴백 ---------- */
+  // 네이버 지도는 모바일 UA 접속을 앱 연동 페이지로 리다이렉트하는데 그 페이지가
+  // iframe 렌더링을 막아 모바일에선 빈 박스가 된다 → 모바일에선 iframe 대신
+  // "탭하면 네이버지도가 열리는" 지도 이미지를 보여준다. (ownify.css 폴백 규칙과 세트)
+  function ensureMobileMap() {
+    if (!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
+    var block = document.querySelector('[data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]');
+    if (!block) return;
+    document.body.classList.add('onf-mobile-map');
+    if (block.querySelector('.onf-map-mobile')) return;
+    var a = document.createElement('a');
+    a.className = 'onf-map-mobile';
+    a.href = 'https://map.naver.com/p/entry/place/2094664237';   // 오니파이 네이버 플레이스
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.innerHTML =
+      '<img alt="오니파이 위치 지도" src="https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@fb90fba/assets/ownify-naver-map.png">' +
+      '<span>지도를 탭하면 네이버지도가 열려요</span>';
+    block.appendChild(a);
+  }
+  setInterval(ensureMobileMap, 1000);
+  ensureMobileMap();
+
 })();

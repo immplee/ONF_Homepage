@@ -900,3 +900,37 @@ body.onf-nav-split.onf-scrolled .notion-topbar ~ div:has(a[href]) {
   -webkit-backdrop-filter: blur(14px) saturate(1.3);
   backdrop-filter: blur(14px) saturate(1.3);
 }
+
+
+/* ---------- 모바일 지도 폴백 (ownify.js ⑧과 세트) ---------- */
+/* 모바일 UA(body.onf-mobile-map)에선 네이버 지도 iframe이 빈 화면이라
+   iframe을 숨기고, 탭하면 네이버지도가 열리는 지도 이미지로 대체 */
+.onf-map-mobile { display: none; }
+body.onf-mobile-map [data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] div:has(iframe) {
+  display: none !important;
+}
+body.onf-mobile-map .onf-map-mobile {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100% !important;
+}
+.onf-map-mobile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 22px;
+}
+.onf-map-mobile span {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  background: rgba(58, 36, 21, .75);
+  color: #F1EADE;
+  font-size: 12.5px;
+  padding: 7px 15px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
