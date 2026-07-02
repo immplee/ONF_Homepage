@@ -665,7 +665,7 @@ html, body {
 :root {
   --hero-kicker-size: 16px;   /* ① "1:1 프리미엄 영어회화, 오니파이" */
   --hero-copy-size: 16px;     /* ② "외워도 늘지 않던 영어. …" */
-  --hero-title-size: 45px;    /* ③ "지금, 당신만의 영어를 시작해 보세요!" */
+  --hero-title-size: 40px;    /* ③ "지금, 당신만의 영어를 시작해 보세요!" */
   --hero-title-weight: 800;   /* ③ 굵기 — Paperlogy 800 (Peter 지정) */
   --hero-metro-size: 16px;    /* ④ "잠실역 도보 10분" */
 }
