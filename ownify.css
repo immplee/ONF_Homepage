@@ -658,3 +658,36 @@ html, body {
 @media (max-width: 1100px) {
   .notion-topbar a.onf-top-cta { display: none !important; }
 }
+
+/* ---------- 12. 홈 히어로 문구 크기·굵기 조절판 ---------- */
+/* ★ 아래 :root의 숫자만 바꾸면 각 줄 크기가 바뀐다 (push 후 몇 분 내 반영) */
+/* ⚠️ 블록 id는 2026-07-02 히어로 기준 — 노션에서 해당 줄을 지웠다 다시 쓰면 id 갱신 필요 */
+:root {
+  --hero-kicker-size: 16px;   /* ① "1:1 프리미엄 영어회화, 오니파이" */
+  --hero-copy-size: 16px;     /* ② "외워도 늘지 않던 영어. …" */
+  --hero-title-size: 30px;    /* ③ "지금, 당신만의 영어를 시작해 보세요!" */
+  --hero-title-weight: 800;   /* ③ 굵기 — Paperlogy 800 (Peter 지정) */
+  --hero-metro-size: 16px;    /* ④ "잠실역 도보 10분" */
+}
+/* ① 소제목 */
+[data-block-id="38fd6a62-96ae-80df-a867-e22d2edc86d7"],
+[data-block-id="38fd6a62-96ae-80df-a867-e22d2edc86d7"] * {
+  font-size: var(--hero-kicker-size) !important;
+}
+/* ② 설명 문장 */
+[data-block-id="d3adc428-75e1-404d-9388-cd864a0b40c0"],
+[data-block-id="d3adc428-75e1-404d-9388-cd864a0b40c0"] * {
+  font-size: var(--hero-copy-size) !important;
+}
+/* ③ 큰 제목 — 안쪽 span까지 지정해야 함: 전역 "모든 글자 400" 규칙(1번 섹션)이
+   span을 400으로 눌러서 h2에만 준 800이 화면에 안 나오던 문제의 해결 지점 */
+[data-block-id="38fd6a62-96ae-805c-bf03-ce9ff458002c"] h2,
+[data-block-id="38fd6a62-96ae-805c-bf03-ce9ff458002c"] h2 * {
+  font-size: var(--hero-title-size) !important;
+  font-weight: var(--hero-title-weight) !important;
+}
+/* ④ 잠실역 도보 안내 */
+[data-block-id="6ac9cfaa-6db5-42a6-b718-e0ec836cdceb"],
+[data-block-id="6ac9cfaa-6db5-42a6-b718-e0ec836cdceb"] * {
+  font-size: var(--hero-metro-size) !important;
+}
