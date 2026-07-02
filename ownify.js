@@ -148,6 +148,12 @@
   function updateClearTop() {
     document.body.classList.toggle('onf-clear-top', !!document.querySelector('.page_cover'));
   }
+  // 색칠(젖빛 유리) 전환 기준: 커버 배너가 탑바 뒤에서 완전히 벗어나는 지점
+  // (배너 높이 - 탑바 100px). 커버 없는 페이지는 40px.
+  function scrolledThreshold() {
+    var c = document.querySelector('.page_cover');
+    return c ? Math.max(40, c.offsetHeight - 100) : 40;
+  }
   // 스크롤 위치 감지: 기본은 창(window) 스크롤, 일부 레이아웃은 .notion-scroller 내부 스크롤
   // (capture라 둘 다 이 리스너로 들어옴 — 그 외 내부 스크롤 요소는 무시)
   document.addEventListener('scroll', function (e) {
@@ -155,7 +161,7 @@
     if (t === document) y = window.scrollY;
     else if (t.classList && t.classList.contains('notion-scroller')) y = t.scrollTop;
     else return;
-    document.body.classList.toggle('onf-scrolled', y > 40);
+    document.body.classList.toggle('onf-scrolled', y > scrolledThreshold());
   }, true);
   // 페이지 이동(SPA)으로 커버 유무가 바뀔 수 있어 본문 변경 때마다 갱신
   new MutationObserver(function () {
