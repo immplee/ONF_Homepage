@@ -844,3 +844,26 @@ body.onf-clear-top.onf-sub .page_cover {
   font-weight: 600;
   text-decoration: none;
 }
+
+/* ---------- 좁은 화면(≤1100px): 투명 탑바 해제 ---------- */
+/* 우피는 화면이 좁아지면 메뉴를 탑바 "밖" 별도 줄로 빼는데, 투명 오버레이는
+   탑바에만 적용돼 커버 위에 크림 메뉴 띠가 뜨고 로고와 줄이 어긋난다(2026-07-02 실측).
+   → 좁은 화면에선 평범한 크림 헤더(메뉴 줄 포함)로 복귀하고 커버는 그 아래부터. */
+@media (max-width: 1100px) {
+  body.onf-clear-top .notion-topbar {
+    position: static !important;
+    background-color: #F1EADE !important;
+  }
+  /* 커버 확장(+240px)도 해제 — 원래 높이로 */
+  body.onf-clear-top .page_cover {
+    height: var(--page-cover-height, 216px) !important;
+  }
+  body.onf-clear-top.onf-sub .page_cover {
+    height: 200px !important;
+  }
+  /* 홈 히어로 텍스트 끌어올림·중앙 보정도 해제(커버가 헤더 아래로 내려가므로) */
+  .notion-page-content > .notion-column_list-block[data-block-id="3883a92c-8e3f-4bcf-a07e-0f1080420dbb"] {
+    margin-top: 40px !important;
+    transform: none !important;
+  }
+}
