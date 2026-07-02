@@ -745,7 +745,10 @@ body.onf-scrolled .notion-topbar {
   box-shadow: 0 1px 0 rgba(181, 154, 123, .28) !important;  /* 은은한 경계선 */
 }
 
-/* 커버를 탑바 높이(100px)만큼 키워 기존 노출 면적 유지 */
+/* 커버를 탑바 높이(100px)만큼 키워 기존 노출 면적 유지
+   + 하단을 투명으로 녹여(mask) 크림 배경과 경계 없이 페이드아웃 */
 body.onf-clear-top .page_cover {
   height: calc(var(--page-cover-height, 216px) + 100px) !important;
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
 }
