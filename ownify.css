@@ -1038,20 +1038,21 @@ body.onf-map-api-on .onf-map-link { display: block; }
 .onf-step-poke [class*="CalloutBlock_content"] { cursor: pointer !important; }
 @keyframes onfPoke { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
 
-/* 말풍선 (활성 카드 우측 상단) */
-.onf-step-bubble {
+/* 말풍선 (활성 카드 우측 상단)
+   ⚠️ 콜아웃 내부 'div{background:none}' 규칙보다 특이도 높게(조상 클래스 3개) 지정해야 배경이 산다 */
+.notion-callout-block [class*="CalloutBlock_content"] .onf-step-bubble {
   position: absolute;
   top: -16px;
   right: -12px;
   z-index: 6;
-  background: #D2691E;
+  background: #D2691E !important;
   color: #FFF7EE !important;
   font-size: 13px;
   font-weight: 700 !important;
   padding: 8px 14px;
   border-radius: 14px 14px 2px 14px;
   white-space: nowrap;
-  box-shadow: 0 6px 16px rgba(58, 36, 21, .28);
+  box-shadow: 0 6px 16px rgba(58, 36, 21, .28) !important;
   pointer-events: none;
   animation: onfBubbleFloat 1.6s ease-in-out infinite;
 }
