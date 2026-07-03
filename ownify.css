@@ -203,9 +203,11 @@ html, body {
 .notion-callout-block a, .notion-callout-block a span {
   color: #4A3220 !important;
 }
-/* 카드 본문 줄간격 넓혀 답답함 완화 (Peter 지시 2026-07-03) */
-.notion-callout-block [class*="CalloutBlock_content"] {
-  line-height: 1.8 !important;
+/* 카드 본문 줄간격 넓혀 답답함 완화 (Peter 지시 2026-07-03) — 안쪽 텍스트 요소까지 지정 */
+.notion-callout-block [class*="CalloutBlock_content"],
+.notion-callout-block [class*="CalloutBlock_content"] div,
+.notion-callout-block [class*="CalloutBlock_content"] span {
+  line-height: 1.85 !important;
 }
 /* 카드 안 태그(인라인 코드 — 우피는 span[style*=SFMono]로 렌더링)는
    은은한 오렌지 칩 (브랜드 포인트, 밝은 카드에서 또렷하게) */
