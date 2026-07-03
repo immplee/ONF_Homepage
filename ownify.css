@@ -1258,3 +1258,8 @@ body.onf-map-api-on .onf-map-link { display: block; }
   margin: 0 !important;
   padding: 2px 0 !important;
 }
+
+/* /how 단계 카드 아래 구분선: 위(17px)·아래(45px) 여백을 45px로 균등(2026-07-04 실측) */
+[data-block-id="392d6a62-96ae-8090-89fc-d3c6ae9d160a"] {
+  margin-top: 29px !important;
+}
