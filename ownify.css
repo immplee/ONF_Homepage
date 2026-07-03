@@ -44,10 +44,13 @@ html, body {
   font-weight: 400 !important;
 }
 
-/* 제목류는 800 */
-.notion-page-content h1, .notion-page-content h2,
-.notion-page-content .notion-header-block,
-.notion-page-content .notion-sub_header-block,
+/* 제목류는 800 — 안쪽 글자(span)까지 지정해야 함: 아래 "모든 글자 400" 규칙이
+   제목 안 span을 눌러 800이 무효가 되던 문제의 전역 해결(2026-07-03) */
+.notion-page-content h1, .notion-page-content h1 *,
+.notion-page-content h2, .notion-page-content h2 *,
+.notion-page-content h3, .notion-page-content h3 *,
+.notion-page-content .notion-header-block, .notion-page-content .notion-header-block *,
+.notion-page-content .notion-sub_header-block, .notion-page-content .notion-sub_header-block *,
 .page-title {
   font-weight: 800 !important;
 }
@@ -218,6 +221,7 @@ html, body {
   background: rgba(210, 105, 30, .12) !important;
   border-radius: 6px !important;
   padding: 2px 8px !important;
+  font-size: 16px !important;   /* 본문과 동일 크기(2026-07-03 Peter 지시, 코드체는 유지) */
 }
 
 /* 카드 안 링크 밑줄·배경 제거 */
