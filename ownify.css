@@ -1274,7 +1274,7 @@ body.onf-map-api-on .onf-map-link { display: block; }
 }
 
 /* /how 단계 카드 아래 구분선: "카드 ↔ 구분선 ↔ 제목" 실제 콘텐츠 기준
-   위88/아래105 → 97/96 균등 (사이 빈 문단 포함 실측, 2026-07-04) */
+   아래 간격은 뒤 요소 여백으로 고정(105px)이라 위를 105px로 맞춤 (2026-07-04 실측) */
 [data-block-id="392d6a62-96ae-8090-89fc-d3c6ae9d160a"] {
-  margin-top: 24px !important;
+  margin-top: 32px !important;
 }
