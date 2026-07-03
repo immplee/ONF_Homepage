@@ -527,6 +527,11 @@
     cl.style.setProperty('max-width', '100%', 'important');
     var cols = cl.querySelectorAll('.notion-column-block');
     if (cols.length < 3) return;
+    // 컬럼 안의 "빈 문단" 숨김 — 데스크톱에선 티 안 나지만 모바일 세로 스택에서
+    // 카드 사이 간격을 벌리고 화살표를 한쪽으로 밀어낸다(2026-07-04 실측)
+    cl.querySelectorAll('.notion-text-block').forEach(function (tb) {
+      if (!(tb.textContent || '').trim() && !tb.querySelector('img')) tb.style.display = 'none';
+    });
     var total = cols.length;
     // 컬럼은 개별 래퍼(block)에 싸여 있고, 진짜 가로 flex 행은 그 래퍼들의 부모다.
     // → flex 행을 찾고, 각 컬럼의 "flex 행 직속 자식(래퍼)"을 기준으로 조작한다.
