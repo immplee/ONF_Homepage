@@ -312,6 +312,15 @@
     var map = new naver.maps.Map(d, { center: pos, zoom: 17 });
     new naver.maps.Marker({ position: pos, map: map, title: '오니파이' });
     document.body.classList.add('onf-map-api-on');
+    // 컨테이너가 뒤늦게 크기를 잡으면(우피 레이아웃·폰트 로드) 지도가 좁게 초기화된 채로
+    // 남을 수 있어, 리사이즈를 트리거해 타일을 다시 꽉 채운다.
+    function refresh() {
+      naver.maps.Event.trigger(map, 'resize');
+      map.setCenter(pos);
+    }
+    [200, 600, 1500].forEach(function (ms) { setTimeout(refresh, ms); });
+    if (window.ResizeObserver) new ResizeObserver(refresh).observe(d);
+    window.addEventListener('resize', refresh);
   }
   // 우피가 렌더한 원본 지도 iframe(+빈 래퍼)을 DOM에서 제거하고 내 요소만 남긴다.
   // CSS 숨김은 재렌더와 경쟁해 깜빡임 → 아예 제거. 빈 래퍼가 남으면 API 지도를 아래로
