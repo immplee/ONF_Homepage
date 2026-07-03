@@ -1113,3 +1113,17 @@ body.onf-map-api-on .onf-map-link { display: block; }
   .onf-step-arrow img { transform: rotate(90deg); animation: onfArrowNudgeV 1.2s ease-in-out infinite; }
   @keyframes onfArrowNudgeV { 0%, 100% { transform: rotate(90deg) translateX(0); } 50% { transform: rotate(90deg) translateX(6px); } }
 }
+
+/* ---------- /how 카드 아이콘·제목 정렬 + 제목 굵기 (2026-07-03 Peter 지시) ---------- */
+/* ① 콜아웃 아이콘(숫자·이모지)을 제목 첫 줄의 세로 중심에 맞춤(+4px, 실측)
+   ② 카드 제목(굵은 스팬)은 Paperlogy 800 — 전역 "모든 글자 400" 규칙이
+      노션 인라인 굵기(600)를 눌러버리므로 여기서 되살린다.
+   대상: How to Ownify 3단계 카드 + 한국인 선생님 카드 */
+[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block .notion-record-icon,
+[data-block-id="d28c173e-5cd4-4e01-b514-0d4a90fe7983"] .notion-callout-block .notion-record-icon {
+  transform: translateY(4px);
+}
+[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block span[style*="font-weight"],
+[data-block-id="d28c173e-5cd4-4e01-b514-0d4a90fe7983"] .notion-callout-block span[style*="font-weight"] {
+  font-weight: 800 !important;
+}
