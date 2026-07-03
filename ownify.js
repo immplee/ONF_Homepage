@@ -228,12 +228,26 @@
   }
   // 스크롤 위치 감지: 기본은 창(window) 스크롤, 일부 레이아웃은 .notion-scroller 내부 스크롤
   // (capture라 둘 다 이 리스너로 들어옴 — 그 외 내부 스크롤 요소는 무시)
+  // 모바일(메뉴 분리)은 배너 기준만 쓰면 전환이 너무 늦어 본문 글이 투명 메뉴 밑을
+  // 지나며 겹쳐 보임 → 본문이 메뉴 줄에 '닿는 순간'에도 전환 (Peter 2026-07-03).
+  function navTouchesText() {
+    var content = document.querySelector('.notion-page-content');
+    if (!content) return false;
+    var strip = null, sibs = document.querySelectorAll('.notion-topbar ~ div');
+    for (var i = 0; i < sibs.length; i++) {
+      if (sibs[i].offsetHeight > 0 && sibs[i].querySelector('a[href]')) { strip = sibs[i]; break; }
+    }
+    var headerBottom = 100 + (strip ? strip.offsetHeight : 40);
+    return content.getBoundingClientRect().top < headerBottom + 6;
+  }
   document.addEventListener('scroll', function (e) {
     var t = e.target, y;
     if (t === document) y = window.scrollY;
     else if (t.classList && t.classList.contains('notion-scroller')) y = t.scrollTop;
     else return;
-    document.body.classList.toggle('onf-scrolled', y > scrolledThreshold());
+    var on = y > scrolledThreshold();
+    if (!on && document.body.classList.contains('onf-nav-split')) on = navTouchesText();
+    document.body.classList.toggle('onf-scrolled', on);
   }, true);
   // 창 크기가 바뀌면 메뉴 분리 여부도 바뀔 수 있어 리사이즈 때도 갱신
   window.addEventListener('resize', function () { setTimeout(updateClearTop, 50); });
