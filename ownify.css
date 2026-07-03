@@ -619,10 +619,10 @@ html, body {
   background: #D2691E;
   padding: 60px 48px 48px;
   font-family: 'Paperlogy', 'Apple SD Gothic Neo', sans-serif;
-  /* 등장 전: 아래에 숨어 있다가 */
+  /* 등장 전: 아래에 살짝 숨어 있다가 (60px→28px·.55s — 크게 늦게 올라오던 잔상 완화, 2026-07-03) */
   opacity: 0;
-  transform: translateY(60px);
-  transition: opacity .7s ease, transform .7s ease;
+  transform: translateY(28px);
+  transition: opacity .55s ease, transform .55s ease;
 }
 /* 화면에 들어오면 위로 떠오르며 등장 (JS가 .onf-show 부착) */
 .onf-footer.onf-show {

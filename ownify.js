@@ -27,12 +27,42 @@
   // 아직 등록 안 된 블록에 .onf-reveal을 붙이고 관찰 시작
   function scan() {
     document.querySelectorAll(SEL).forEach(function (el) {
-      if (!el.classList.contains('onf-reveal')) {
-        el.classList.add('onf-reveal');
-        io.observe(el);
+      if (el.classList.contains('onf-reveal')) return;
+      // 조상이 이미 등장 애니메이션 대상이면 건너뜀 — 래퍼와 내부 블록이
+      // 이중으로 움직여 내용물이 뒤늦게 내려앉는 잔상을 만들던 문제(2026-07-03)
+      if (el.parentElement && el.parentElement.closest('.onf-reveal')) return;
+      el.classList.add('onf-reveal');
+      io.observe(el);
+    });
+    alignCalloutIcons();
+  }
+
+  /* 콜아웃 아이콘(이모지)을 첫 번째 보이는 블록의 첫 줄과 세로 중앙 정렬.
+     카드마다 첫 블록 구조(칩 제목/헤딩/본문)가 달라 고정값 CSS로는 안 맞음 —
+     실측해서 카드별로 자동 보정 (2026-07-03 Peter 지시 "항상 자동으로"). */
+  function alignCalloutIcons() {
+    document.querySelectorAll('.notion-callout-block [class*="CalloutBlock_content"]').forEach(function (c) {
+      var icon = c.querySelector('.notion-record-icon');
+      var blocks = c.querySelector('[class*="CalloutBlock_blocks"]');
+      if (!icon || !blocks) return;
+      var first = null;
+      for (var i = 0; i < blocks.children.length; i++) {
+        if (blocks.children[i].offsetHeight > 2) { first = blocks.children[i]; break; }
+      }
+      if (!first) return;
+      var lh = parseFloat(getComputedStyle(first).lineHeight);
+      var firstLine = (lh && lh < first.offsetHeight) ? lh : first.offsetHeight;
+      var target = first.getBoundingClientRect().top + firstLine / 2;
+      var ir = icon.getBoundingClientRect();
+      if (!ir.height) return;
+      var delta = target - (ir.top + ir.height / 2);
+      if (Math.abs(delta) > 1.5) {
+        var cur = parseFloat(icon.style.marginTop) || parseFloat(getComputedStyle(icon).marginTop) || 0;
+        icon.style.setProperty('margin-top', Math.round(cur + delta) + 'px', 'important');
       }
     });
   }
+  window.addEventListener('resize', function () { setTimeout(alignCalloutIcons, 80); });
 
   // 우피(노션)는 블록을 늦게 그리므로: 10초 동안 0.5초마다 재스캔
   var n = 0, t = setInterval(function () {
@@ -85,7 +115,7 @@
         footIo.unobserve(e.target);
       }
     });
-  }, { threshold: .15 });
+  }, { threshold: 0 });   // 윗변이 보이는 즉시 등장 — .15는 바닥까지 가야 떠서 부자연(2026-07-03)
 
   function ensureFooter() {
     // 본문 "안"이 아니라 "바로 뒤"(형제)에 둔다 — 본문 컨테이너는 모바일에서
