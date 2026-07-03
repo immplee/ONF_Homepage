@@ -683,7 +683,8 @@ html, body {
 /* 로고(왼쪽 40px)와 대칭 위치. 글자 굵기 600 = 탑메뉴와 동일 */
 .notion-topbar a.onf-top-cta {
   position: absolute;
-  right: 40px;
+  /* 오른쪽 여백 = 로고의 왼쪽 여백 (ownify.js ④가 로고 위치를 재서 --onf-cta-right로 전달) */
+  right: var(--onf-cta-right, 40px);
   top: 50%;
   transform: translateY(-50%);
   display: inline-flex;

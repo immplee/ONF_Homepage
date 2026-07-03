@@ -124,6 +124,12 @@
   function ensureTopCta() {
     var bar = document.querySelector('.notion-topbar');
     if (!bar) return;
+    // CTA 오른쪽 여백 = 로고 왼쪽 여백 (좌우 대칭 자동 유지 — 2026-07-03 Peter 지시)
+    var logo = bar.querySelector('img:not(.onf-band-arrow)');
+    if (logo) {
+      var lx = Math.round(logo.getBoundingClientRect().left);
+      if (lx > 0) document.documentElement.style.setProperty('--onf-cta-right', lx + 'px');
+    }
     var isHome = location.pathname === '/' || location.pathname === '';
     var existing = bar.querySelector('.onf-top-cta');
     if (isHome) {                     // 홈이면 있던 것도 제거(SPA 이동 대응)
