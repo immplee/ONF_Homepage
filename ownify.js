@@ -50,9 +50,24 @@
         if (blocks.children[i].offsetHeight > 2) { first = blocks.children[i]; break; }
       }
       if (!first) return;
-      var lh = parseFloat(getComputedStyle(first).lineHeight);
-      var firstLine = (lh && lh < first.offsetHeight) ? lh : first.offsetHeight;
-      var target = first.getBoundingClientRect().top + firstLine / 2;
+      // 첫 줄 '실제 글자' 중심을 Range로 실측 — line-height 절반 방식은 폰트
+      // 메트릭에 따라 글자보다 2~3px 위를 겨냥해 이모지가 떠 보임(2026-07-03 모바일 실측)
+      var target = null;
+      var walker = document.createTreeWalker(first, NodeFilter.SHOW_TEXT);
+      var tn;
+      while ((tn = walker.nextNode())) {
+        if (tn.textContent.trim()) {
+          var rg = document.createRange();
+          rg.setStart(tn, 0); rg.setEnd(tn, Math.min(1, tn.length));
+          var tr = rg.getBoundingClientRect();
+          if (tr.height) { target = tr.top + tr.height / 2; break; }
+        }
+      }
+      if (target === null) {  // 텍스트 없는 카드(이미지 등)는 기존 line-height 방식 폴백
+        var lh = parseFloat(getComputedStyle(first).lineHeight);
+        var firstLine = (lh && lh < first.offsetHeight) ? lh : first.offsetHeight;
+        target = first.getBoundingClientRect().top + firstLine / 2;
+      }
       var ir = icon.getBoundingClientRect();
       if (!ir.height) return;
       var delta = target - (ir.top + ir.height / 2);
@@ -640,6 +655,7 @@
         });
       }
     });
+    alignCalloutIcons();  // 새로 나타난 단계 카드의 이모지도 첫 줄 중심에 재정렬
     // 높이 균등: 보이는 카드들의 '자연 높이'를 재서 가장 큰 값으로 min-height 통일.
     // ⚠️ 카드가 새로 나타나면 옆 카드 폭이 줄며 줄바꿈이 바뀌므로, rAF로 폭 반영을
     //    기다린 뒤 (min-height 비움 → 강제 리플로 → 측정 → 설정) 해야 정확하다.
