@@ -152,19 +152,13 @@
   // 커버(.page_cover)가 있는 페이지: 탑바를 커버 위에 투명하게 얹고(body.onf-clear-top),
   // 스크롤을 내리면 크림 배경으로 복귀(body.onf-scrolled). ownify.css 커버 섹션과 세트.
   // 하위 페이지엔 body.onf-sub도 함께 토글 — 배너를 낮은 띠로 줄임(ownify.css 커버 섹션과 세트).
-  // 하위 페이지 커버는 노션에 뭐가 걸려 있든 코드가 정한 배너로 강제 —
-  // 페이지별 지정은 ONF_COVERS, 그 외 하위 페이지는 ONF_COVER(기본)로 통일.
-  // (세로 위치·높이 통일은 ownify.css의 body.onf-sub .page_cover 규칙이 담당)
-  var ONF_COVER = 'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@00a4ef6/assets/cover-banner.webp';
-  var ONF_COVERS = {
-    '/how':   'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@bfa2eee/assets/cover-how.webp',
-    '/where': 'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@6d8ba32/assets/cover-where-v2.webp'  // v2: 워드마크 아래 배치(탑바 겹침 해소, 2026-07-03)
-  };
-  // 페이지별 세로 초점(object-position) — 기본은 CSS의 center 47%.
-  // /where 리셉션은 벽 OWNIFY 로고가 탑바 메뉴와 겹치지 않게 초점을 위로(35%).
-  var ONF_COVER_POS = {
-    '/where': 'center 18%'   // v2 배너: 벽 워드마크가 메뉴 아래 오는 초점(실측)
-  };
+  // 커버는 노션에 뭐가 걸려 있든 코드가 정한 배너로 강제 — 홈 포함 "전 페이지 한 장"
+  // 통일(2026-07-03 Peter 지시: 데스크·OWNIFY 노트 이미지, 위치 일정).
+  // 예외 페이지가 생기면 ONF_COVERS에 '/경로': 'URL'로 추가.
+  // (세로 위치·높이 통일은 ownify.css의 커버 섹션 규칙이 담당)
+  var ONF_COVER = 'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@a7cea5e/assets/cover-unified.webp';
+  var ONF_COVERS = {};
+  var ONF_COVER_POS = {};
   function updateClearTop() {
     document.body.classList.toggle('onf-clear-top', !!document.querySelector('.page_cover'));
     // 우피는 좁은 창(≈780px 이하)에서 탑바를 둘로 나눈다: 기존 탑바는 h=0으로 숨고,
@@ -180,20 +174,19 @@
     document.body.classList.toggle('onf-nav-split', !!visibleBar && menuLinks <= 1);
     var home = location.pathname === '/' || location.pathname === '';
     document.body.classList.toggle('onf-sub', !home);
-    if (!home) {
-      var c = document.querySelector('.page_cover');
-      var path = location.pathname.replace(/\/$/, '');
-      var want = ONF_COVERS[path] || ONF_COVER;
-      // SPA 이동으로 같은 img가 재사용될 수 있어 "적용한 URL"을 기억해 비교
-      if (c && c.tagName === 'IMG' && c.dataset.onfCanon !== want) {
-        c.dataset.onfCanon = want;
-        c.removeAttribute('srcset');
-        c.src = want;
-      }
-      // 페이지별 초점 보정 (인라인 !important가 CSS 공통값 47%를 덮음)
-      if (c && ONF_COVER_POS[path]) {
-        c.style.setProperty('object-position', ONF_COVER_POS[path], 'important');
-      }
+    // 홈 포함 전 페이지 커버 통일
+    var c = document.querySelector('.page_cover');
+    var path = location.pathname.replace(/\/$/, '');
+    var want = ONF_COVERS[path] || ONF_COVER;
+    // SPA 이동으로 같은 img가 재사용될 수 있어 "적용한 URL"을 기억해 비교
+    if (c && c.tagName === 'IMG' && c.dataset.onfCanon !== want) {
+      c.dataset.onfCanon = want;
+      c.removeAttribute('srcset');
+      c.src = want;
+    }
+    // 페이지별 초점 보정 (인라인 !important가 CSS 공통값을 덮음)
+    if (c && ONF_COVER_POS[path]) {
+      c.style.setProperty('object-position', ONF_COVER_POS[path], 'important');
     }
   }
   // 색칠(젖빛 유리) 전환 기준: 커버 배너가 탑바 뒤에서 완전히 벗어나는 지점

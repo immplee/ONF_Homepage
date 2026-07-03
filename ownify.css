@@ -841,6 +841,9 @@ body.onf-clear-top .page_cover {
    다르게 잡아도 하위 페이지는 항상 같은 crop (이미지 통일은 ownify.js ⑤ ONF_COVER). */
 body.onf-clear-top.onf-sub .page_cover {
   height: 300px !important;
+}
+/* 세로 위치는 홈·하위 공통 한 값 — "위치 일정하게"(2026-07-03 Peter 지시) */
+body.onf-clear-top .page_cover {
   object-fit: cover !important;
   object-position: center 47% !important;
 }
