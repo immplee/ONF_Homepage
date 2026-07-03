@@ -1038,6 +1038,14 @@ body.onf-map-api-on .onf-map-link { display: block; }
 [data-block-id="d28c173e-5cd4-4e01-b514-0d4a90fe7983"] {
   margin-top: 46px !important;
 }
+/* step1 블록은 우피 기본 margin-left:-18px + 초과 폭으로 다른 카드(콘텐츠 116~1324)보다
+   왼쪽으로 삐져나감 → 콘텐츠 폭에 맞춤(왼쪽 줄 정렬, 2026-07-03) */
+[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
 /* 카드가 컬럼 높이를 꽉 채우게(높이 균등의 전제) */
 [data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-column-block,
 [data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-column-block > div,
