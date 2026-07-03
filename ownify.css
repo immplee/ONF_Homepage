@@ -1259,7 +1259,8 @@ body.onf-map-api-on .onf-map-link { display: block; }
   padding: 2px 0 !important;
 }
 
-/* /how 단계 카드 아래 구분선: 위(17px)·아래(45px) 여백을 45px로 균등(2026-07-04 실측) */
+/* /how 단계 카드 아래 구분선: 위17/아래45 → 31/31 균등.
+   (주변 여백 합이 62px로 고정된 슬롯이라 margin-top으로 위치만 조절, 2026-07-04 실측) */
 [data-block-id="392d6a62-96ae-8090-89fc-d3c6ae9d160a"] {
-  margin-top: 29px !important;
+  margin-top: 15px !important;
 }
