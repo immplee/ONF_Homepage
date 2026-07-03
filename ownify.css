@@ -1114,10 +1114,36 @@ body.onf-map-api-on .onf-map-link { display: block; }
   50%      { transform: translateY(-6px) scale(1.03); }
 }
 
-/* 좁은 화면(모바일): 세로 스택이라 화살표는 아래를 향하도록 회전 */
+/* 화살표 이미지 2종: 데스크톱=가로(→), 모바일=세로(↓, Peter 제공 이미지) */
+.onf-step-arrow img.onf-arrow-v { display: none; }
 @media (max-width: 768px) {
-  .onf-step-arrow img { transform: rotate(90deg); animation: onfArrowNudgeV 1.2s ease-in-out infinite; }
-  @keyframes onfArrowNudgeV { 0%, 100% { transform: rotate(90deg) translateX(0); } 50% { transform: rotate(90deg) translateX(6px); } }
+  .onf-step-arrow img.onf-arrow-h { display: none; }
+  .onf-step-arrow img.onf-arrow-v {
+    display: block;
+    animation: onfArrowNudgeV 1.2s ease-in-out infinite;
+  }
+  @keyframes onfArrowNudgeV { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(3px); } }
+  /* 세로 스택: JS가 준 가로용 높이·여백 무효화, 카드 사이 가운데 배치 */
+  .onf-step-arrow {
+    width: 100% !important;
+    height: auto !important;
+    margin-top: 0 !important;
+    padding: 12px 0 !important;
+    justify-content: center !important;
+    align-self: center !important;
+  }
+}
+
+/* ---------- 국기 이모지 펄럭임 (ownify.js ⑩과 세트) ---------- */
+.onf-flag {
+  display: inline-block;
+  transform-origin: 25% 70%;
+  animation: onfFlagWave 2.8s ease-in-out infinite;
+}
+.onf-flag:nth-of-type(2n) { animation-delay: -1.4s; }  /* 두 번째 국기는 반박자 엇갈리게 */
+@keyframes onfFlagWave {
+  0%, 100% { transform: rotate(-5deg) skewY(3deg); }
+  50%      { transform: rotate(6deg) skewY(-3deg); }
 }
 
 /* ---------- /how 카드 아이콘·제목 정렬 + 제목 굵기 (2026-07-03 Peter 지시) ---------- */

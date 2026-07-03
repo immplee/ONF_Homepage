@@ -421,6 +421,7 @@
   // 스타일·애니메이션은 ownify.css(.onf-step-*)와 세트. 우피 재렌더 대비 매 틱 상태 재적용.
   var STEP_COL = 'b8fd976b-8eff-4bb5-b837-209e0c1303ea';
   var STEP_EMOJI = 'https://immplee.github.io/ONF_Homepage/assets/how-step-emoji.png';
+  var STEP_EMOJI_DOWN = 'https://immplee.github.io/ONF_Homepage/assets/how-step-arrow-down.png';  // 모바일 세로 전개용(Peter 제공)
   var stepsShown = 1;      // 현재 보이는 카드 수
   var stepBlockSeen = false;
   var stepArrowCount = 0;  // 화살표 개수(바뀔 때 애니메이션 동기화)
@@ -491,7 +492,9 @@
         if (visible && !hasArrow) {
           var ar = document.createElement('div');
           ar.className = 'onf-step-arrow';
-          ar.innerHTML = '<img alt="다음" src="' + STEP_EMOJI + '">';
+          // 가로(데스크톱)·세로(모바일) 화살표를 둘 다 넣고 CSS 미디어쿼리가 표시를 고른다
+          ar.innerHTML = '<img class="onf-arrow-h" alt="다음" src="' + STEP_EMOJI + '">' +
+            '<img class="onf-arrow-v" alt="다음" src="' + STEP_EMOJI_DOWN + '">';
           flexRow.insertBefore(ar, wrap);
         } else if (!visible && hasArrow) {
           prev.remove();
@@ -588,5 +591,22 @@
   }
   setInterval(ensureSteps2, 800);
   ensureSteps2();
+
+
+  /* ---------- ⑩ 국기 이모지 펄럭임 ---------- */
+  // 제목 속 국기 이모지(🇰🇷·🇺🇸 등)를 span으로 감싸 CSS 펄럭임(.onf-flag)을 준다.
+  // 이모지는 글자라 직접 애니메이션이 안 되므로 감싸는 처리가 필요.
+  function ensureFlagWave() {
+    document.querySelectorAll('.notion-page-content :is(h1,h2,h3) span').forEach(function (sp) {
+      if (sp.dataset.onfFlags || sp.classList.contains('onf-flag')) return;
+      if (!/\uD83C[\uDDE6-\uDDFF]/.test(sp.textContent || '')) return;
+      if (sp.querySelector('span')) return;   // 이미 감싼 구조면 건너뜀
+      sp.dataset.onfFlags = '1';
+      sp.innerHTML = sp.innerHTML.replace(/((?:\uD83C[\uDDE6-\uDDFF]){2})/g,
+        '<span class="onf-flag">$1</span>');
+    });
+  }
+  ensureFlagWave();
+  setInterval(ensureFlagWave, 1500);
 
 })();
