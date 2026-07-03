@@ -431,11 +431,15 @@
   function typeBody(callout) {
     if (!callout) return;
     var blocks = callout.querySelectorAll('.notion-text-block');
-    if (blocks.length < 3) return;                 // 제목·태그·본문 중 본문(마지막)
-    var body = blocks[blocks.length - 1];
-    if (body.dataset.onfTyped) return;
+    if (blocks.length < 3) return;                 // 제목·태그·본문
+    // 본문 = '마지막 비어있지 않은' 텍스트 블록 (카드에 따라 끝에 빈 블록이 있어 마지막 고정 금지)
+    var body = null;
+    for (var bi = blocks.length - 1; bi >= 0; bi--) {
+      if ((blocks[bi].textContent || '').trim()) { body = blocks[bi]; break; }
+    }
+    if (!body || body.dataset.onfTyped) return;
     var full = body.textContent;
-    if (!full || !full.trim()) return;
+    if (!full.trim()) return;
     body.dataset.onfTyped = '1';
     body.classList.add('onf-type');
     body.textContent = '';
