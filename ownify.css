@@ -1033,9 +1033,12 @@ body.onf-map-api-on .onf-map-link { display: block; }
 [data-block-id="d28c173e-5cd4-4e01-b514-0d4a90fe7983"] .notion-callout-block [class*="CalloutBlock_content"] {
   border: 2px solid #6F4A2F !important;
 }
-/* 제목과 카드 섹션 사이 간격 확대 (너무 붙어 보임 — Peter 지시 2026-07-03) */
-[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"],
-[data-block-id="d28c173e-5cd4-4e01-b514-0d4a90fe7983"] {
+/* 제목과 카드 사이 간격 (2026-07-03).
+   - '한국인 선생님' 섹션: 제목(152b…)↔카드 블록(d28c…) 사이
+   - 'How to Ownify' 섹션: 여백을 제목↔첫 카드(392d…8007)에 준다. 단계 블록(b8fd…)엔 안 줌
+     — 안 그러면 카드2↔카드3(단계 카드) 사이에 큰 틈이 생김(Peter 지시로 위치 이동). */
+[data-block-id="d28c173e-5cd4-4e01-b514-0d4a90fe7983"],
+[data-block-id="392d6a62-96ae-8007-ab06-c7449656faca"] {
   margin-top: 46px !important;
 }
 /* step1 블록은 우피 기본 margin-left:-18px + 초과 폭으로 다른 카드(콘텐츠 116~1324)보다
