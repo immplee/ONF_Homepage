@@ -1013,8 +1013,9 @@ body.onf-map-api-on .onf-map-link { display: block; }
 [data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block > div {
   height: 100% !important;
 }
-/* 카드 행: 보이는 카드끼리 같은 높이(stretch) */
-.onf-steps-flex { align-items: stretch !important; }
+/* 카드 행: 위 정렬(stretch 금지 — stretch는 JS 높이측정을 교란해 자연높이를 오측정).
+   높이 균등은 ownify.js ⑨의 min-height가 전담. */
+.onf-steps-flex { align-items: flex-start !important; }
 /* 컬럼 래퍼(JS가 .onf-step-wrap 부여)를 ①폭 균등 분배(넘침 방지) ②세로 flex로 만들어
    내부 카드가 래퍼 높이를 꽉 채우게(짧은 카드 해소). */
 .onf-step-wrap {
