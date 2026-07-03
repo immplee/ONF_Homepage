@@ -220,7 +220,7 @@ html, body {
   color: #B9591A !important;
   background: rgba(210, 105, 30, .12) !important;
   border-radius: 6px !important;
-  padding: 2px 8px !important;
+  padding: 2px 6px !important;  /* 좌우 6px — 좁은 창에서도 칩 줄이 안 접히게(2026-07-03) */
   font-size: 16px !important;   /* 본문과 동일 크기(2026-07-03 Peter 지시, 코드체는 유지) */
 }
 
@@ -1166,4 +1166,22 @@ body.onf-map-api-on .onf-map-link { display: block; }
   width: calc(100% + 36px) !important;
   max-width: none !important;
   margin-left: -18px !important;
+}
+
+/* ---------- /how 카드 마감(2026-07-03 Peter 지시 3건) ---------- */
+/* ① 단계 카드: JS(⑨) 초기화 전 "화살표 없는 3장" 노출 방지 —
+   초기화되면(.onf-steps-flex 부착) 즉시 표시, JS가 죽어도 2.5초 후엔 자동 표시 */
+[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] {
+  opacity: 0;
+  animation: onfStepsFallback .3s ease 2.5s forwards;
+}
+[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"]:has(.onf-steps-flex) {
+  opacity: 1 !important;
+  animation: none !important;
+}
+@keyframes onfStepsFallback { to { opacity: 1; } }
+
+/* ③ 카드 안 칩 줄과 아래 본문 사이 여백 (모든 콜아웃 카드 공통) */
+.notion-callout-block .notion-text-block:has(span[style*="SFMono"]) {
+  margin-bottom: 8px !important;
 }
