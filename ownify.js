@@ -309,7 +309,7 @@
     d.className = 'onf-map-api';
     block.appendChild(d);
     var pos = new naver.maps.LatLng(ONF_PLACE.lat, ONF_PLACE.lng);
-    var map = new naver.maps.Map(d, { center: pos, zoom: 16 });
+    var map = new naver.maps.Map(d, { center: pos, zoom: 17 });
     new naver.maps.Marker({ position: pos, map: map, title: '오니파이' });
     document.body.classList.add('onf-map-api-on');
   }
