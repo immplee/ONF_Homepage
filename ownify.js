@@ -424,17 +424,19 @@
   var stepsShown = 1;      // 현재 보이는 카드 수
   var stepBlockSeen = false;
   var stepArrowCount = 0;  // 화살표 개수(바뀔 때 애니메이션 동기화)
-  var typedCards = [];     // 카드별 본문 타자기 완료 여부(페이지 재진입 시 리셋)
   // 카드 본문(마지막 텍스트 블록)을 왼쪽부터 한 글자씩 나타냄. 글자 자리는 처음부터 차지해
   // (opacity로만 노출) 높이 균등·줄바꿈이 흔들리지 않는다. 카드가 보일 때 1회만.
-  function typeBody(callout, idx) {
-    if (typedCards[idx] || !callout) return;
+  // ⚠️ 완료 표시는 '노드 자체'(dataset)에 — 우피가 로드 초기에 콜아웃을 갈아치우므로
+  //    인덱스 플래그면 버려질 초기 노드에 소모돼 교체된 안정 노드가 건너뛰어진다.
+  function typeBody(callout) {
+    if (!callout) return;
     var blocks = callout.querySelectorAll('.notion-text-block');
     if (blocks.length < 3) return;                 // 제목·태그·본문 중 본문(마지막)
     var body = blocks[blocks.length - 1];
+    if (body.dataset.onfTyped) return;
     var full = body.textContent;
     if (!full || !full.trim()) return;
-    typedCards[idx] = true;
+    body.dataset.onfTyped = '1';
     body.classList.add('onf-type');
     body.textContent = '';
     var spans = [];
@@ -455,7 +457,7 @@
   function ensureSteps() {
     var cl = document.querySelector('[data-block-id="' + STEP_COL + '"]');
     if (!cl) { stepBlockSeen = false; return; }
-    if (!stepBlockSeen) { stepBlockSeen = true; stepsShown = 1; typedCards = []; }  // 페이지 재진입 시 처음부터
+    if (!stepBlockSeen) { stepBlockSeen = true; stepsShown = 1; }  // 페이지 재진입 시 처음부터(타자기 완료표시는 노드 dataset이라 새 노드면 자동 재실행)
     var cols = cl.querySelectorAll('.notion-column-block');
     if (cols.length < 3) return;
     var total = cols.length;
@@ -477,7 +479,7 @@
       var visible = i < stepsShown;
       // 숨김은 클래스로 — CSS의 display:flex !important를 인라인이 못 이기므로
       wrap.classList.toggle('onf-step-hidden', !visible);
-      if (visible) typeBody(c.querySelector('.notion-callout-block'), i);  // 본문 타자기(1회)
+      if (visible) typeBody(c.querySelector('.notion-callout-block'));  // 본문 타자기(1회)
       // 카드 앞(i>=1) 화살표: flex 행에서 래퍼 앞에 넣고, 숨기면 뺀다
       if (i >= 1) {
         var prev = wrap.previousElementSibling;
