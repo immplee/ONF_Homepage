@@ -158,7 +158,10 @@
       var logo = bar.querySelector('img:not(.onf-band-arrow)');
       if (logo) {
         var lx = Math.round(logo.getBoundingClientRect().left);
-        if (lx > 0) document.documentElement.style.setProperty('--onf-cta-right', lx + 'px');
+        // 우피가 탑바를 다 그리기 전에 재면 로고가 임시 위치라 수백 px이 나와
+        // SNS 버튼이 Reviews 위에 얹혔다 우측으로 튀는 원인이 됨(2026-07-03 Peter).
+        // 정상 좌측 여백 범위(≤120px)일 때만 반영 — 그 전엔 CSS 폴백(40px)이 제자리를 지킴.
+        if (lx > 0 && lx <= 120) document.documentElement.style.setProperty('--onf-cta-right', lx + 'px');
       }
     }
     var isHome = location.pathname === '/' || location.pathname === '';
