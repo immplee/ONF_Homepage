@@ -388,7 +388,17 @@
       if (/Reviews/.test(links[i].textContent || '') && links[i].offsetHeight > 0) { reviews = links[i]; break; }
     }
     if (!reviews) return;
+    // ⚠️ Reviews의 직속 부모는 '개별 링크 래퍼'라 거기 넣으면 간격(gap)이 안 붙는다.
+    //    메뉴 링크 3개 이상을 담은 flex 컨테이너(진짜 메뉴 행)까지 올라가서 넣어야
+    //    다른 항목과 같은 간격·가운데 정렬을 그대로 받는다(2026-07-04 실측).
     var host = reviews.parentElement;
+    while (host && host !== document.body) {
+      var hcs = getComputedStyle(host);
+      if ((hcs.display === 'flex' || hcs.display === 'inline-flex') &&
+          host.querySelectorAll('a[href]').length >= 3) break;
+      host = host.parentElement;
+    }
+    if (!host || host === document.body) return;
     var item = document.querySelector('.onf-sns-menu');
     if (!item || item.parentElement !== host) {
       if (item) item.remove();

@@ -451,9 +451,13 @@ a.onf-sns-menu {
   color: #D2691E !important;
   font-family: 'Paperlogy', 'Apple SD Gothic Neo', sans-serif !important;
   font-weight: 600 !important;
+  font-size: inherit;
+  padding: 0 16px;            /* 다른 메뉴 항목과 같은 안쪽 여백 → 간격 리듬 통일 */
   cursor: pointer;
   text-decoration: none !important;
   user-select: none;
+  display: inline-flex;
+  align-items: center;
 }
 /* 위젯 컨테이너는 앵커 전용 — 메뉴 클릭을 가로막지 않게 통과 */
 .onf-sns { pointer-events: none; }
