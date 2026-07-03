@@ -313,10 +313,24 @@
     new naver.maps.Marker({ position: pos, map: map, title: '오니파이' });
     document.body.classList.add('onf-map-api-on');
   }
+  // 폐기된 네이버 iframe을 DOM에서 즉시 제거 (CSS 숨김은 우피 재렌더와 경쟁해 깜빡임 →
+  // 아예 제거). 우피가 다시 그려 넣을 때마다 MutationObserver가 같은 프레임에 또 제거한다.
+  function killNaverIframe(block) {
+    block.querySelectorAll('iframe[src*="map.naver.com"]').forEach(function (f) {
+      var wrap = f.closest('div');
+      (wrap && wrap !== block ? wrap : f).remove();
+    });
+  }
   function ensureCustomMap() {
     var block = document.querySelector('[data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]');
     if (!block) return;
     document.body.classList.add('onf-map-custom');
+    killNaverIframe(block);
+    // 이 블록에 iframe이 다시 붙는 즉시 제거 (1회만 등록)
+    if (!block.__onfMapGuard) {
+      block.__onfMapGuard = new MutationObserver(function () { killNaverIframe(block); });
+      block.__onfMapGuard.observe(block, { childList: true, subtree: true });
+    }
     // 지도 우하단 '네이버지도에서 보기' 버튼 (플레이스 사진·리뷰·길찾기로 연결)
     if (!block.querySelector('.onf-map-link')) {
       var l = document.createElement('a');
