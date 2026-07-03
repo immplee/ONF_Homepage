@@ -1,5 +1,7 @@
 # ONF_Homepage — OWNIFY 홈페이지 커스텀 코드
 
+> **© 2026 OWNIFY. All rights reserved.** 이 저장소는 www.ownify.co.kr 서빙 목적으로만 공개되어 있으며, 공개가 사용 허락을 의미하지 않습니다. 코드·디자인·문구·이미지의 무단 복제·수정·배포·상업적 이용을 금합니다. 상세는 [LICENSE](LICENSE).
+
 [www.ownify.co.kr](https://www.ownify.co.kr) (우피/Oopy)에 들어가는 커스텀 CSS·JS의 **정본 저장소**.
 
 우피 설정의 `<head>` 입력칸은 항목별 10,240자 제한이 있어서, 코드를 여기(공개 저장소)에 두고 **GitHub Pages**로 불러온다. → 글자 수 제한 없음 + 주석 가능 + git 이력 관리.
