@@ -493,17 +493,22 @@
       }
     });
     // 높이 균등: 보이는 카드들의 '자연 높이'를 재서 가장 큰 값으로 min-height 통일.
-    // (min-height를 비웠다가 다시 재므로 몇 장이 보이든 항상 자동으로 같아짐)
-    var contents = [];
+    // ⚠️ 카드가 새로 나타나면 옆 카드 폭이 줄며 줄바꿈이 바뀌므로, rAF로 폭 반영을
+    //    기다린 뒤 (min-height 비움 → 강제 리플로 → 측정 → 설정) 해야 정확하다.
+    var eqContents = [];
     cols.forEach(function (c, i) {
       if (i < stepsShown) {
         var ct = c.querySelector('.notion-callout-block [class*="CalloutBlock_content"]');
-        if (ct) { ct.style.minHeight = ''; contents.push(ct); }
+        if (ct) eqContents.push(ct);
       }
     });
-    var maxH = 0;
-    contents.forEach(function (ct) { if (ct.offsetHeight > maxH) maxH = ct.offsetHeight; });
-    if (maxH > 0) contents.forEach(function (ct) { ct.style.minHeight = maxH + 'px'; });
+    requestAnimationFrame(function () {
+      eqContents.forEach(function (ct) { ct.style.minHeight = ''; });
+      void flexRow.offsetHeight;                       // 폭 변화 반영 강제
+      var maxH = 0;
+      eqContents.forEach(function (ct) { if (ct.offsetHeight > maxH) maxH = ct.offsetHeight; });
+      if (maxH > 0) eqContents.forEach(function (ct) { ct.style.minHeight = maxH + 'px'; });
+    });
   }
   setInterval(ensureSteps, 700);
   ensureSteps();
