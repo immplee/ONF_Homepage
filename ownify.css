@@ -1278,3 +1278,8 @@ body.onf-map-api-on .onf-map-link { display: block; }
 [data-block-id="392d6a62-96ae-8090-89fc-d3c6ae9d160a"] {
   margin-top: 32px !important;
 }
+
+/* 단계 카드: 콜아웃 아래 여백 통일(2번 카드만 4px 있어 간격이 어긋남, 2026-07-04 실측) */
+.onf-step-wrap .notion-callout-block {
+  margin-bottom: 0 !important;
+}
