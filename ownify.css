@@ -1088,8 +1088,8 @@ body.onf-map-api-on .onf-map-link { display: block; }
   padding: 10px 18px;
   border-radius: 16px;
   white-space: nowrap;
-  /* 오렌지 글로우로 크림 배경 위에서 확 튀게 (크림 링은 꼬리와 사이가 벌어져 제거) */
-  box-shadow: 0 8px 22px rgba(210, 105, 30, .45) !important;
+  /* 글로우 제거 — 은은한 드롭섀도만(Peter 지시 2026-07-03) */
+  box-shadow: 0 3px 8px rgba(58, 36, 21, .18) !important;
   pointer-events: none;
   transform-origin: center bottom;
   /* 길고 부드러운 상하 둥실 + 아주 미세한 숨쉬기 (뚝뚝 끊김 없이) */
