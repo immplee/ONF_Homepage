@@ -1143,6 +1143,15 @@ body.onf-map-api-on .onf-map-link { display: block; }
     animation: onfArrowNudgeV 1.2s ease-in-out infinite;
   }
   @keyframes onfArrowNudgeV { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(3px); } }
+  /* 모바일: 데스크톱용 카드 폭 확장(+36px)·높이 균등화(min-height) 해제 —
+     세로 스택에선 카드가 래퍼 밖으로 늘어나 화살표와 겹치고 간격이 뒤틀린다(2026-07-04 실측) */
+  [data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+  [data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block [class*="CalloutBlock_content"] {
+    min-height: 0 !important;
+  }
   /* 모바일: 단계 카드를 세로 스택으로(우피는 모바일에서도 컬럼을 안 쌓음) */
   .onf-steps-flex { display: flex !important; flex-direction: column !important; }
   .onf-step-wrap { width: 100% !important; }
