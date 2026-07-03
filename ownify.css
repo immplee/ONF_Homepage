@@ -842,10 +842,11 @@ body.onf-clear-top .page_cover {
 body.onf-clear-top.onf-sub .page_cover {
   height: 300px !important;
 }
-/* 세로 위치는 홈·하위 공통 한 값 — "위치 일정하게"(2026-07-03 Peter 지시) */
+/* 세로 위치는 홈·하위 공통 한 값 — "위치 일정하게"(2026-07-03 Peter 지시).
+   78% = 통합 배너(데스크 소품이 하단)에 맞춘 값: 하위 300px 띠에도 소품이 보임(실측) */
 body.onf-clear-top .page_cover {
   object-fit: cover !important;
-  object-position: center 47% !important;
+  object-position: center 78% !important;
 }
 
 
