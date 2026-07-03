@@ -713,7 +713,7 @@ html, body {
    → 세로 높이를 화면 절반 이하로 축소. 핀은 지도 중심이라 잘려도 계속 보임. */
 @media (max-width: 899px) {
   [data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] {
-    height: 340px !important;
+    height: 225px !important;   /* 340px의 2/3 (Peter 2026-07-03) */
     min-height: 0 !important;
   }
 }
