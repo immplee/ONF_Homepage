@@ -158,12 +158,12 @@
   var ONF_COVER = 'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@00a4ef6/assets/cover-banner.webp';
   var ONF_COVERS = {
     '/how':   'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@bfa2eee/assets/cover-how.webp',
-    '/where': 'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@bfa2eee/assets/cover-where.webp'
+    '/where': 'https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@6d8ba32/assets/cover-where-v2.webp'  // v2: 워드마크 아래 배치(탑바 겹침 해소, 2026-07-03)
   };
   // 페이지별 세로 초점(object-position) — 기본은 CSS의 center 47%.
   // /where 리셉션은 벽 OWNIFY 로고가 탑바 메뉴와 겹치지 않게 초점을 위로(35%).
   var ONF_COVER_POS = {
-    '/where': 'center 35%'
+    '/where': 'center 18%'   // v2 배너: 벽 워드마크가 메뉴 아래 오는 초점(실측)
   };
   function updateClearTop() {
     document.body.classList.toggle('onf-clear-top', !!document.querySelector('.page_cover'));
