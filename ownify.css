@@ -1132,3 +1132,10 @@ body.onf-map-api-on .onf-map-link { display: block; }
 [data-block-id="d28c173e-5cd4-4e01-b514-0d4a90fe7983"] .notion-callout-block span[style*="font-weight"] {
   font-weight: 800 !important;
 }
+
+
+/* ---------- 카드 본문 타자기 (ownify.js typeBody와 세트) ---------- */
+/* 글자를 처음부터 자리 차지(공간 유지)시키고 opacity로만 왼쪽부터 순차 노출 →
+   높이 균등·줄바꿈이 흔들리지 않으면서 한 글자씩 입력되는 느낌 */
+.onf-type .onf-type-c { opacity: 0; }
+.onf-type .onf-type-c.on { opacity: 1; transition: opacity .08s ease; }
