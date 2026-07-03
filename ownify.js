@@ -423,7 +423,15 @@
   });
   window.addEventListener('scroll', positionSnsDropdown, true);
   ensureSnsMenu();
-  setInterval(ensureSnsMenu, 800);
+  // 메뉴가 그려지는 '즉시' SNS 항목을 붙인다 — 타이머만 쓰면 최대 0.8초 늦게 나타나
+  // 깜빡이듯 보임(2026-07-04 Peter). DOM 변화를 감지해 없을 때만 재시도(rAF로 묶음).
+  var snsMenuPending = false;
+  new MutationObserver(function () {
+    if (snsMenuPending || document.querySelector('.onf-sns-menu')) return;
+    snsMenuPending = true;
+    requestAnimationFrame(function () { snsMenuPending = false; ensureSnsMenu(); });
+  }).observe(document.documentElement, { childList: true, subtree: true });
+  setInterval(ensureSnsMenu, 800);   // SPA 이동·위치 보정용 백스톱
 
   /* ---------- ⑦ 브라우저 탭 제목 ---------- */
   // 우피가 페이지 이동 때마다 탭 제목을 노션 페이지 제목으로 다시 쓰므로 주기적으로 강제.
