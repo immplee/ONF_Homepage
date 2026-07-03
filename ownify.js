@@ -50,8 +50,10 @@
         if (blocks.children[i].offsetHeight > 2) { first = blocks.children[i]; break; }
       }
       if (!first) return;
-      // 첫 줄 '실제 글자' 중심을 Range로 실측 — line-height 절반 방식은 폰트
-      // 메트릭에 따라 글자보다 2~3px 위를 겨냥해 이모지가 떠 보임(2026-07-03 모바일 실측)
+      // 첫 줄 '실제 글자' 중심을 실측 — line-height 절반 방식은 폰트
+      // 메트릭에 따라 글자보다 2~3px 위를 겨냥해 이모지가 떠 보임(2026-07-03 모바일 실측).
+      // 글자 박스 중심도 부족: 한글 잉크는 박스 안에서 아래에 앉아 텍스트가 ~1px 쳐져
+      // 보임(2026-07-04 모바일 실측) → 캔버스 메트릭으로 '잉크 중심'을 겨냥한다.
       var target = null;
       var walker = document.createTreeWalker(first, NodeFilter.SHOW_TEXT);
       var tn;
@@ -60,7 +62,11 @@
           var rg = document.createRange();
           rg.setStart(tn, 0); rg.setEnd(tn, Math.min(1, tn.length));
           var tr = rg.getBoundingClientRect();
-          if (tr.height) { target = tr.top + tr.height / 2; break; }
+          if (tr.height) {
+            var ink = inkCenter(tn, tr);
+            target = (ink !== null) ? ink : (tr.top + tr.height / 2);
+            break;
+          }
         }
       }
       if (target === null) {  // 텍스트 없는 카드(이미지 등)는 기존 line-height 방식 폴백
@@ -71,11 +77,31 @@
       var ir = icon.getBoundingClientRect();
       if (!ir.height) return;
       var delta = target - (ir.top + ir.height / 2);
-      if (Math.abs(delta) > 1.5) {
+      // 임계 0.5px: 1.5px는 ~1px 잔차를 방치해 모바일에서 쳐져 보였음(2026-07-04).
+      // 정수 반올림이라 적용 후 잔차는 0.5px 미만 → 재스캔 때 재조정 없이 안정.
+      if (Math.abs(delta) > 0.5) {
         var cur = parseFloat(icon.style.marginTop) || parseFloat(getComputedStyle(icon).marginTop) || 0;
         icon.style.setProperty('margin-top', Math.round(cur + delta) + 'px', 'important');
       }
     });
+  }
+
+  /* 첫 글자 묶음의 '잉크 중심' y — Range 박스는 폰트 ascent 여백까지 포함해
+     박스 중심을 맞춰도 한글 잉크가 낮게 보인다. 캔버스 TextMetrics로
+     baseline 기준 실제 잉크 상하한을 재서 그 중앙을 돌려준다(미지원 브라우저는 null). */
+  var _inkCtx = null;
+  function inkCenter(textNode, rangeRect) {
+    try {
+      var el = textNode.parentElement;
+      if (!el) return null;
+      var st = getComputedStyle(el);
+      if (!_inkCtx) _inkCtx = document.createElement('canvas').getContext('2d');
+      _inkCtx.font = st.fontWeight + ' ' + st.fontSize + ' ' + st.fontFamily;
+      var m = _inkCtx.measureText(textNode.textContent.trim().slice(0, 12));
+      if (m.actualBoundingBoxAscent === undefined || m.fontBoundingBoxAscent === undefined) return null;
+      var baseline = rangeRect.top + m.fontBoundingBoxAscent;
+      return baseline - (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 2;
+    } catch (e) { return null; }
   }
   window.addEventListener('resize', function () { setTimeout(alignCalloutIcons, 80); });
 
