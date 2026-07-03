@@ -136,8 +136,17 @@ html, body {
 /* 현재 메뉴 = 채운 오렌지 알약(4안, Peter 2026-07-03 선택. PC·모바일 공통).
    '현재' 표시는 ownify.js ⑤-2가 경로 비교로 a.onf-current를 달아줌 —
    우피 기본 인디케이터(a > div)는 호버만 해도 표시가 옮겨붙어 남는 잔상 버그라 아예 숨김. */
-.notion-topbar a > div,
-.notion-topbar ~ div a > div { display: none !important; }
+/* ⚠️ a>div가 둘로 쓰임(2026-07-03 실측): 데스크탑=빈 인디케이터 div,
+   모바일 스트립=글자 래퍼 div(<a><div><span>글자</span></div></a>).
+   통째로 숨기면 모바일 메뉴 글자가 사라짐 → span 없는(빈) div만 숨긴다. */
+.notion-topbar a > div:not(:has(span)),
+.notion-topbar ~ div a > div:not(:has(span)) { display: none !important; }
+/* 모바일 글자 래퍼는 우피 인라인(height:100%; padding:0 16px)을 리셋 —
+   알약 크기는 a의 패딩이 담당 */
+.notion-topbar ~ div a > div {
+  height: auto !important;
+  padding: 0 !important;
+}
 /* 모든 메뉴 링크를 알약 모양으로(평소엔 투명) — 호버·선택 시 배경만 바뀌어 흔들림 없음.
    ⚠️ 우피가 링크를 탑바 높이만큼 세로로 늘여놔서(스트레치) 그대로 두면 알약이
    세로 캡슐이 됨 — 높이를 글자 기준으로 강제(2026-07-03 실측). */
