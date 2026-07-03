@@ -1135,6 +1135,9 @@ body.onf-map-api-on .onf-map-link { display: block; }
     animation: onfArrowNudgeV 1.2s ease-in-out infinite;
   }
   @keyframes onfArrowNudgeV { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(3px); } }
+  /* 모바일: 단계 카드를 세로 스택으로(우피는 모바일에서도 컬럼을 안 쌓음) */
+  .onf-steps-flex { display: flex !important; flex-direction: column !important; }
+  .onf-step-wrap { width: 100% !important; }
   /* 세로 스택: JS가 준 가로용 높이·여백 무효화, 카드 사이 가운데 배치 */
   .onf-step-arrow {
     width: 100% !important;

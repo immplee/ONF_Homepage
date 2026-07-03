@@ -472,11 +472,23 @@
     // 진짜 가로 flex 행 = "모든 카드를 담은" flex 조상. (래퍼를 flex로 만들어도 오인 안 하게
     // '마지막 카드까지 포함'을 조건에 넣는다 — 래퍼는 카드 1개만 담아 걸러진다.)
     var last = cols[cols.length - 1];
+    // ⚠️ 탐색은 반드시 "컬럼 리스트 블록(cl) 안"으로 제한한다.
+    //    우피는 모바일(≤780px)에서 컬럼 컨테이너를 display:block으로 바꾸므로,
+    //    'display:flex' 조건으로 찾으면 페이지 전체(.notion-page-content)까지 올라가
+    //    본문 전체가 숨는 대형 사고가 난다(2026-07-03 실측). 컨테이너가 block이어도
+    //    조작(래퍼·화살표·숨김)은 동일하게 동작하고, 모바일 세로 스택은 CSS가 담당.
     var flexRow = cols[0].parentElement;
-    while (flexRow && !(getComputedStyle(flexRow).display === 'flex' && flexRow !== last && flexRow.contains(last))) {
+    while (flexRow && cl.contains(flexRow) && !(flexRow !== last && flexRow.contains(last))) {
       flexRow = flexRow.parentElement;
     }
-    if (!flexRow) return;
+    if (!flexRow || !cl.contains(flexRow)) return;
+    // 과거 버전이 페이지에 잘못 붙였을 수 있는 클래스 청소(캐시된 옛 JS 흔적 복구)
+    document.querySelectorAll('.onf-steps-flex').forEach(function (el) {
+      if (el !== flexRow) el.classList.remove('onf-steps-flex');
+    });
+    document.querySelectorAll('.onf-step-wrap').forEach(function (el) {
+      if (!cl.contains(el) || el === cl) el.classList.remove('onf-step-wrap', 'onf-step-hidden');
+    });
     flexRow.classList.add('onf-steps-flex');
     function wrapperOf(col) { var w = col; while (w.parentElement && w.parentElement !== flexRow) w = w.parentElement; return w; }
     cols.forEach(function (c, i) {
