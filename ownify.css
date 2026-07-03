@@ -1140,7 +1140,7 @@ body.onf-map-api-on .onf-map-link { display: block; }
   transform-origin: 25% 70%;
   animation: onfFlagWave 2.8s ease-in-out infinite;
 }
-.onf-flag:nth-of-type(2n) { animation-delay: -1.4s; }  /* 두 번째 국기는 반박자 엇갈리게 */
+/* 두 번째 국기의 반박자 지연은 ownify.js ⑩이 inline animation-delay로 부여 */
 @keyframes onfFlagWave {
   0%, 100% { transform: rotate(-5deg) skewY(3deg); }
   50%      { transform: rotate(6deg) skewY(-3deg); }

@@ -594,16 +594,17 @@
 
 
   /* ---------- ⑩ 국기 이모지 펄럭임 ---------- */
-  // 제목 속 국기 이모지(🇰🇷·🇺🇸 등)를 span으로 감싸 CSS 펄럭임(.onf-flag)을 준다.
-  // 이모지는 글자라 직접 애니메이션이 안 되므로 감싸는 처리가 필요.
+  // 우피는 제목 속 이모지를 <img>(커스텀 이모지)로 렌더링한다 →
+  // "한국인 선생님" 제목의 국기 이미지들에 .onf-flag(펄럭임)를 붙인다.
+  // 두 번째 국기는 반박자 늦춰 자연스럽게 엇갈리게.
   function ensureFlagWave() {
-    document.querySelectorAll('.notion-page-content :is(h1,h2,h3) span').forEach(function (sp) {
-      if (sp.dataset.onfFlags || sp.classList.contains('onf-flag')) return;
-      if (!/\uD83C[\uDDE6-\uDDFF]/.test(sp.textContent || '')) return;
-      if (sp.querySelector('span')) return;   // 이미 감싼 구조면 건너뜀
-      sp.dataset.onfFlags = '1';
-      sp.innerHTML = sp.innerHTML.replace(/((?:\uD83C[\uDDE6-\uDDFF]){2})/g,
-        '<span class="onf-flag">$1</span>');
+    document.querySelectorAll('.notion-page-content :is(h1,h2,h3)').forEach(function (h) {
+      if ((h.textContent || '').indexOf('한국인 선생님') === -1) return;
+      var imgs = h.querySelectorAll('img:not(.onf-flag)');
+      for (var fi = 0; fi < imgs.length; fi++) {
+        imgs[fi].classList.add('onf-flag');
+        if (fi % 2 === 1) imgs[fi].style.animationDelay = '-1.4s';
+      }
     });
   }
   ensureFlagWave();
