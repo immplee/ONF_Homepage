@@ -147,6 +147,12 @@ html, body {
   height: auto !important;
   padding: 0 !important;
 }
+/* 우피는 모바일 현재 메뉴 밑줄을 span의 inset box-shadow(#6F4A2F)로 그림 — 알약이
+   표시를 대신하므로 제거 (2026-07-03 실측) */
+.notion-topbar a span,
+.notion-topbar ~ div a span {
+  box-shadow: none !important;
+}
 /* 모든 메뉴 링크를 알약 모양으로(평소엔 투명) — 호버·선택 시 배경만 바뀌어 흔들림 없음.
    ⚠️ 우피가 링크를 탑바 높이만큼 세로로 늘여놔서(스트레치) 그대로 두면 알약이
    세로 캡슐이 됨 — 높이를 글자 기준으로 강제(2026-07-03 실측). */
