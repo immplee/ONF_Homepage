@@ -105,25 +105,24 @@
   }
   window.addEventListener('resize', function () { setTimeout(alignCalloutIcons, 80); });
 
-  // 우피(노션)는 블록을 늦게 그리므로: 10초 동안 0.5초마다 재스캔
-  var n = 0, t = setInterval(function () {
+  // 우피(노션)는 블록을 늦게 그리므로: 10초 동안 0.5초마다 재스캔.
+  // SPA 페이지 이동 때도 재시작할 수 있게 버스트 구조(⑤의 경로 감지가 호출).
+  var scanCount = 0, scanTimer = null;
+  function startScanBurst() {
+    scanCount = 0;
     scan();
-    if (++n > 20) clearInterval(t);
-  }, 500);
+    if (scanTimer) return;               // 이미 도는 중이면 카운터만 리셋
+    scanTimer = setInterval(function () {
+      scan();
+      if (++scanCount > 20) { clearInterval(scanTimer); scanTimer = null; }
+    }, 500);
+  }
+  startScanBurst();
   window.addEventListener('load', scan);
 
-  /* ---------- ② 인스타 버튼 (오픈 전 임시 알림) ---------- */
-  // 버튼(#onfInsta)이 늦게 생기므로 나타날 때까지 0.3초마다 확인
-  // 인스타 오픈하면: 이 블록을 지우고 우피 본문에서 버튼을 <a href>로 교체
-  var it = setInterval(function () {
-    var b = document.getElementById('onfInsta');
-    if (b) {
-      b.addEventListener('click', function () {
-        alert('📸 인스타그램 오픈 준비 중입니다 🙏🏻');
-      });
-      clearInterval(it);
-    }
-  }, 300);
+  /* ---------- ② 인스타 버튼 알림 → ②-2 위임 방식으로 통합(2026-07-04) ----------
+     기존 300ms 폴링은 버튼 없는 페이지에서 영원히 돌고, 재렌더로 새 노드가 되면
+     핸들러가 사라졌음 — 문서 위임(②-2)이 둘 다 해결. */
 
   /* ---------- ③ 사이트 푸터 주입 ---------- */
   // 모든 페이지 본문 맨 끝에 회사 정보 + 로고 푸터를 붙인다.
@@ -148,7 +147,7 @@
         'src="https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@66d00f3/assets/ownify-logo-cream.svg">' +
     '</div>';
 
-  // 화면에 15% 들어오면 .onf-show → 아래에서 위로 떠오르는 등장
+  // 윗변이 화면에 들어오는 즉시 .onf-show → 아래에서 위로 떠오르는 등장
   var footIo = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
       if (e.isIntersecting) {
@@ -184,6 +183,7 @@
     requestAnimationFrame(function () {
       footPending = false;
       ensureFooter();
+      ensureTopCta();   // 플로팅 CTA도 본문 재렌더 즉시 반영(2초 폴링 대기 제거)
     });
   }).observe(document.body, { childList: true, subtree: true });
   ensureFooter();
@@ -308,9 +308,24 @@
   }, true);
   // 창 크기가 바뀌면 메뉴 분리 여부도 바뀔 수 있어 리사이즈 때도 갱신
   window.addEventListener('resize', function () { setTimeout(updateClearTop, 50); });
-  // 페이지 이동(SPA)으로 커버 유무가 바뀔 수 있어 본문 변경 때마다 갱신
+  // 페이지 이동(SPA)으로 커버 유무가 바뀔 수 있어 본문 변경 때마다 갱신.
+  // ⚠️ rAF로 묶기 — 노션은 스크롤 중에도 블록을 수시로 넣었다 빼서, 디바운스 없이는
+  // 변이마다 강제 레이아웃(offsetHeight)이 돌아 프레임이 떨어짐(2026-07-04 점검).
+  var clearTopPending = false;
   new MutationObserver(function () {
-    updateClearTop();
+    if (clearTopPending) return;
+    clearTopPending = true;
+    requestAnimationFrame(function () {
+      clearTopPending = false;
+      updateClearTop();
+      // SPA로 경로가 바뀌었으면 등장 애니메이션·아이콘 정렬 스캔을 다시 돌린다
+      // (기존엔 첫 10초 후 영구 종료라 늦게 방문한 페이지에 적용이 안 됐음)
+      var path = location.pathname;
+      if (window.__onfLastPath !== path) {
+        window.__onfLastPath = path;
+        startScanBurst();
+      }
+    });
   }).observe(document.body, { childList: true, subtree: true });
   updateClearTop();
 
@@ -319,7 +334,8 @@
   // 자리표시 href 상태 → 클릭해도 이동하지 않고 준비 중 알림만 띄운다.
   // 인스타 오픈하면: 이 블록을 지우고 우피 head의 .onf-sns-b href를 실제 주소로 교체.
   document.addEventListener('click', function (e) {
-    var b = e.target && e.target.closest && e.target.closest('.onf-sns-b');
+    if (!e.target || !e.target.closest) return;
+    var b = e.target.closest('.onf-sns-b') || e.target.closest('#onfInsta');
     if (!b) return;
     e.preventDefault();
     e.stopPropagation();
@@ -341,7 +357,7 @@
       a.innerHTML = '<img alt="카카오톡 채널" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjI0IiBmaWxsPSIjRkFFMTAwIi8+PHBhdGggZD0iTTUwIDI0Yy0xNi42IDAtMzAgMTAuNy0zMCAyMy44IDAgOC41IDUuNiAxNS45IDE0IDIwLjFsLTIuOSAxMC43Yy0uMjYuOTYuODQgMS43MiAxLjY2IDEuMTdsMTIuOS04LjZjMS40LjE0IDIuOS4yMiA0LjQuMjIgMTYuNiAwIDMwLTEwLjcgMzAtMjMuOFM2Ni42IDI0IDUwIDI0eiIgZmlsbD0iIzNDMUUxRSIvPjwvc3ZnPg==">';
       // PC에선 카카오 1:1 채팅이 앱 전용(웹 미지원)이라 QR 팝업으로 안내. 모바일은 바로 채팅.
       a.addEventListener('click', function (ev) {
-        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
+        if (onfIsMobileDevice()) return;   // 모바일(iPad 포함)은 앱 채팅 직행
         ev.preventDefault();
         var old = document.querySelector('.onf-qr');
         if (old) { old.remove(); return; }
@@ -407,7 +423,8 @@
       item.textContent = 'SNS';
       item.addEventListener('click', function (e) {
         e.preventDefault();
-        cb.checked = !cb.checked;
+        var cbNow = document.querySelector('.onf-sns-cb') || cb;  // 위젯 재생성 대비
+        cbNow.checked = !cbNow.checked;
         positionSnsDropdown();
       });
       host.appendChild(item);
@@ -458,6 +475,7 @@
   } catch (e) {}
   // ⑦-2 <title> 노드를 직접 고치는 경우 대비: 변경 감지 즉시 교정
   function enforceTitle() {
+    if (!titleDesc) return;   // 극단 환경 방어(디스크립터 없으면 기능만 포기)
     var want = onfWantTitle();
     if (want && titleDesc.get.call(document) !== want) titleDesc.set.call(document, want);
   }
@@ -475,13 +493,22 @@
   //   API 로드/인증 실패 시엔 "탭하면 네이버지도가 열리는" 이미지 폴백 자동 표시.
   //   Client ID는 도메인 제한(ownify.co.kr)이라 공개돼도 무방. (ownify.css 규칙과 세트)
   var ONF_PLACE = { lat: 37.5102816, lng: 127.0966326 };   // 오니파이(롯데웰빙센터)
+  // iPadOS 13+는 UA가 'Macintosh'라 정규식만으론 PC로 오판 → 터치 포인트로 보강
+  function onfIsMobileDevice() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+      (/Macintosh/.test(navigator.userAgent) && (navigator.maxTouchPoints || 0) > 1);
+  }
   // 인증 실패 시 네이버가 이 전역 함수를 호출 → API 지도 제거하고 이미지 폴백 유지
   window.navermap_authFailure = function () {
+    // 실패 플래그를 남겨야 함 — 없으면 1초 루프가 지도 생성→실패→제거를 영원히
+    // 반복하며 리스너를 누적시킴(2026-07-04 점검에서 발견)
+    window.__onfMapAuthFailed = true;
     document.body.classList.remove('onf-map-api-on');
     var d = document.querySelector('.onf-map-api');
     if (d) d.remove();
   };
   function buildApiMap(block) {
+    if (window.__onfMapAuthFailed) return;   // 인증 실패면 이미지 폴백만 유지
     if (!window.naver || !naver.maps || block.querySelector('.onf-map-api')) return;
     var d = document.createElement('div');
     d.className = 'onf-map-api';
@@ -504,7 +531,15 @@
     d.__onfHeal = heal;                        // ensureCustomMap 1초 루프가 매번 호출
     [100, 300, 700, 1500, 3000].forEach(function (ms) { setTimeout(heal, ms); });
     if (window.ResizeObserver) new ResizeObserver(heal).observe(d);
-    window.addEventListener('resize', heal);
+    // window 리스너는 1회만 — buildApiMap마다 등록하면 재렌더 때 옛 지도를 잡은
+    // 클로저가 계속 쌓임(누수, 2026-07-04 점검). 현재 지도의 heal을 찾아 위임.
+    if (!window.__onfMapResizeBound) {
+      window.__onfMapResizeBound = true;
+      window.addEventListener('resize', function () {
+        var cur = document.querySelector('.onf-map-api');
+        if (cur && cur.__onfHeal) cur.__onfHeal();
+      });
+    }
   }
   // 우피가 렌더한 원본 지도 iframe(+빈 래퍼)을 DOM에서 제거하고 내 요소만 남긴다.
   // CSS 숨김은 재렌더와 경쟁해 깜빡임 → 아예 제거. 빈 래퍼가 남으면 API 지도를 아래로
@@ -520,12 +555,14 @@
   // (모바일 UA는 네이버가 iframe을 거부해 빈 화면이 되므로 아예 주입하지 않음)
   var ONF_DIRECTIONS = 'https://map.naver.com/p/directions/3zmKkz,2AJN93,%EC%9E%A0%EC%8B%A4%EC%97%AD(%EB%A0%88%EC%9D%B4%ED%81%AC%ED%8C%B0%EB%A6%AC%EC%8A%A4)4%EB%B2%88%EC%B6%9C%EA%B5%AC,21405356,PLACE_POI/3zmDLo,2AJGJW,%EC%98%A4%EB%8B%88%ED%8C%8C%EC%9D%B4,2094664237,PLACE_POI/-/walk?c=16.00,0,0,0,dh';
   function ensureDirections(block) {
-    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
-    var next = block.nextElementSibling;
-    if (next && next.classList && next.classList.contains('onf-directions')) {
-      // 이미 있으면 URL만 최신으로 (경로 변경 대응)
-      var ex = next.querySelector('.onf-directions-frame');
-      if (ex && ex.src !== ONF_DIRECTIONS) ex.src = ONF_DIRECTIONS;
+    if (onfIsMobileDevice()) return;
+    var wrapEx = document.querySelector('.onf-directions');
+    if (wrapEx) {
+      // 위치가 틀어졌으면 재배치(중복 생성 방지), URL은 원문 비교
+      // (.src는 브라우저가 정규화해 항상 불일치 → 매초 리로드되던 버그, 2026-07-04)
+      if (block.nextElementSibling !== wrapEx) block.insertAdjacentElement('afterend', wrapEx);
+      var ex = wrapEx.querySelector('.onf-directions-frame');
+      if (ex && ex.getAttribute('src') !== ONF_DIRECTIONS) ex.setAttribute('src', ONF_DIRECTIONS);
       return;
     }
     var wrap = document.createElement('div');
