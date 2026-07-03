@@ -403,4 +403,72 @@
   setInterval(ensureCustomMap, 1000);
   ensureCustomMap();
 
+  /* ---------- ⑨ How 단계 카드 순차 등장 ---------- */
+  // /how의 3열 카드(발음기호/미드/팟캐스트)를 클릭으로 하나씩 가로로 등장시킨다.
+  // 처음엔 1번만(통통 튀며 "눌러서 다음 단계" 말풍선) → 클릭 시 화살표+다음 카드 등장 → 3번까지.
+  // 스타일·애니메이션은 ownify.css(.onf-step-*)와 세트. 우피 재렌더 대비 매 틱 상태 재적용.
+  var STEP_COL = 'b8fd976b-8eff-4bb5-b837-209e0c1303ea';
+  var STEP_EMOJI = 'https://immplee.github.io/ONF_Homepage/assets/how-step-emoji.png';
+  var stepsShown = 1;      // 현재 보이는 카드 수
+  var stepBlockSeen = false;
+  function ensureSteps() {
+    var cl = document.querySelector('[data-block-id="' + STEP_COL + '"]');
+    if (!cl) { stepBlockSeen = false; return; }
+    if (!stepBlockSeen) { stepBlockSeen = true; stepsShown = 1; }  // 페이지 재진입 시 처음부터
+    var cols = cl.querySelectorAll('.notion-column-block');
+    if (cols.length < 3) return;
+    var flex = cols[0].parentElement;
+    flex.classList.add('onf-steps-flex');
+    var total = cols.length;
+    cols.forEach(function (c, i) {
+      var visible = i < stepsShown;
+      c.style.display = visible ? '' : 'none';
+      // 카드 앞(i>=1) 화살표: 보이면 넣고, 숨기면 뺀다
+      if (i >= 1) {
+        var prev = c.previousElementSibling;
+        var hasArrow = prev && prev.classList && prev.classList.contains('onf-step-arrow');
+        if (visible && !hasArrow) {
+          var ar = document.createElement('div');
+          ar.className = 'onf-step-arrow';
+          ar.innerHTML = '<img alt="다음" src="' + STEP_EMOJI + '">';
+          c.parentElement.insertBefore(ar, c);
+        } else if (!visible && hasArrow) {
+          prev.remove();
+        }
+      }
+      // '다음 클릭' 대상 = 마지막으로 보이는 카드(더 남았을 때)
+      var isNext = (i === stepsShown - 1) && (stepsShown < total);
+      c.classList.toggle('onf-step-poke', isNext);
+      // 말풍선
+      var content = c.querySelector('.notion-callout-block [class*="CalloutBlock_content"]');
+      if (content) {
+        var bubble = content.querySelector('.onf-step-bubble');
+        if (isNext && !bubble) {
+          var b = document.createElement('div');
+          b.className = 'onf-step-bubble';
+          b.textContent = '눌러서 다음 단계를 확인해보세요 👆';
+          content.appendChild(b);
+        } else if (!isNext && bubble) {
+          bubble.remove();
+        }
+      }
+      // 클릭 → 다음 카드 등장 (재렌더로 새 요소면 다시 바인딩)
+      if (!c.__onfStepClick) {
+        c.__onfStepClick = true;
+        c.addEventListener('click', function () {
+          var live = document.querySelector('[data-block-id="' + STEP_COL + '"]');
+          if (!live) return;
+          var all = live.querySelectorAll('.notion-column-block');
+          var idx = Array.prototype.indexOf.call(all, c);
+          if (idx === stepsShown - 1 && stepsShown < all.length) {
+            stepsShown++;
+            ensureSteps();
+          }
+        });
+      }
+    });
+  }
+  setInterval(ensureSteps, 700);
+  ensureSteps();
+
 })();

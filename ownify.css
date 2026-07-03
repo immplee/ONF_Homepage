@@ -996,3 +996,69 @@ body.onf-map-api-on .onf-map-api {
 }
 body.onf-map-api-on .onf-map-link { display: block; }
 .onf-map-link:hover { background: #EADFCD; }
+
+
+/* ---------- How 단계 카드 순차 등장 인터랙션 (ownify.js ⑨와 세트) ---------- */
+/* 3개 카드가 클릭으로 하나씩 가로로 등장, 카드 사이에 화살표 이모지.
+   테두리 #6F4A2F, 보이는 카드끼리 높이 균등(stretch). 블록 id는 /how의 3열 카드. */
+#onf-STEP .notion-callout-block [class*="CalloutBlock_content"],
+[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block [class*="CalloutBlock_content"] {
+  border: 2px solid #6F4A2F !important;
+  height: 100% !important;
+}
+/* 카드가 컬럼 높이를 꽉 채우게(높이 균등의 전제) */
+[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-column-block,
+[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-column-block > div,
+[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block,
+[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block > div {
+  height: 100% !important;
+}
+/* 카드 행: 보이는 카드끼리 같은 높이 + 화살표 세로중앙 */
+.onf-steps-flex { align-items: stretch !important; }
+
+/* 카드 사이 화살표 (좌→우 살짝 넛지) */
+.onf-step-arrow {
+  flex: 0 0 auto;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+.onf-step-arrow img {
+  width: 50px;
+  height: 50px;
+  display: block;
+  animation: onfArrowNudge 1.2s ease-in-out infinite;
+}
+@keyframes onfArrowNudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+
+/* 통통 튀는 '다음 클릭' 카드 */
+.onf-step-poke { cursor: pointer; animation: onfPoke 1.25s ease-in-out infinite; }
+.onf-step-poke [class*="CalloutBlock_content"] { cursor: pointer !important; }
+@keyframes onfPoke { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+
+/* 말풍선 (활성 카드 우측 상단) */
+.onf-step-bubble {
+  position: absolute;
+  top: -16px;
+  right: -12px;
+  z-index: 6;
+  background: #D2691E;
+  color: #FFF7EE !important;
+  font-size: 13px;
+  font-weight: 700 !important;
+  padding: 8px 14px;
+  border-radius: 14px 14px 2px 14px;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(58, 36, 21, .28);
+  pointer-events: none;
+  animation: onfBubbleFloat 1.6s ease-in-out infinite;
+}
+@keyframes onfBubbleFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+/* 좁은 화면(모바일): 세로 스택이라 화살표는 아래를 향하도록 회전 */
+@media (max-width: 768px) {
+  .onf-step-arrow img { transform: rotate(90deg); animation: onfArrowNudgeV 1.2s ease-in-out infinite; }
+  @keyframes onfArrowNudgeV { 0%, 100% { transform: rotate(90deg) translateX(0); } 50% { transform: rotate(90deg) translateX(6px); } }
+}
