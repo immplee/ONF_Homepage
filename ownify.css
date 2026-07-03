@@ -178,37 +178,38 @@ html, body {
 
 /* ---------- 3. 본문 공통 요소 ---------- */
 
-/* 콜아웃 → 다크 브라운 카드 + 크림 텍스트 (2026-07-02 C안, 호버 시 살짝 떠오름) */
+/* 콜아웃 → 밝은 크림 카드 + 브라운 글자 (2026-07-03: 다크 브라운이 답답해 밝게 전환).
+   페이지 배경(#F1EADE)보다 살짝 밝은 카드 + 얇은 베이지 테두리로 산뜻하게 분리. */
 .notion-callout-block [class*="CalloutBlock_content"] {
-  background-color: #6F4A2F !important;
-  border: 1.5px solid #5C3C25 !important;
+  background-color: #FBF6EC !important;
+  border: 1.5px solid #E4D6C0 !important;
   border-radius: 12px !important;
-  box-shadow: none !important;
+  box-shadow: 0 4px 16px rgba(111, 74, 47, .07) !important;
   padding-top: 33px !important;
   padding-bottom: 33px !important;
   position: relative !important;
   transition: background-color .2s, box-shadow .2s, transform .2s !important;
 }
 .notion-callout-block [class*="CalloutBlock_content"]:hover {
-  background-color: #7D5638 !important;
-  box-shadow: 0 6px 18px rgba(58, 36, 21, .28) !important;
+  background-color: #FFFCF6 !important;
+  box-shadow: 0 8px 22px rgba(111, 74, 47, .14) !important;
   transform: translateY(-2px) !important;
 }
 
-/* 다크 카드 위 글자는 전부 크림 */
+/* 밝은 카드 위 글자는 브라운 (제목·본문) */
 .notion-callout-block [class*="CalloutBlock_content"],
 .notion-callout-block [class*="CalloutBlock_content"] div,
 .notion-callout-block [class*="CalloutBlock_content"] span,
 .notion-callout-block a, .notion-callout-block a span {
-  color: #F3EADB !important;
+  color: #4A3220 !important;
 }
 /* 카드 안 태그(인라인 코드 — 우피는 span[style*=SFMono]로 렌더링)는
-   크림 칩 + 브라운 글자로 반전 (다크 카드에서 또렷하게) */
+   은은한 오렌지 칩 (브랜드 포인트, 밝은 카드에서 또렷하게) */
 .notion-callout-block [class*="CalloutBlock_content"] code,
 .notion-callout-block [class*="CalloutBlock_content"] code span,
 .notion-callout-block [class*="CalloutBlock_content"] span[style*="SFMono"] {
-  color: #6F4A2F !important;
-  background: #F1EADE !important;
+  color: #B9591A !important;
+  background: rgba(210, 105, 30, .12) !important;
   border-radius: 6px !important;
   padding: 2px 8px !important;
 }
