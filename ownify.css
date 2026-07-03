@@ -1086,26 +1086,26 @@ body.onf-map-api-on .onf-map-link { display: block; }
   /* 오렌지 글로우로 크림 배경 위에서 확 튀게 */
   box-shadow: 0 8px 22px rgba(210, 105, 30, .5), 0 0 0 3px rgba(255, 247, 238, .6) !important;
   pointer-events: none;
-  transform-origin: bottom right;
-  animation: onfBubblePop 1.05s ease-in-out infinite;
+  transform-origin: center bottom;
+  /* 길고 부드러운 상하 둥실 + 아주 미세한 숨쉬기 (뚝뚝 끊김 없이) */
+  animation: onfBubblePop 2.4s ease-in-out infinite;
 }
-/* 카드를 콕 가리키는 꼬리(삼각형) */
+/* 좌측 하단 대각선 꼬리 — 둥근 모서리 회전 사각형(귀엽게) */
 .notion-callout-block [class*="CalloutBlock_content"] .onf-step-bubble::after {
   content: "" !important;
   position: absolute !important;
-  bottom: -8px !important;
-  right: 30px !important;
-  width: 0 !important;
-  height: 0 !important;
-  border-left: 8px solid transparent !important;
-  border-right: 8px solid transparent !important;
-  border-top: 9px solid #D2691E !important;
-  background: none !important;
+  bottom: -4px !important;
+  left: 4px !important;
+  width: 17px !important;
+  height: 17px !important;
+  background: #D2691E !important;
+  border-radius: 0 0 0 6px !important;   /* 바깥(좌하) 모서리만 둥글게 */
+  transform: rotate(45deg) !important;   /* 좌측 하단 대각선으로 뾰족하게 */
 }
-/* 위아래로 콕콕 + 살짝 커졌다 작아지며 시선을 끈다 */
+/* 상하 둥실 + 미세 숨쉬기 (부드럽게) */
 @keyframes onfBubblePop {
   0%, 100% { transform: translateY(0) scale(1); }
-  50%      { transform: translateY(-5px) scale(1.06); }
+  50%      { transform: translateY(-6px) scale(1.03); }
 }
 
 /* 좁은 화면(모바일): 세로 스택이라 화살표는 아래를 향하도록 회전 */
