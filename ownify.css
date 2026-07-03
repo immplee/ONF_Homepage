@@ -133,11 +133,31 @@ html, body {
   top: calc(50% + 16px) !important;
   bottom: auto !important;
 }
-/* 현재 메뉴 밑줄 색 = 브랜드 오렌지 (우피 기본 브라운 #6F4A2F 덮음 — PC·모바일 공통,
-   모바일 분리 메뉴 줄의 링크도 포함. Peter 2026-07-03) */
+/* 현재 메뉴 = 채운 오렌지 알약(4안, Peter 2026-07-03 선택. PC·모바일 공통).
+   '현재' 표시는 ownify.js ⑤-2가 경로 비교로 a.onf-current를 달아줌 —
+   우피 기본 인디케이터(a > div)는 호버만 해도 표시가 옮겨붙어 남는 잔상 버그라 아예 숨김. */
 .notion-topbar a > div,
-.notion-topbar ~ div a > div {
+.notion-topbar ~ div a > div { display: none !important; }
+/* 모든 메뉴 링크를 알약 모양으로(평소엔 투명) — 호버·선택 시 배경만 바뀌어 흔들림 없음 */
+.notion-topbar a:not(:has(img)),
+.notion-topbar ~ div a {
+  padding: 7px 16px !important;
+  border-radius: 999px !important;
+  transition: background-color .18s !important;
+}
+/* 호버(현재 메뉴 제외) = 은은한 오렌지 칩 — 커서가 떠나면 즉시 사라짐(순수 :hover) */
+.notion-topbar a:not(:has(img)):hover:not(.onf-current),
+.notion-topbar ~ div a:hover:not(.onf-current) {
+  background-color: rgba(210, 105, 30, .14) !important;
+}
+/* 현재 메뉴 = 채운 알약 + 크림 글자 */
+.notion-topbar a.onf-current,
+.notion-topbar ~ div a.onf-current {
   background-color: #D2691E !important;
+}
+.notion-topbar a.onf-current, .notion-topbar a.onf-current span,
+.notion-topbar ~ div a.onf-current, .notion-topbar ~ div a.onf-current span {
+  color: #FFF7EE !important;
 }
 
 /* 좁은 화면: 로고 왼쪽·메뉴 오른쪽으로 풀어주기 */
@@ -181,6 +201,10 @@ html, body {
   .notion-topbar ~ div:has(a) > * {
     flex: 0 1 auto !important;
     min-width: 0 !important;
+  }
+  /* 좁은 화면에선 알약 패딩 축소 — 4개 메뉴가 한 줄에 여유 있게 */
+  .notion-topbar ~ div a {
+    padding: 6px 10px !important;
   }
 }
 
@@ -960,6 +984,8 @@ body.onf-nav-split.onf-clear-top .notion-topbar ~ div:has(a[href]) {
   position: absolute !important;
   top: 0 !important;
   padding-top: 100px !important;   /* 로고 탑바(100px) 높이만큼 — 링크 위치는 기존 그대로 */
+  height: auto !important;         /* 우피 고정 높이면 패딩에 밀려 링크가 잘림(실측) */
+  overflow: visible !important;
   left: 0 !important;
   right: 0 !important;
   z-index: 100 !important;

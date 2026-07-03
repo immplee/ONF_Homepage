@@ -219,6 +219,17 @@
     if (c && ONF_COVER_POS[path]) {
       c.style.setProperty('object-position', ONF_COVER_POS[path], 'important');
     }
+    // ⑤-2 현재 메뉴 표시: 경로가 일치하는 메뉴 링크에 .onf-current(채운 알약 — CSS와 세트).
+    // 우피 기본 인디케이터는 호버 잔상 버그가 있어 CSS에서 숨기고 이걸로 대체.
+    var norm = location.pathname.replace(/\/$/, '') || '/';
+    var navLinks = document.querySelectorAll('.notion-topbar a[href], .notion-topbar ~ div a[href]');
+    for (var li = 0; li < navLinks.length; li++) {
+      var na = navLinks[li];
+      if (na.querySelector('img')) { na.classList.remove('onf-current'); continue; } // 로고 제외
+      var lp;
+      try { lp = new URL(na.href, location.origin).pathname.replace(/\/$/, '') || '/'; } catch (e) { continue; }
+      na.classList.toggle('onf-current', lp === norm && lp !== '/');
+    }
   }
   // 색칠(젖빛 유리) 전환 기준: 커버 배너가 탑바 뒤에서 완전히 벗어나는 지점
   // (배너 높이 - 탑바 100px). 커버 없는 페이지는 40px.
