@@ -237,12 +237,31 @@ html, body {
   opacity: .5 !important;
 }
 
-/* 네이버 지도 iframe 임베드는 폐기(2026-07-03) — 이제 지도 API(ownify.js ⑧)로 전 기기 통일.
-   iframe은 ①모바일 UA에서 렌더 거부 ②우피가 블록을 주기적으로 다시 그릴 때 API 지도와
-   번갈아 깜빡임 → 조건 없이 항상 숨겨 iframe을 화면에서 완전히 제거한다. */
-.notion-page-content iframe[src*="map.naver.com"],
-.notion-page-content div:has(> iframe[src*="map.naver.com"]) {
+/* 위치 지도 블록(2a11866f) 안의 원본 네이버 iframe만 숨김 — 이 블록은 지도 API로 대체(ownify.js ⑧).
+   ⚠️ 페이지 전체가 아니라 이 블록 안으로만 좁힌다. 아래 도보 길찾기 임베드(.onf-directions)는
+   같은 map.naver.com iframe이라 전체 숨김이면 같이 사라지므로. */
+[data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] iframe[src*="map.naver.com"],
+[data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] div:has(> iframe[src*="map.naver.com"]) {
   display: none !important;
+}
+
+/* ---------- 도보 길찾기 임베드 (ownify.js ⑧-3과 세트, PC 전용) ---------- */
+/* 네이버 길찾기 웹페이지를 iframe으로 끼우고 왼쪽 경로 패널(453px)을 크롭해 지도만 보이게.
+   모바일 UA에선 네이버가 iframe을 거부하므로 JS가 아예 주입하지 않음. */
+.onf-directions {
+  overflow: hidden;
+  border-radius: 22px;
+  box-shadow: 0 14px 40px rgba(111, 74, 47, .18);
+  height: 420px;
+  margin-top: 18px;
+}
+.onf-directions-frame {
+  border: 0;
+  display: block;
+  width: calc(100% + 453px);
+  max-width: none;
+  height: 100%;
+  margin-left: -453px;
 }
 
 

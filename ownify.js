@@ -331,11 +331,29 @@
       if (cls.indexOf('onf-map-') === -1) c.remove();
     });
   }
+  // ⑧-3 지도 아래 도보 길찾기 임베드 (잠실역 2호선 → 오니파이). PC 전용 —
+  // 네이버 길찾기 웹페이지를 iframe으로 끼우고 왼쪽 경로 패널은 CSS(.onf-directions)로 크롭.
+  // (모바일 UA는 네이버가 iframe을 거부해 빈 화면이 되므로 아예 주입하지 않음)
+  var ONF_DIRECTIONS = 'https://map.naver.com/p/directions/3zmN0C,2AJOIJ,%EC%9E%A0%EC%8B%A4%EC%97%AD%202%ED%98%B8%EC%84%A0,216,SUBWAY_STATION/3zmDLo,2AJGJW,%EC%98%A4%EB%8B%88%ED%8C%8C%EC%9D%B4,2094664237,PLACE_POI/-/walk?c=16.00,0,0,0,dh';
+  function ensureDirections(block) {
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
+    var next = block.nextElementSibling;
+    if (next && next.classList && next.classList.contains('onf-directions')) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'onf-directions';
+    var f = document.createElement('iframe');
+    f.className = 'onf-directions-frame';
+    f.loading = 'lazy';
+    f.src = ONF_DIRECTIONS;
+    wrap.appendChild(f);
+    block.insertAdjacentElement('afterend', wrap);
+  }
   function ensureCustomMap() {
     var block = document.querySelector('[data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]');
     if (!block) return;
     document.body.classList.add('onf-map-custom');
     cleanBlock(block);
+    ensureDirections(block);
     // 우피가 원본 지도를 다시 그려 넣는 즉시 또 제거 (같은 프레임 → 깜빡임 없음, 1회만 등록)
     if (!block.__onfMapGuard) {
       block.__onfMapGuard = new MutationObserver(function () { cleanBlock(block); });
