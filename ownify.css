@@ -1027,14 +1027,8 @@ body.onf-map-api-on .onf-map-link { display: block; }
 .onf-step-wrap.onf-step-hidden { display: none !important; }
 /* 우피가 컬럼 사이에 넣는 빈 간격 요소 숨김(화살표로 대체, 이중 간격·넘침 방지) */
 .onf-steps-flex > *:not(.onf-step-wrap):not(.onf-step-arrow) { display: none !important; }
-/* 래퍼 안 컬럼·카드가 세로로 꽉 차게 */
-.onf-steps-flex .notion-column-block { flex: 1 1 auto !important; }
-.onf-steps-flex .notion-column-block > div,
-.onf-steps-flex .notion-callout-block,
-.onf-steps-flex .notion-callout-block > div,
-.onf-steps-flex .notion-callout-block [class*="CalloutBlock_content"] {
-  height: 100% !important;
-}
+/* 높이 균등은 ownify.js ⑨가 매 틱 '가장 큰 카드 높이'를 재서 min-height로 맞춘다
+   (CSS height:100% 체인은 상황 따라 깨져서 JS로 확실히 — Peter 지시 2026-07-03) */
 
 /* 카드 사이 화살표 (좌→우 살짝 넛지) — 칸을 카드 높이만큼 늘리고 그 안에서 이미지를 세로 중앙 */
 .onf-step-arrow {
@@ -1046,8 +1040,8 @@ body.onf-map-api-on .onf-map-link { display: block; }
   padding: 0 4px;
 }
 .onf-step-arrow img {
-  width: 50px;
-  height: 50px;
+  width: 34px;
+  height: 34px;
   display: block;
   animation: onfArrowNudge 1.2s ease-in-out infinite;
 }

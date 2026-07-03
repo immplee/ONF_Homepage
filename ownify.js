@@ -492,6 +492,18 @@
         });
       }
     });
+    // 높이 균등: 보이는 카드들의 '자연 높이'를 재서 가장 큰 값으로 min-height 통일.
+    // (min-height를 비웠다가 다시 재므로 몇 장이 보이든 항상 자동으로 같아짐)
+    var contents = [];
+    cols.forEach(function (c, i) {
+      if (i < stepsShown) {
+        var ct = c.querySelector('.notion-callout-block [class*="CalloutBlock_content"]');
+        if (ct) { ct.style.minHeight = ''; contents.push(ct); }
+      }
+    });
+    var maxH = 0;
+    contents.forEach(function (ct) { if (ct.offsetHeight > maxH) maxH = ct.offsetHeight; });
+    if (maxH > 0) contents.forEach(function (ct) { ct.style.minHeight = maxH + 'px'; });
   }
   setInterval(ensureSteps, 700);
   ensureSteps();
