@@ -313,23 +313,24 @@
     new naver.maps.Marker({ position: pos, map: map, title: '오니파이' });
     document.body.classList.add('onf-map-api-on');
   }
-  // 폐기된 네이버 iframe을 DOM에서 즉시 제거 (CSS 숨김은 우피 재렌더와 경쟁해 깜빡임 →
-  // 아예 제거). 우피가 다시 그려 넣을 때마다 MutationObserver가 같은 프레임에 또 제거한다.
-  function killNaverIframe(block) {
-    block.querySelectorAll('iframe[src*="map.naver.com"]').forEach(function (f) {
-      var wrap = f.closest('div');
-      (wrap && wrap !== block ? wrap : f).remove();
+  // 우피가 렌더한 원본 지도 iframe(+빈 래퍼)을 DOM에서 제거하고 내 요소만 남긴다.
+  // CSS 숨김은 재렌더와 경쟁해 깜빡임 → 아예 제거. 빈 래퍼가 남으면 API 지도를 아래로
+  // 밀어내 잘리므로, iframe 유무와 상관없이 "내가 안 만든 직속 자식"을 통째로 제거한다.
+  function cleanBlock(block) {
+    Array.prototype.slice.call(block.children).forEach(function (c) {
+      var cls = c.className && c.className.toString ? c.className.toString() : '';
+      if (cls.indexOf('onf-map-') === -1) c.remove();
     });
   }
   function ensureCustomMap() {
     var block = document.querySelector('[data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]');
     if (!block) return;
     document.body.classList.add('onf-map-custom');
-    killNaverIframe(block);
-    // 이 블록에 iframe이 다시 붙는 즉시 제거 (1회만 등록)
+    cleanBlock(block);
+    // 우피가 원본 지도를 다시 그려 넣는 즉시 또 제거 (같은 프레임 → 깜빡임 없음, 1회만 등록)
     if (!block.__onfMapGuard) {
-      block.__onfMapGuard = new MutationObserver(function () { killNaverIframe(block); });
-      block.__onfMapGuard.observe(block, { childList: true, subtree: true });
+      block.__onfMapGuard = new MutationObserver(function () { cleanBlock(block); });
+      block.__onfMapGuard.observe(block, { childList: true });
     }
     // 지도 우하단 '네이버지도에서 보기' 버튼 (플레이스 사진·리뷰·길찾기로 연결)
     if (!block.querySelector('.onf-map-link')) {
