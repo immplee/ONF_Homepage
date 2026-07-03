@@ -465,7 +465,7 @@
         if (isNext && !bubble) {
           var b = document.createElement('div');
           b.className = 'onf-step-bubble';
-          b.textContent = '눌러서 다음 단계를 확인해보세요 👆';
+          b.textContent = '눌러서 다음 단계를 확인해보세요 👆🏻';
           content.appendChild(b);
         } else if (!isNext && bubble) {
           bubble.remove();

@@ -1013,8 +1013,24 @@ body.onf-map-api-on .onf-map-link { display: block; }
 [data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block > div {
   height: 100% !important;
 }
-/* 카드 행: 보이는 카드끼리 같은 높이 + 화살표 세로중앙 */
+/* 카드 행: 보이는 카드끼리 같은 높이(stretch) */
 .onf-steps-flex { align-items: stretch !important; }
+/* 컬럼 래퍼(우피 해시 클래스)를 ①폭 균등 분배(넘침 방지) ②세로 flex로 만들어
+   내부 카드가 래퍼 높이를 꽉 채우게(짧은 카드 해소). 화살표는 제외. */
+.onf-steps-flex > *:not(.onf-step-arrow) {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+/* 래퍼 안 컬럼·카드가 세로로 꽉 차게 */
+.onf-steps-flex .notion-column-block { flex: 1 1 auto !important; }
+.onf-steps-flex .notion-column-block > div,
+.onf-steps-flex .notion-callout-block,
+.onf-steps-flex .notion-callout-block > div,
+.onf-steps-flex .notion-callout-block [class*="CalloutBlock_content"] {
+  height: 100% !important;
+}
 
 /* 카드 사이 화살표 (좌→우 살짝 넛지) — 칸을 카드 높이만큼 늘리고 그 안에서 이미지를 세로 중앙 */
 .onf-step-arrow {
@@ -1033,10 +1049,9 @@ body.onf-map-api-on .onf-map-link { display: block; }
 }
 @keyframes onfArrowNudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
 
-/* 통통 튀는 '다음 클릭' 카드 */
-.onf-step-poke { cursor: pointer; animation: onfPoke 1.25s ease-in-out infinite; }
+/* '다음 클릭' 카드 — 카드는 가만히, 커서만 포인터 (통통은 말풍선만, Peter 지시 2026-07-03) */
+.onf-step-poke { cursor: pointer; }
 .onf-step-poke [class*="CalloutBlock_content"] { cursor: pointer !important; }
-@keyframes onfPoke { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
 
 /* 말풍선 (활성 카드 우측 상단)
    ⚠️ 콜아웃 내부 'div{background:none}' 규칙보다 특이도 높게(조상 클래스 3개) 지정해야 배경이 산다 */
