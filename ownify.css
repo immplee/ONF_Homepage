@@ -709,6 +709,14 @@ html, body {
 }
 [data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] div { height: 100% !important; }
 [data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] iframe { width: 100% !important; height: 100% !important; }
+/* 모바일: 지도가 화면을 다 차지하면 스크롤 중 손가락이 지도에 잡혀 방해됨(Peter 2026-07-03)
+   → 세로 높이를 화면 절반 이하로 축소. 핀은 지도 중심이라 잘려도 계속 보임. */
+@media (max-width: 899px) {
+  [data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"] {
+    height: 340px !important;
+    min-height: 0 !important;
+  }
+}
 
 /* 2열 상단 정렬: 오른쪽 '지하철로 오시는 길'이 왼쪽 주소와 같은 높이에서 시작
    (섹션 5의 첫 컬럼 세로중앙 규칙을 이 페이지에서만 덮어씀 — 동일 특이도, 뒤에 있어 이김) */
