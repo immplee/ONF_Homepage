@@ -464,6 +464,12 @@
     var cl = document.querySelector('[data-block-id="' + STEP_COL + '"]');
     if (!cl) { stepBlockSeen = false; return; }
     if (!stepBlockSeen) { stepBlockSeen = true; stepsShown = 1; }  // 페이지 재진입 시 처음부터(타자기 완료표시는 노드 dataset이라 새 노드면 자동 재실행)
+    // 좌측 줄 맞춤: 우피 기본 CSS가 이 컬럼블록에 margin-left:-18px+초과폭을 걸어 다른 카드보다
+    // 왼쪽으로 삐져나감. CSS !important로도 못 이겨(우피 규칙 우선) 인라인으로 콘텐츠 폭에 맞춘다.
+    cl.style.setProperty('margin-left', '0', 'important');
+    cl.style.setProperty('margin-right', '0', 'important');
+    cl.style.setProperty('width', '100%', 'important');
+    cl.style.setProperty('max-width', '100%', 'important');
     var cols = cl.querySelectorAll('.notion-column-block');
     if (cols.length < 3) return;
     var total = cols.length;
