@@ -432,9 +432,13 @@
     var total = cols.length;
     // 컬럼은 개별 래퍼(block)에 싸여 있고, 진짜 가로 flex 행은 그 래퍼들의 부모다.
     // → flex 행을 찾고, 각 컬럼의 "flex 행 직속 자식(래퍼)"을 기준으로 조작한다.
-    var w0 = cols[0];
-    while (w0.parentElement && getComputedStyle(w0.parentElement).display !== 'flex') w0 = w0.parentElement;
-    var flexRow = w0.parentElement;
+    // 진짜 가로 flex 행 = "모든 카드를 담은" flex 조상. (래퍼를 flex로 만들어도 오인 안 하게
+    // '마지막 카드까지 포함'을 조건에 넣는다 — 래퍼는 카드 1개만 담아 걸러진다.)
+    var last = cols[cols.length - 1];
+    var flexRow = cols[0].parentElement;
+    while (flexRow && !(getComputedStyle(flexRow).display === 'flex' && flexRow !== last && flexRow.contains(last))) {
+      flexRow = flexRow.parentElement;
+    }
     if (!flexRow) return;
     flexRow.classList.add('onf-steps-flex');
     function wrapperOf(col) { var w = col; while (w.parentElement && w.parentElement !== flexRow) w = w.parentElement; return w; }
