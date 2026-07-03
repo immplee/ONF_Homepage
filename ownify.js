@@ -117,34 +117,35 @@
   }).observe(document.body, { childList: true, subtree: true });
   ensureFooter();
 
-  /* ---------- ④ 탑바 우측 상담 CTA ---------- */
-  // 로고(왼쪽 40px)와 대칭인 오른쪽 40px 위치. 문구·화살표는 본문 띠 배너(.onf-band)와 동일.
-  // 스타일은 ownify.css 11번 섹션(.onf-top-cta)과 세트. 1100px 이하에선 CSS가 숨김.
+  /* ---------- ④ 우하단 플로팅 상담 CTA ---------- */
+  // 2026-07-03 SNS 버튼과 자리 맞교환: 상담 CTA는 우하단 플로팅, SNS는 탑바 우측.
+  // 문구·화살표는 본문 띠 배너(.onf-band)와 동일. 스타일은 ownify.css 11번 섹션(.onf-float-cta)과 세트.
   // 홈(/)에는 본문 띠 배너가 있으므로 하위 페이지(/how·/where 등)에서만 표시 (2026-07-02 Peter 지시).
+  // 로고 왼쪽 여백 측정(--onf-cta-right)은 유지 — 이제 SNS 버튼(우상단) 위치가 이 값을 쓴다.
   function ensureTopCta() {
     var bar = document.querySelector('.notion-topbar');
-    if (!bar) return;
-    // CTA 오른쪽 여백 = 로고 왼쪽 여백 (좌우 대칭 자동 유지 — 2026-07-03 Peter 지시)
-    var logo = bar.querySelector('img:not(.onf-band-arrow)');
-    if (logo) {
-      var lx = Math.round(logo.getBoundingClientRect().left);
-      if (lx > 0) document.documentElement.style.setProperty('--onf-cta-right', lx + 'px');
+    if (bar) {
+      var logo = bar.querySelector('img:not(.onf-band-arrow)');
+      if (logo) {
+        var lx = Math.round(logo.getBoundingClientRect().left);
+        if (lx > 0) document.documentElement.style.setProperty('--onf-cta-right', lx + 'px');
+      }
     }
     var isHome = location.pathname === '/' || location.pathname === '';
-    var existing = bar.querySelector('.onf-top-cta');
+    var existing = document.querySelector('.onf-float-cta');
     if (isHome) {                     // 홈이면 있던 것도 제거(SPA 이동 대응)
       if (existing) existing.remove();
       return;
     }
     if (existing) return;
     var a = document.createElement('a');
-    a.className = 'onf-top-cta';
+    a.className = 'onf-float-cta';
     a.href = 'https://own-ify.notion.site/309d6a6296ae80ebbedfe2bfdeabc5db?pvs=105'; // 상담 신청서(띠 배너와 동일)
     a.innerHTML = '👨🏻‍💻 상담 신청하러 가기 ' +
       '<img class="onf-band-arrow" alt="→" src="https://immplee.github.io/ONF_Homepage/assets/cta-arrow.webp">';
-    bar.appendChild(a);
+    document.body.appendChild(a);
   }
-  // 우피가 탑바를 다시 그릴 수 있어 2초마다 존재 확인 후 재주입
+  // 우피가 페이지를 다시 그릴 수 있어 2초마다 존재 확인 후 재주입
   ensureTopCta();
   setInterval(ensureTopCta, 2000);
 

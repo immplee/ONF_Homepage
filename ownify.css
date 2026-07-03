@@ -375,13 +375,16 @@ html, body {
 }
 
 
-/* ---------- 7. SNS 플로팅 버튼 (우하단) ---------- */
-/* 구조: 체크박스 토글 → :checked 시 아이템 2개가 위로 팝업 */
+/* ---------- 7. SNS 플로팅 버튼 (우상단 — 2026-07-03 상담 CTA와 자리 맞교환) ---------- */
+/* 구조: 체크박스 토글 → :checked 시 아이템들이 아래로 팝업.
+   위치: 탑바 우측(로고 왼쪽 여백과 대칭 — --onf-cta-right는 ownify.js ④가 계산).
+   좁은 화면(≤899px)에서는 예전처럼 우하단 + 위로 팝업 (아래 media 폴백). */
 
 .onf-sns {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
+  right: var(--onf-cta-right, 40px);
+  top: 20px;              /* 탑바 100px의 세로 중앙 */
+  bottom: auto;
   z-index: 9999;
   width: 60px;
   height: 60px;
@@ -451,33 +454,44 @@ html, body {
   background: transparent;
 }
 
-/* 열렸을 때: 위로 튀어오르며 등장 (살짝 기울였다가 호버 시 정렬)
-   순서(아래→위): 카카오톡 채널(-64, ownify.js ⑥이 주입) → 블로그(-120) → 인스타(-176) */
+/* 열렸을 때: 아래로 떨어지며 등장 (살짝 기울였다가 호버 시 정렬)
+   순서(위→아래): 카카오톡 채널(+64, ownify.js ⑥이 주입) → 블로그(+120) → 인스타(+176) */
 .onf-sns-cb:checked ~ .onf-sns-k {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(-64px) rotate(-8deg);
+  transform: translateY(64px) rotate(-8deg);
 }
 .onf-sns-cb:checked ~ .onf-sns-a {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(-120px) rotate(8deg);
+  transform: translateY(120px) rotate(8deg);
   transition-delay: .06s;
 }
 .onf-sns-cb:checked ~ .onf-sns-b {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(-176px) rotate(-8deg);
+  transform: translateY(176px) rotate(-8deg);
   transition-delay: .12s;
 }
 .onf-sns-cb:checked ~ .onf-sns-k:hover {
-  transform: translateY(-64px) rotate(0) scale(1.08);
+  transform: translateY(64px) rotate(0) scale(1.08);
 }
 .onf-sns-cb:checked ~ .onf-sns-a:hover {
-  transform: translateY(-120px) rotate(0) scale(1.08);
+  transform: translateY(120px) rotate(0) scale(1.08);
 }
 .onf-sns-cb:checked ~ .onf-sns-b:hover {
-  transform: translateY(-176px) rotate(0) scale(1.08);
+  transform: translateY(176px) rotate(0) scale(1.08);
+}
+
+/* 좁은 화면 폴백: 우하단으로 복귀 + 위로 팝업 (탑바가 좁아 겹치므로) */
+@media (max-width: 899px) {
+  .onf-sns { top: auto; bottom: 24px; right: 24px; }
+  .onf-sns-cb:checked ~ .onf-sns-k { transform: translateY(-64px) rotate(-8deg); }
+  .onf-sns-cb:checked ~ .onf-sns-a { transform: translateY(-120px) rotate(8deg); }
+  .onf-sns-cb:checked ~ .onf-sns-b { transform: translateY(-176px) rotate(-8deg); }
+  .onf-sns-cb:checked ~ .onf-sns-k:hover { transform: translateY(-64px) rotate(0) scale(1.08); }
+  .onf-sns-cb:checked ~ .onf-sns-a:hover { transform: translateY(-120px) rotate(0) scale(1.08); }
+  .onf-sns-cb:checked ~ .onf-sns-b:hover { transform: translateY(-176px) rotate(0) scale(1.08); }
 }
 
 
@@ -702,47 +716,45 @@ html, body {
   align-items: flex-start !important;
 }
 
-/* ---------- 11. 탑바 우측 상담 CTA (ownify.js ④와 세트) ---------- */
-/* 로고(왼쪽 40px)와 대칭 위치. 글자 굵기 600 = 탑메뉴와 동일 */
-.notion-topbar a.onf-top-cta {
-  position: absolute;
-  /* 오른쪽 여백 = 로고의 왼쪽 여백 (ownify.js ④가 로고 위치를 재서 --onf-cta-right로 전달) */
-  right: var(--onf-cta-right, 40px);
-  top: 50%;
-  transform: translateY(-50%);
+/* ---------- 11. 우하단 플로팅 상담 CTA (ownify.js ④와 세트) ---------- */
+/* 2026-07-03 SNS 버튼과 자리 맞교환 — 탑바 우측 → 우하단 플로팅.
+   글자 굵기 600, 스타일은 띠 배너와 동일 톤. 하위 페이지 전용(홈은 띠 배너가 담당). */
+a.onf-float-cta {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   background: #D2691E;
-  color: #FFF7EE !important;   /* 탑바 링크 오렌지 규칙(2번 섹션)보다 우선 */
-  border-radius: 16px;
-  padding: 11px 18px;
+  color: #FFF7EE !important;
+  border-radius: 18px;
+  padding: 14px 20px;
+  font-family: 'Paperlogy', 'Apple SD Gothic Neo', sans-serif;
   font-size: 15px !important;
   font-weight: 600 !important;
   text-decoration: none;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(58, 36, 21, .18);
+  box-shadow: 0 6px 18px rgba(58, 36, 21, .28);
   transition: background .2s, transform .2s;
-  z-index: 5;
+  z-index: 9998;
 }
-.notion-topbar a.onf-top-cta:hover {
+a.onf-float-cta:hover {
   background: #e0761f;
-  transform: translateY(-50%) scale(1.04);
+  transform: scale(1.04);
 }
-/* 화살표: 로고용 48px 규칙(.notion-topbar img)을 이기고 16px로 (흔들림 애니메이션은 .onf-band-arrow 공용) */
-.notion-topbar .onf-top-cta img.onf-band-arrow {
+a.onf-float-cta img.onf-band-arrow {
   height: 16px !important;
   width: auto !important;
 }
-/* 표시 조건: 900px 이상 + 메뉴가 탑바 안에 있을 때(분리 전).
-   900~1100px에선 아래 규칙이 메뉴를 왼쪽으로 밀어 CTA 자리를 확보한다. */
+/* 좁은 화면에선 숨김 — SNS 버튼이 우하단으로 복귀하는 자리와 겹침 (섹션 7 폴백과 세트) */
 @media (max-width: 899px) {
-  .notion-topbar a.onf-top-cta { display: none !important; }
+  a.onf-float-cta { display: none !important; }
 }
-body.onf-nav-split .notion-topbar a.onf-top-cta { display: none !important; }
+/* SNS 버튼(우상단)이 탑바 안에 자리하도록 900~1100px에선 메뉴를 살짝 왼쪽으로 */
 @media (min-width: 900px) and (max-width: 1100px) {
   .notion-topbar[style*="grid-template"] > div:nth-child(2) {
-    margin-right: 250px !important;   /* 2번 섹션의 40px 대신 — CTA(약 190px+여백) 공간 */
+    margin-right: 130px !important;   /* 2번 섹션의 40px 대신 — SNS 버튼(60px+여백) 공간 */
   }
 }
 
