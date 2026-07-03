@@ -312,15 +312,21 @@
     var map = new naver.maps.Map(d, { center: pos, zoom: 17 });
     new naver.maps.Marker({ position: pos, map: map, title: '오니파이' });
     document.body.classList.add('onf-map-api-on');
-    // 컨테이너가 뒤늦게 크기를 잡으면(우피 레이아웃·폰트 로드) 지도가 좁게 초기화된 채로
-    // 남을 수 있어, 리사이즈를 트리거해 타일을 다시 꽉 채운다.
-    function refresh() {
-      naver.maps.Event.trigger(map, 'resize');
-      map.setCenter(pos);
+    // 자가 교정: 지도의 내부 크기가 컨테이너와 어긋나면(좁게 초기화됐거나 뒤늦게 커짐)
+    // 리사이즈를 트리거해 타일을 다시 꽉 채운다. 크기가 맞으면 아무것도 안 함
+    // (사용자가 지도를 움직여도 방해하지 않기 위해 "어긋났을 때만" 고친다).
+    function heal() {
+      var sz = map.getSize();                 // 지도가 인지한 크기
+      var cw = d.clientWidth, ch = d.clientHeight;
+      if (cw > 0 && ch > 0 && (Math.abs(sz.width - cw) > 2 || Math.abs(sz.height - ch) > 2)) {
+        naver.maps.Event.trigger(map, 'resize');
+        map.setCenter(pos);
+      }
     }
-    [200, 600, 1500].forEach(function (ms) { setTimeout(refresh, ms); });
-    if (window.ResizeObserver) new ResizeObserver(refresh).observe(d);
-    window.addEventListener('resize', refresh);
+    d.__onfHeal = heal;                        // ensureCustomMap 1초 루프가 매번 호출
+    [100, 300, 700, 1500, 3000].forEach(function (ms) { setTimeout(heal, ms); });
+    if (window.ResizeObserver) new ResizeObserver(heal).observe(d);
+    window.addEventListener('resize', heal);
   }
   // 우피가 렌더한 원본 지도 iframe(+빈 래퍼)을 DOM에서 제거하고 내 요소만 남긴다.
   // CSS 숨김은 재렌더와 경쟁해 깜빡임 → 아예 제거. 빈 래퍼가 남으면 API 지도를 아래로
@@ -381,6 +387,9 @@
         '<span>지도를 탭하면 네이버지도가 열려요</span>';
       block.appendChild(a);
     }
+    // 이미 만든 지도가 좁게 굳었으면 매 틱 자가 교정 (크기 맞으면 아무 일 안 함)
+    var apiDiv = block.querySelector('.onf-map-api');
+    if (apiDiv && apiDiv.__onfHeal) apiDiv.__onfHeal();
     // ⑧-2 네이버 지도 API 로드 (1회) 후 지도 생성
     if (window.naver && window.naver.maps) { buildApiMap(block); return; }
     if (window.__onfMapsLoading) return;
