@@ -426,8 +426,18 @@
   var stepsShown = 1;      // 현재 보이는 카드 수
   var stepBlockSeen = false;
   var stepArrowCount = 0;  // 화살표 개수(바뀔 때 애니메이션 동기화)
-  var stepsSettled = false;   // 레이아웃 안정 여부(타자기 관찰 시작 게이트)
-  var stepsPending = [];      // 안정 전 대기 중인 관찰 준비 함수들
+  var stepsSettled = false;   // 레이아웃 안정 여부(타자기 시작 게이트)
+  var stepReveals = [];       // 타자기 대기: {card, reveal, done} — 카드 하단이 화면에 들어오면 발동
+  // ⑨-2 폴링: 레이아웃 안정 후, 등록된 카드의 하단이 뷰포트 안에 들어오면 타자기 시작
+  setInterval(function () {
+    if (!stepsSettled) return;
+    for (var i = 0; i < stepReveals.length; i++) {
+      var e = stepReveals[i];
+      if (e.done || !e.card) continue;
+      var r = e.card.getBoundingClientRect();
+      if (r.height > 0 && r.bottom > 0 && r.bottom <= window.innerHeight) { e.done = true; e.reveal(); }
+    }
+  }, 200);
   // 카드 본문(마지막 텍스트 블록)을 왼쪽부터 한 글자씩 나타냄. 글자 자리는 처음부터 차지해
   // (opacity로만 노출) 높이 균등·줄바꿈이 흔들리지 않는다. 카드가 보일 때 1회만.
   // ⚠️ 완료 표시는 '노드 자체'(dataset)에 — 우피가 로드 초기에 콜아웃을 갈아치우므로
@@ -467,26 +477,17 @@
         j++;
       }, 42);
     }
-    // 관찰은 '레이아웃 안정 후' 시작 — 로드 중 배너 이미지가 늦게 실려 카드가 잠깐 위로
-    // 올라왔다 내려가며 관찰자가 조기 발동하는 것 방지. 안정 뒤 관찰자의 첫 보고가
-    // 현재(정착된) 위치를 알려주므로, 이미 화면에 다 보이면 즉시·아니면 스크롤 진입 시 타이핑.
-    function arm() {
-      var obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting && e.intersectionRatio >= 0.99) { reveal(); obs.disconnect(); }
-        });
-      }, { threshold: [0, 0.5, 0.99, 1] });
-      obs.observe(body);
-    }
-    if (stepsSettled) arm(); else stepsPending.push(arm);
+    // 노출 시작 조건 = '카드 하단이 화면 안에 들어옴' — 폴링(⑨-2 인터벌)이 매번 확인해
+    // 조건 충족 시 reveal 호출. 레이아웃 안정(stepsSettled) 전에는 발동 안 함.
+    stepReveals.push({ card: callout, reveal: reveal, done: false });
   }
   function ensureSteps() {
     var cl = document.querySelector('[data-block-id="' + STEP_COL + '"]');
     if (!cl) { stepBlockSeen = false; return; }
     if (!stepBlockSeen) {  // 페이지 재진입 시 처음부터(타자기 완료표시는 노드 dataset이라 새 노드면 자동 재실행)
       stepBlockSeen = true; stepsShown = 1;
-      stepsSettled = false; stepsPending = [];   // 레이아웃 안정 타이머 재시작
-      setTimeout(function () { stepsSettled = true; stepsPending.forEach(function (f) { f(); }); stepsPending = []; }, 1800);
+      stepsSettled = false; stepReveals = [];    // 레이아웃 안정 타이머 재시작
+      setTimeout(function () { stepsSettled = true; }, 1800);
     }
     // 좌측 줄 맞춤: 우피 기본 CSS가 이 컬럼블록에 margin-left:-18px+초과폭을 걸어 다른 카드보다
     // 왼쪽으로 삐져나감. CSS !important로도 못 이겨(우피 규칙 우선) 인라인으로 콘텐츠 폭에 맞춘다.
