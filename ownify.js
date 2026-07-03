@@ -453,12 +453,24 @@
       body.appendChild(s);
       spans.push(s);
     }
-    var j = 0;
-    var iv = setInterval(function () {
-      if (j >= spans.length) { clearInterval(iv); return; }
-      spans[j].classList.add('on');
-      j++;
-    }, 42);
+    // 실제 타이핑(노출)은 '카드가 화면에 다 보이면' 시작 — 스크롤로 진입할 때 애니메이션이 보이게.
+    // (글자 자리는 위에서 이미 잡아둬 레이아웃은 안정)
+    var started = false;
+    function reveal() {
+      if (started) return; started = true;
+      var j = 0;
+      var iv = setInterval(function () {
+        if (j >= spans.length) { clearInterval(iv); return; }
+        spans[j].classList.add('on');
+        j++;
+      }, 42);
+    }
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && e.intersectionRatio >= 0.99) { reveal(); obs.disconnect(); }
+      });
+    }, { threshold: [0, 0.5, 0.99, 1] });
+    obs.observe(body);
   }
   function ensureSteps() {
     var cl = document.querySelector('[data-block-id="' + STEP_COL + '"]');
