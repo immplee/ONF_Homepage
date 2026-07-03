@@ -212,6 +212,18 @@
   }).observe(document.body, { childList: true, subtree: true });
   updateClearTop();
 
+  /* ---------- ②-2 SNS 인스타 버튼 — 오픈 전 알림 (페이지 이동 차단) ---------- */
+  // SNS 위젯(우피 head 인라인)의 인스타(a.onf-sns-b)는 아직 실제 계정이 없어
+  // 자리표시 href 상태 → 클릭해도 이동하지 않고 준비 중 알림만 띄운다.
+  // 인스타 오픈하면: 이 블록을 지우고 우피 head의 .onf-sns-b href를 실제 주소로 교체.
+  document.addEventListener('click', function (e) {
+    var b = e.target && e.target.closest && e.target.closest('.onf-sns-b');
+    if (!b) return;
+    e.preventDefault();
+    e.stopPropagation();
+    alert('📸 인스타그램 오픈 준비 중입니다 🙏🏻');
+  }, true);
+
   /* ---------- ⑥ SNS 플로팅에 카카오톡 채널 추가 ---------- */
   // SNS 위젯 HTML은 우피 head에 인라인이라(레포 밖) 카카오 항목은 여기서 주입.
   // 위치·등장 애니메이션은 ownify.css 7번 섹션(.onf-sns-k)과 세트 — 메인 버튼 바로 위 첫 슬롯.
@@ -237,7 +249,7 @@
           '<div class="onf-qr-card">' +
             '<p class="onf-qr-title">카카오톡 상담</p>' +
             '<img src="https://cdn.jsdelivr.net/gh/immplee/ONF_Homepage@fb90fba/assets/kakao-chat-qr.png" alt="카카오톡 채팅 QR">' +
-            '<p class="onf-qr-hint">휴대폰 카메라로 QR을 찍으면<br>오니파이와의 카카오톡 채팅이 바로 열려요</p>' +
+            '<p class="onf-qr-hint">휴대폰 카메라로 QR코드를 찍으면<br>오니파이 카카오톡 채널로 연결됩니다</p>' +
             '<a href="http://pf.kakao.com/_xcBxaPX/chat" target="_blank" rel="noopener">카카오 계정으로 웹에서 열기 →</a>' +
           '</div>';
         o.addEventListener('click', function (e2) { if (e2.target === o) o.remove(); });
