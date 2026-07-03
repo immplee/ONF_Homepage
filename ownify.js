@@ -340,11 +340,16 @@
   // ⑧-3 지도 아래 도보 길찾기 임베드 (잠실역 2호선 → 오니파이). PC 전용 —
   // 네이버 길찾기 웹페이지를 iframe으로 끼우고 왼쪽 경로 패널은 CSS(.onf-directions)로 크롭.
   // (모바일 UA는 네이버가 iframe을 거부해 빈 화면이 되므로 아예 주입하지 않음)
-  var ONF_DIRECTIONS = 'https://map.naver.com/p/directions/3zmN0C,2AJOIJ,%EC%9E%A0%EC%8B%A4%EC%97%AD%202%ED%98%B8%EC%84%A0,216,SUBWAY_STATION/3zmDLo,2AJGJW,%EC%98%A4%EB%8B%88%ED%8C%8C%EC%9D%B4,2094664237,PLACE_POI/-/walk?c=16.00,0,0,0,dh';
+  var ONF_DIRECTIONS = 'https://map.naver.com/p/directions/3zmKkz,2AJN93,%EC%9E%A0%EC%8B%A4%EC%97%AD(%EB%A0%88%EC%9D%B4%ED%81%AC%ED%8C%B0%EB%A6%AC%EC%8A%A4)4%EB%B2%88%EC%B6%9C%EA%B5%AC,21405356,PLACE_POI/3zmDLo,2AJGJW,%EC%98%A4%EB%8B%88%ED%8C%8C%EC%9D%B4,2094664237,PLACE_POI/-/walk?c=16.00,0,0,0,dh';
   function ensureDirections(block) {
     if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
     var next = block.nextElementSibling;
-    if (next && next.classList && next.classList.contains('onf-directions')) return;
+    if (next && next.classList && next.classList.contains('onf-directions')) {
+      // 이미 있으면 URL만 최신으로 (경로 변경 대응)
+      var ex = next.querySelector('.onf-directions-frame');
+      if (ex && ex.src !== ONF_DIRECTIONS) ex.src = ONF_DIRECTIONS;
+      return;
+    }
     var wrap = document.createElement('div');
     wrap.className = 'onf-directions';
     var f = document.createElement('iframe');
