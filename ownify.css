@@ -841,13 +841,15 @@ body.onf-clear-top .page_cover {
    세로 위치(object-position)도 강제 통일 — 노션에서 페이지마다 커버 위치를
    다르게 잡아도 하위 페이지는 항상 같은 crop (이미지 통일은 ownify.js ⑤ ONF_COVER). */
 body.onf-clear-top.onf-sub .page_cover {
-  height: 300px !important;
+  /* 300px 띠 → 화면폭 비례(30vw)로 확대: 통합 배너의 데스크 소품이 잘리지 않고
+     사진 아래끝까지 보이게 (2026-07-03 Peter 결정 — 경계를 아래로) */
+  height: clamp(320px, 30vw, 540px) !important;
 }
 /* 세로 위치는 홈·하위 공통 한 값 — "위치 일정하게"(2026-07-03 Peter 지시).
    78% = 통합 배너(데스크 소품이 하단)에 맞춘 값: 하위 300px 띠에도 소품이 보임(실측) */
 body.onf-clear-top .page_cover {
   object-fit: cover !important;
-  object-position: center 78% !important;
+  object-position: center bottom !important;  /* 사진 아래끝을 배너 바닥에 고정 */
 }
 
 
