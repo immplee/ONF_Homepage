@@ -606,38 +606,4 @@
   ensureSteps2();
 
 
-  /* ---------- ⑩ 국기 이모지 펄럭임 (S자 물결) ---------- */
-  // 우피는 제목 속 이모지를 <img>로 렌더링한다. 단일 이미지는 S자로 휠 수 없으므로
-  // 국기를 세로 조각 7개로 잘라(배경이미지+위치 분할) 각 조각을 시차를 두고
-  // 오르내리게 한다 → 왼쪽에서 오른쪽으로 흐르는 진짜 물결. ownify.css .onf-flagwave와 세트.
-  var FLAG_SLICES = 7;
-  function makeFlagWave(img) {
-    var r = img.getBoundingClientRect();
-    if (!r.width || !r.height) return false;      // 아직 로드 전이면 다음 틱에
-    var W = Math.round(r.width), Hh = Math.round(r.height);
-    var wrap = document.createElement('span');
-    wrap.className = 'onf-flagwave';
-    wrap.style.width = W + 'px';
-    wrap.style.height = Hh + 'px';
-    for (var i = 0; i < FLAG_SLICES; i++) {
-      var s = document.createElement('span');
-      s.className = 'onf-flagwave-s';
-      s.style.backgroundImage = 'url("' + img.src + '")';
-      s.style.backgroundSize = W + 'px ' + Hh + 'px';
-      s.style.backgroundPosition = (-i * W / FLAG_SLICES) + 'px 0';
-      s.style.animationDelay = (i * 0.13) + 's';
-      wrap.appendChild(s);
-    }
-    img.replaceWith(wrap);
-    return true;
-  }
-  function ensureFlagWave() {
-    document.querySelectorAll('.notion-page-content :is(h1,h2,h3)').forEach(function (h) {
-      if ((h.textContent || '').indexOf('한국인 선생님') === -1) return;
-      h.querySelectorAll('img').forEach(function (im) { makeFlagWave(im); });
-    });
-  }
-  ensureFlagWave();
-  setInterval(ensureFlagWave, 1500);
-
 })();
