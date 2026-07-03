@@ -362,6 +362,59 @@
     clearInterval(snsK);
   }, 400);
 
+  /* ---------- ⑥-2 SNS를 탑 메뉴 항목으로 (2026-07-04 Peter 지시) ---------- */
+  // 둥근 SNS 플로팅 버튼 대신 메뉴(How·Where·QnA·Reviews) 옆에 'SNS' 항목을 넣고,
+  // 클릭하면 기존 위젯의 아이콘들(카카오→블로그→인스타)이 그 아래로 떨어진다.
+  // 위젯(.onf-sns)은 그대로 재사용 — 컨테이너를 메뉴 항목 위치로 옮겨 앵커로 쓴다.
+  function positionSnsDropdown() {
+    var sns = document.querySelector('.onf-sns');
+    var item = document.querySelector('.onf-sns-menu');
+    if (!sns || !item || item.offsetHeight === 0) return;
+    var r = item.getBoundingClientRect();
+    sns.style.setProperty('left', Math.round(r.left + r.width / 2 - 30) + 'px', 'important');
+    sns.style.setProperty('top', Math.round(r.top + r.height / 2 - 30) + 'px', 'important');
+    sns.style.setProperty('right', 'auto', 'important');
+    sns.style.setProperty('bottom', 'auto', 'important');
+  }
+  function ensureSnsMenu() {
+    var sns = document.querySelector('.onf-sns');
+    if (!sns) return;
+    var cb = sns.querySelector('.onf-sns-cb');
+    if (!cb) return;
+    // 보이는 메뉴에서 Reviews 링크를 찾아 그 컨테이너에 SNS 항목을 붙인다
+    var links = document.querySelectorAll('.notion-topbar a[href], .notion-topbar ~ div a[href]');
+    var reviews = null;
+    for (var i = 0; i < links.length; i++) {
+      if (/Reviews/.test(links[i].textContent || '') && links[i].offsetHeight > 0) { reviews = links[i]; break; }
+    }
+    if (!reviews) return;
+    var host = reviews.parentElement;
+    var item = document.querySelector('.onf-sns-menu');
+    if (!item || item.parentElement !== host) {
+      if (item) item.remove();
+      item = document.createElement('a');
+      item.className = 'onf-sns-menu';
+      item.textContent = 'SNS';
+      item.addEventListener('click', function (e) {
+        e.preventDefault();
+        cb.checked = !cb.checked;
+        positionSnsDropdown();
+      });
+      host.appendChild(item);
+    }
+    positionSnsDropdown();
+  }
+  // 바깥을 클릭하면 드롭다운 닫기
+  document.addEventListener('click', function (e) {
+    var cb = document.querySelector('.onf-sns-cb');
+    if (!cb || !cb.checked) return;
+    if (e.target.closest && (e.target.closest('.onf-sns') || e.target.closest('.onf-sns-menu'))) return;
+    cb.checked = false;
+  });
+  window.addEventListener('scroll', positionSnsDropdown, true);
+  ensureSnsMenu();
+  setInterval(ensureSnsMenu, 800);
+
   /* ---------- ⑦ 브라우저 탭 제목 ---------- */
   // 우피가 페이지 이동 때마다 탭 제목을 노션 페이지 제목으로 다시 쓰므로 주기적으로 강제.
   // 페이지를 추가하려면 아래 맵에 경로: 제목 한 줄만 추가.
