@@ -423,6 +423,7 @@
   var STEP_EMOJI = 'https://immplee.github.io/ONF_Homepage/assets/how-step-emoji.png';
   var stepsShown = 1;      // 현재 보이는 카드 수
   var stepBlockSeen = false;
+  var stepArrowCount = 0;  // 화살표 개수(바뀔 때 애니메이션 동기화)
   function ensureSteps() {
     var cl = document.querySelector('[data-block-id="' + STEP_COL + '"]');
     if (!cl) { stepBlockSeen = false; return; }
@@ -508,9 +509,49 @@
       var maxH = 0;
       eqContents.forEach(function (ct) { if (ct.offsetHeight > maxH) maxH = ct.offsetHeight; });
       if (maxH > 0) eqContents.forEach(function (ct) { ct.style.minHeight = maxH + 'px'; });
+      // 화살표를 '카드' 세로 정중앙에 맞춤 — 래퍼 여분 높이에 딸리지 않게 카드 기준으로 배치.
+      var arrows = flexRow.querySelectorAll('.onf-step-arrow');
+      if (eqContents.length && arrows.length) {
+        var rowTop = flexRow.getBoundingClientRect().top;
+        var cardTop = eqContents[0].getBoundingClientRect().top;
+        var cardH = eqContents[0].getBoundingClientRect().height;
+        arrows.forEach(function (ar) {
+          ar.style.marginTop = Math.round(cardTop - rowTop) + 'px';
+          ar.style.height = Math.round(cardH) + 'px';
+        });
+      }
+      // 화살표 개수가 바뀌면(새 화살표 등장) 모든 화살표 애니메이션을 같은 순간에 재시작 → 동기화
+      if (arrows.length !== stepArrowCount) {
+        stepArrowCount = arrows.length;
+        arrows.forEach(function (ar) { var im = ar.querySelector('img'); if (im) im.style.animation = 'none'; });
+        void flexRow.offsetHeight;
+        arrows.forEach(function (ar) { var im = ar.querySelector('img'); if (im) im.style.animation = ''; });
+      }
     });
   }
   setInterval(ensureSteps, 700);
   ensureSteps();
+
+  /* ---------- ⑩ 두 번째 How 카드 섹션 높이 균등 ('한국인 선생님' 3장) ---------- */
+  // 순차 등장은 없고 항상 3장. 카드 높이만 자동 균등(테두리는 ownify.css에서 처리).
+  var STEP2_COL = 'd28c173e-5cd4-4e01-b514-0d4a90fe7983';
+  function ensureSteps2() {
+    var cl = document.querySelector('[data-block-id="' + STEP2_COL + '"]');
+    if (!cl) return;
+    var contents = [];
+    cl.querySelectorAll('.notion-callout-block [class*="CalloutBlock_content"]').forEach(function (ct) {
+      if (ct.offsetParent !== null) contents.push(ct);
+    });
+    if (contents.length < 2) return;
+    requestAnimationFrame(function () {
+      contents.forEach(function (ct) { ct.style.minHeight = ''; });
+      void cl.offsetHeight;
+      var maxH = 0;
+      contents.forEach(function (ct) { if (ct.offsetHeight > maxH) maxH = ct.offsetHeight; });
+      if (maxH > 0) contents.forEach(function (ct) { ct.style.minHeight = maxH + 'px'; });
+    });
+  }
+  setInterval(ensureSteps2, 800);
+  ensureSteps2();
 
 })();

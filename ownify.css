@@ -863,6 +863,11 @@ body.onf-clear-top .page_cover {
   object-fit: cover !important;
   object-position: center bottom !important;  /* 사진 아래끝을 배너 바닥에 고정 */
 }
+/* 하위 페이지만 사진을 살짝 아래로(100%→92%) — 컵이 Reviews 메뉴에서 더 떨어지게
+   (2026-07-03 Peter 지시. 홈은 위 bottom 유지) */
+body.onf-clear-top.onf-sub .page_cover {
+  object-position: center 92% !important;
+}
 
 
 /* ---------- 카카오톡 상담 QR 팝업 (PC 전용 — ownify.js ⑥과 세트) ---------- */
@@ -1007,10 +1012,10 @@ body.onf-map-api-on .onf-map-link { display: block; }
 /* ---------- How 단계 카드 순차 등장 인터랙션 (ownify.js ⑨와 세트) ---------- */
 /* 3개 카드가 클릭으로 하나씩 가로로 등장, 카드 사이에 화살표 이모지.
    테두리 #6F4A2F, 보이는 카드끼리 높이 균등(stretch). 블록 id는 /how의 3열 카드. */
-#onf-STEP .notion-callout-block [class*="CalloutBlock_content"],
-[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block [class*="CalloutBlock_content"] {
+/* 두 How 카드 섹션 모두 브라운 테두리 (2번째 = '한국인 선생님' 섹션, 2026-07-03) */
+[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block [class*="CalloutBlock_content"],
+[data-block-id="d28c173e-5cd4-4e01-b514-0d4a90fe7983"] .notion-callout-block [class*="CalloutBlock_content"] {
   border: 2px solid #6F4A2F !important;
-  height: 100% !important;
 }
 /* 카드가 컬럼 높이를 꽉 채우게(높이 균등의 전제) */
 [data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-column-block,
@@ -1040,9 +1045,9 @@ body.onf-map-api-on .onf-map-link { display: block; }
 /* 카드 사이 화살표 (좌→우 살짝 넛지) — 칸을 카드 높이만큼 늘리고 그 안에서 이미지를 세로 중앙 */
 .onf-step-arrow {
   flex: 0 0 auto;
-  align-self: stretch !important;   /* 카드 높이만큼 채운 뒤 */
+  align-self: flex-start;           /* 행 높이(래퍼 여분)에 딸리지 않게 — 높이·위치는 JS가 카드에 맞춤 */
   display: flex;
-  align-items: center;              /* 이미지를 세로 정중앙에 */
+  align-items: center;              /* 이미지를 (JS가 준 높이의) 세로 정중앙에 */
   justify-content: center;
   padding: 0 30px;                  /* 좌우 여백 넓혀 카드와 떨어뜨림(카드는 자동으로 좁아짐) */
 }
