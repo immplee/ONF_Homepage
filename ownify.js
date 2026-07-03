@@ -440,8 +440,10 @@
     function wrapperOf(col) { var w = col; while (w.parentElement && w.parentElement !== flexRow) w = w.parentElement; return w; }
     cols.forEach(function (c, i) {
       var wrap = wrapperOf(c);
+      wrap.classList.add('onf-step-wrap');   // CSS로 폭·높이 제어(우피 간격 요소와 구분)
       var visible = i < stepsShown;
-      wrap.style.display = visible ? '' : 'none';
+      // 숨김은 클래스로 — CSS의 display:flex !important를 인라인이 못 이기므로
+      wrap.classList.toggle('onf-step-hidden', !visible);
       // 카드 앞(i>=1) 화살표: flex 행에서 래퍼 앞에 넣고, 숨기면 뺀다
       if (i >= 1) {
         var prev = wrap.previousElementSibling;

@@ -1015,14 +1015,18 @@ body.onf-map-api-on .onf-map-link { display: block; }
 }
 /* 카드 행: 보이는 카드끼리 같은 높이(stretch) */
 .onf-steps-flex { align-items: stretch !important; }
-/* 컬럼 래퍼(우피 해시 클래스)를 ①폭 균등 분배(넘침 방지) ②세로 flex로 만들어
-   내부 카드가 래퍼 높이를 꽉 채우게(짧은 카드 해소). 화살표는 제외. */
-.onf-steps-flex > *:not(.onf-step-arrow) {
+/* 컬럼 래퍼(JS가 .onf-step-wrap 부여)를 ①폭 균등 분배(넘침 방지) ②세로 flex로 만들어
+   내부 카드가 래퍼 높이를 꽉 채우게(짧은 카드 해소). */
+.onf-step-wrap {
   flex: 1 1 0 !important;
   min-width: 0 !important;
   display: flex !important;
   flex-direction: column !important;
 }
+/* 숨김(초기·미공개 단계) — 2클래스라 위 display:flex를 이김 */
+.onf-step-wrap.onf-step-hidden { display: none !important; }
+/* 우피가 컬럼 사이에 넣는 빈 간격 요소 숨김(화살표로 대체, 이중 간격·넘침 방지) */
+.onf-steps-flex > *:not(.onf-step-wrap):not(.onf-step-arrow) { display: none !important; }
 /* 래퍼 안 컬럼·카드가 세로로 꽉 차게 */
 .onf-steps-flex .notion-column-block { flex: 1 1 auto !important; }
 .onf-steps-flex .notion-column-block > div,
