@@ -1269,6 +1269,12 @@ body.onf-map-api-on .onf-map-link { display: block; }
 [data-block-id="d28c173e-5cd4-4e01-b514-0d4a90fe7983"] .notion-callout-block .notion-record-icon {
   transform: translateY(4px);
 }
+/* /how 상단 카드 2개도 동일 보정: 이모지가 텍스트 첫 줄보다 ~3px 떠 있음
+   (모바일·데스크톱 공통 실측 2.5~3.5px, Peter 지시 2026-07-03) */
+[data-block-id="392d6a62-96ae-8007-ab06-c7449656faca"] .notion-record-icon,
+[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] .notion-record-icon {
+  transform: translateY(3px);
+}
 [data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block span[style*="font-weight"],
 [data-block-id="d28c173e-5cd4-4e01-b514-0d4a90fe7983"] .notion-callout-block span[style*="font-weight"] {
   font-weight: 800 !important;
