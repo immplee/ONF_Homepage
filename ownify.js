@@ -237,7 +237,9 @@
     for (var i = 0; i < sibs.length; i++) {
       if (sibs[i].offsetHeight > 0 && sibs[i].querySelector('a[href]')) { strip = sibs[i]; break; }
     }
-    var headerBottom = 100 + (strip ? strip.offsetHeight : 40);
+    // 메뉴 줄이 화면 맨 위부터 시작(top:0 + padding-top:100px, CSS '유리 한 장' 구조)이라
+    // 뷰포트 기준 바닥 좌표가 곧 헤더 하단
+    var headerBottom = strip ? strip.getBoundingClientRect().bottom : 140;
     return content.getBoundingClientRect().top < headerBottom + 6;
   }
   document.addEventListener('scroll', function (e) {
