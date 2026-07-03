@@ -1058,7 +1058,8 @@ body.onf-map-api-on .onf-map-link { display: block; }
   display: flex;
   align-items: center;              /* 이미지를 (JS가 준 높이의) 세로 정중앙에 */
   justify-content: center;
-  padding: 0 30px;                  /* 좌우 여백 넓혀 카드와 떨어뜨림(카드는 자동으로 좁아짐) */
+  padding: 0 7px;                   /* 화살표 칸 94→48px로 슬림하게 — 카드가 넓어져
+                                       좁은 창(≈1230px)에서도 3번 카드 칩이 한 줄 유지(2026-07-03 실측) */
 }
 .onf-step-arrow img {
   width: 34px;
