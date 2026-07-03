@@ -385,7 +385,7 @@ html, body {
   right: var(--onf-cta-right, 40px);
   top: 20px;              /* 탑바 100px의 세로 중앙 */
   bottom: auto;
-  z-index: 9999;
+  z-index: 1000001;       /* 우피 탑바 sticky 래퍼(z 1,000,000)보다 위 — 안 그러면 탑바가 클릭을 먹고 젖빛 블러에 가려짐 */
   width: 60px;
   height: 60px;
   font-family: inherit;
@@ -892,7 +892,7 @@ body.onf-clear-top.onf-sub .page_cover {
 .onf-qr {
   position: fixed;
   inset: 0;
-  z-index: 10000;
+  z-index: 1000002;       /* SNS 버튼(1000001)보다 위 */
   background: rgba(58, 36, 21, .45);
   display: flex;
   align-items: center;
@@ -1228,4 +1228,21 @@ body.onf-map-api-on .onf-map-link { display: block; }
 /* ③ 카드 안 칩 줄과 아래 본문 사이 여백 (모든 콜아웃 카드 공통) */
 .notion-callout-block .notion-text-block:has(span[style*="SFMono"]) {
   margin-bottom: 8px !important;
+}
+
+
+/* ---------- 13. /how 상단 안내 카드 2개 (2026-07-03 Peter 지시) ---------- */
+/* 테두리를 브랜드 브라운으로 또렷하게 */
+[data-block-id="392d6a62-96ae-8007-ab06-c7449656faca"] [class*="CalloutBlock_content"],
+[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"] {
+  border-color: #6F4A2F !important;
+}
+/* 오른쪽 '수업 흐름' 카드: 목록 줄간격·블록 간격을 아래 단계 카드 수준으로 정돈 */
+[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"] div,
+[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"] span {
+  line-height: 1.7 !important;
+}
+[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] .notion-bulleted_list-block {
+  margin: 0 !important;
+  padding: 2px 0 !important;
 }
