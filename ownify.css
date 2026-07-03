@@ -1159,3 +1159,11 @@ body.onf-map-api-on .onf-map-link { display: block; }
   height: 30px !important;
   width: 30px !important;
 }
+
+/* /how 3단계 카드: 폭을 균등하게 +36px(카드당 +12px) 확장 —
+   3번 카드 '원서' 칩이 한 줄에 들어가는 최소 폭(실측, 2026-07-03 Peter 지시) */
+[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] {
+  width: calc(100% + 36px) !important;
+  max-width: none !important;
+  margin-left: -18px !important;
+}
