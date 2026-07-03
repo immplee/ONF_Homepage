@@ -1157,15 +1157,26 @@ body.onf-map-api-on .onf-map-link { display: block; }
   }
 }
 
-/* ---------- 국기 이모지 펄럭임 (ownify.js ⑩과 세트) ---------- */
-.onf-flag {
+/* ---------- 국기 이모지 펄럭임 — S자 물결 (ownify.js ⑩과 세트) ---------- */
+/* 국기를 세로 조각으로 잘라 조각마다 시차(0.13s)를 둔 상하 이동 → 흐르는 물결 */
+.onf-flagwave {
   display: inline-block;
-  transform-origin: 25% 70%;
-  animation: onfFlagWave 2.8s ease-in-out infinite;
+  vertical-align: -3px;
+  font-size: 0;               /* 조각 사이 공백 제거 */
+  white-space: nowrap;
 }
-/* 두 번째 국기의 반박자 지연은 ownify.js ⑩이 inline animation-delay로 부여 */
-@keyframes onfFlagWave {
-  0%, 100% { transform: rotate(-5deg) skewY(3deg); }
+.onf-flagwave-s {
+  display: inline-block;
+  width: calc(100% / 7);
+  height: 100%;
+  background-repeat: no-repeat;
+  animation: onfFlagRipple 1.7s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes onfFlagRipple {
+  0%, 100% { transform: translateY(1.6px); }
+  50%      { transform: translateY(-1.6px); }
+}
   50%      { transform: rotate(6deg) skewY(-3deg); }
 }
 
