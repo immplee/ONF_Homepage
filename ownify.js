@@ -417,21 +417,28 @@
     if (!stepBlockSeen) { stepBlockSeen = true; stepsShown = 1; }  // 페이지 재진입 시 처음부터
     var cols = cl.querySelectorAll('.notion-column-block');
     if (cols.length < 3) return;
-    var flex = cols[0].parentElement;
-    flex.classList.add('onf-steps-flex');
     var total = cols.length;
+    // 컬럼은 개별 래퍼(block)에 싸여 있고, 진짜 가로 flex 행은 그 래퍼들의 부모다.
+    // → flex 행을 찾고, 각 컬럼의 "flex 행 직속 자식(래퍼)"을 기준으로 조작한다.
+    var w0 = cols[0];
+    while (w0.parentElement && getComputedStyle(w0.parentElement).display !== 'flex') w0 = w0.parentElement;
+    var flexRow = w0.parentElement;
+    if (!flexRow) return;
+    flexRow.classList.add('onf-steps-flex');
+    function wrapperOf(col) { var w = col; while (w.parentElement && w.parentElement !== flexRow) w = w.parentElement; return w; }
     cols.forEach(function (c, i) {
+      var wrap = wrapperOf(c);
       var visible = i < stepsShown;
-      c.style.display = visible ? '' : 'none';
-      // 카드 앞(i>=1) 화살표: 보이면 넣고, 숨기면 뺀다
+      wrap.style.display = visible ? '' : 'none';
+      // 카드 앞(i>=1) 화살표: flex 행에서 래퍼 앞에 넣고, 숨기면 뺀다
       if (i >= 1) {
-        var prev = c.previousElementSibling;
+        var prev = wrap.previousElementSibling;
         var hasArrow = prev && prev.classList && prev.classList.contains('onf-step-arrow');
         if (visible && !hasArrow) {
           var ar = document.createElement('div');
           ar.className = 'onf-step-arrow';
           ar.innerHTML = '<img alt="다음" src="' + STEP_EMOJI + '">';
-          c.parentElement.insertBefore(ar, c);
+          flexRow.insertBefore(ar, wrap);
         } else if (!visible && hasArrow) {
           prev.remove();
         }
