@@ -166,19 +166,22 @@ html, body {
   border-radius: 999px !important;
   transition: background-color .18s !important;
 }
-/* 호버(현재 메뉴 제외) = 은은한 오렌지 칩 — 커서가 떠나면 즉시 사라짐(순수 :hover) */
-.notion-topbar a:not(:has(img)):hover:not(.onf-current),
-.notion-topbar ~ div a:hover:not(.onf-current) {
-  background-color: rgba(210, 105, 30, .14) !important;
+/* 5안 · 글자 대비(2026-07-03 Peter — 4안 알약에서 변경): 배경 없이
+   현재 메뉴만 또렷한 오렌지+굵게, 나머지는 브라운 톤다운. 호버하면 오렌지로 살아나고
+   커서가 떠나면 즉시 원래대로(순수 :hover라 잔상 없음). */
+.notion-topbar a:not(:has(img)), .notion-topbar a:not(:has(img)) span,
+.notion-topbar ~ div a, .notion-topbar ~ div a span {
+  color: rgba(111, 74, 47, .58) !important;
+  transition: color .18s !important;
 }
-/* 현재 메뉴 = 채운 알약 + 크림 글자 */
-.notion-topbar a.onf-current,
-.notion-topbar ~ div a.onf-current {
-  background-color: #D2691E !important;
+.notion-topbar a:not(:has(img)):hover, .notion-topbar a:not(:has(img)):hover span,
+.notion-topbar ~ div a:hover, .notion-topbar ~ div a:hover span {
+  color: #D2691E !important;
 }
 .notion-topbar a.onf-current, .notion-topbar a.onf-current span,
 .notion-topbar ~ div a.onf-current, .notion-topbar ~ div a.onf-current span {
-  color: #FFF7EE !important;
+  color: #D2691E !important;
+  font-weight: 800 !important;
 }
 
 /* 좁은 화면: 로고 왼쪽·메뉴 오른쪽으로 풀어주기 */
