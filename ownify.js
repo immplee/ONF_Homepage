@@ -489,11 +489,20 @@
     '/what':    'Ownify┃What'
   };
   var onfRawTitle = '';   // 우피가 쓰려던 원제목(리뷰 상세 = 작성자명, 🧡 포함) 보관
+  // 리뷰 상세 여부를 body 클래스 없이 직접 판정 — 스크립트 실행 즉시(head 단계,
+  // body 생기기 전) 제목을 치환해야 작성자명이 먼저 떴다 바뀌는 깜빡임이 없다(2026-07-04).
+  function onfIsReviewDetail() {
+    var m = location.pathname.replace(/\/+$/, '').match(/^\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/);
+    if (!m) return false;
+    try {
+      return JSON.parse(localStorage.getItem('onfReviewOrder') || '[]').indexOf(m[1]) !== -1;
+    } catch (e) { return false; }
+  }
   function onfWantTitle() {
     var fixed = ONF_TITLES[location.pathname.replace(/\/$/, '')];
     if (fixed) return fixed;
-    // 리뷰 상세(⑫가 body 클래스 부여): Ownify┃Reviews┃작성자명 (2026-07-04 Peter)
-    if (document.body && document.body.classList.contains('onf-review-detail')) {
+    // 리뷰 상세: Ownify┃Reviews┃작성자명 (2026-07-04 Peter)
+    if (onfIsReviewDetail()) {
       var raw = onfRawTitle;
       if (!raw && titleDesc) {
         var cur = titleDesc.get.call(document);   // 스크립트보다 먼저 쓰인 초기 <title> 대비
