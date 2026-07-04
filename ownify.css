@@ -1384,9 +1384,20 @@ body.onf-review-detail .notion-image-block {
   margin-left: auto !important;
   margin-right: auto !important;
 }
-body.onf-review-detail .notion-image-block img {
+/* 노션에서 이미지 블록을 작게 리사이즈해 둔 경우(원본 300px대) 안쪽 래퍼가
+   원래 크기·비율 박스를 유지해 레터박스로 작게 그려짐 → 래퍼 체인을 전부 풀고
+   이미지를 자연 비율 100% 폭으로(2026-07-04 실측) */
+body.onf-review-detail .notion-image-block div {
   width: 100% !important;
   height: auto !important;
+  max-width: none !important;
+}
+body.onf-review-detail .notion-image-block img {
+  position: static !important;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: auto !important;
+  object-fit: contain !important;
 }
 /* 좌우 고정 내비(라이트박스식 세로 중앙): 왼쪽=리뷰 목록으로, 오른쪽=다음 리뷰 */
 .onf-rev-back, .onf-rev-next {
