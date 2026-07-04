@@ -475,8 +475,20 @@
     '/reviews': 'Ownify┃Reviews',
     '/what':    'Ownify┃What'
   };
+  var onfRawTitle = '';   // 우피가 쓰려던 원제목(리뷰 상세 = 작성자명, 🧡 포함) 보관
   function onfWantTitle() {
-    return ONF_TITLES[location.pathname.replace(/\/$/, '')];
+    var fixed = ONF_TITLES[location.pathname.replace(/\/$/, '')];
+    if (fixed) return fixed;
+    // 리뷰 상세(⑫가 body 클래스 부여): Ownify┃Reviews┃작성자명 (2026-07-04 Peter)
+    if (document.body && document.body.classList.contains('onf-review-detail')) {
+      var raw = onfRawTitle;
+      if (!raw && titleDesc) {
+        var cur = titleDesc.get.call(document);   // 스크립트보다 먼저 쓰인 초기 <title> 대비
+        if (cur && cur.indexOf('Ownify┃') !== 0) raw = cur.trim();
+      }
+      if (raw) return 'Ownify┃Reviews┃' + raw;
+    }
+    return undefined;
   }
   var titleDesc = Object.getOwnPropertyDescriptor(Document.prototype, 'title');
   // ⑦-1 쓰기 가로채기: 우피가 제목을 바꿔 써도 매핑된 페이지에선 즉시 우리 제목으로 치환
@@ -485,7 +497,10 @@
     Object.defineProperty(document, 'title', {
       configurable: true,
       get: function () { return titleDesc.get.call(document); },
-      set: function (v) { titleDesc.set.call(document, onfWantTitle() || v); }
+      set: function (v) {
+        if (v && v.indexOf('Ownify┃') !== 0) onfRawTitle = String(v).trim();  // 원제목 갱신
+        titleDesc.set.call(document, onfWantTitle() || v);
+      }
     });
   } catch (e) {}
   // ⑦-2 <title> 노드를 직접 고치는 경우 대비: 변경 감지 즉시 교정
