@@ -1320,6 +1320,17 @@ body.onf-map-api-on .onf-map-link { display: block; }
   width: 30px !important;
 }
 
+/* ---------- /where 여백 (2026-07-04 Peter 지시) ----------
+   ① '오시는 길' 제목 ↔ 본문 2열: /how의 제목↔첫 카드 여백과 동일(46px 마진 → 실측 50px)
+   ② 주소 ↔ 지도, '지하철로 오시는 길' ↔ 본문: 살짝만(10px) — 두 곳은 항상 같은 값 유지 */
+[data-block-id="391d6a62-96ae-80b9-8727-cedfaa8148cf"] {
+  margin-top: 46px !important;
+}
+[data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"],
+[data-block-id="391d6a62-96ae-800c-a6c6-c8749474d789"] {
+  margin-top: 10px !important;
+}
+
 /* /how 3단계 카드: 폭을 균등하게 +36px(카드당 +12px) 확장 —
    3번 카드 '원서' 칩이 한 줄에 들어가는 최소 폭(실측, 2026-07-03 Peter 지시) */
 [data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] {

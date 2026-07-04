@@ -851,5 +851,18 @@
   setInterval(ensureSteps2, 800);
   ensureSteps2();
 
+  /* ---------- ⑪ 페이지 진입 시 항상 맨 위부터 (2026-07-04 Peter 지시) ----------
+     재방문·뒤로가기 때 브라우저 스크롤 복원(scrollRestoration)이나 우피 내부 이동의
+     이전 위치가 남아 살짝 내려간 채 열리는 문제 → 진입 시 강제로 맨 위.
+     앵커(#해시) 링크로 온 경우는 그 위치를 존중해 건드리지 않는다. */
+  try { history.scrollRestoration = 'manual'; } catch (e) {}
+  function onfToTop() { if (!location.hash) window.scrollTo(0, 0); }
+  window.addEventListener('pageshow', onfToTop);   // 첫 로드 + bfcache 복원 모두
+  document.addEventListener('DOMContentLoaded', onfToTop);
+  // 우피 내부 메뉴 이동(SPA)은 pageshow가 안 뜸 → 경로 변화를 감지해 맨 위로
+  var onfPath = location.pathname;
+  setInterval(function () {
+    if (location.pathname !== onfPath) { onfPath = location.pathname; onfToTop(); }
+  }, 250);
 
 })();
