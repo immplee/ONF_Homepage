@@ -177,7 +177,9 @@ html, body {
 .notion-topbar a.onf-current, .notion-topbar a.onf-current span,
 .notion-topbar ~ div a.onf-current, .notion-topbar ~ div a.onf-current span {
   color: #D2691E !important;
-  font-weight: 800 !important;
+  /* 900: 메뉴 크기에선 600↔800 차이가 미미해 색만 바뀐 듯 보임(2026-07-04 Peter).
+     Paperlogy는 100~900 전 웨이트 제공 — 최대 굵기로 확실히 구분. */
+  font-weight: 900 !important;
 }
 
 /* 좁은 화면: 로고 왼쪽·메뉴 오른쪽으로 풀어주기 */
