@@ -625,33 +625,38 @@
   setInterval(ensureCustomMap, 1000);
   ensureCustomMap();
 
-  /* ---------- ⑨ How 단계 카드 순차 등장 ---------- */
-  // /how의 3열 카드(발음기호/미드/팟캐스트)를 클릭으로 하나씩 가로로 등장시킨다.
-  // 처음엔 1번만(통통 튀며 "눌러서 다음 단계" 말풍선) → 클릭 시 화살표+다음 카드 등장 → 3번까지.
-  // 스타일·애니메이션은 ownify.css(.onf-step-*)와 세트. 우피 재렌더 대비 매 틱 상태 재적용.
+  /* ---------- ⑨ How 단계 카드 — 전체 즉시 표시 + 순차 타자기 ---------- */
+  // /how의 3열 카드: 클릭 전개·말풍선 폐지(2026-07-04 Peter) — 카드와 화살표는 처음부터
+  // 전부 표시하고, 본문 타자기만 왼쪽 카드부터 순서대로(앞 카드 완료 후 다음) 친다.
+  // 스타일·화살표 모션은 ownify.css(.onf-step-*)와 세트. 우피 재렌더 대비 매 틱 상태 재적용.
   var STEP_COL = 'b8fd976b-8eff-4bb5-b837-209e0c1303ea';
   var STEP_EMOJI = 'https://immplee.github.io/ONF_Homepage/assets/how-step-emoji.png';
   var STEP_EMOJI_DOWN = 'https://immplee.github.io/ONF_Homepage/assets/how-step-arrow-down.png';  // 모바일 세로 전개용(Peter 제공)
-  var stepsShown = 1;      // 현재 보이는 카드 수
   var stepBlockSeen = false;
   var stepArrowCount = 0;  // 화살표 개수(바뀔 때 애니메이션 동기화)
   var stepsSettled = false;   // 레이아웃 안정 여부(타자기 시작 게이트)
-  var stepReveals = [];       // 타자기 대기: {card, reveal, done} — 카드 하단이 화면에 들어오면 발동
-  // ⑨-2 폴링: 레이아웃 안정 후, 등록된 카드의 하단이 뷰포트 안에 들어오면 타자기 시작
+  var stepReveals = [];       // 타자기 큐: {idx, card, start, started, finished}
+  // ⑨-2 폴링(순차): 첫 미완료 카드 하나만 본다 — 화면에 보이면 시작, 진행 중이면 대기,
+  // 끝났으면 다음으로. 그래서 항상 왼쪽 카드부터 차례대로 타이핑된다.
   setInterval(function () {
     if (!stepsSettled) return;
-    for (var i = 0; i < stepReveals.length; i++) {
-      var e = stepReveals[i];
-      if (e.done || !e.card) continue;
-      var r = e.card.getBoundingClientRect();
-      if (r.height > 0 && r.bottom > 0 && r.bottom <= window.innerHeight) { e.done = true; e.reveal(); }
+    var q = stepReveals.slice().sort(function (a, b) { return a.idx - b.idx; });
+    for (var i = 0; i < q.length; i++) {
+      var e = q[i];
+      if (e.card && !e.card.isConnected) e.finished = true;  // 재렌더로 버려진 노드는 통과
+      if (e.finished) continue;
+      if (!e.started) {
+        var r = e.card.getBoundingClientRect();
+        if (r.height > 0 && r.bottom > 0 && r.bottom <= window.innerHeight) e.start();
+      }
+      return;  // 순차 보장: 첫 미완료 카드만 처리
     }
   }, 200);
   // 카드 본문(마지막 텍스트 블록)을 왼쪽부터 한 글자씩 나타냄. 글자 자리는 처음부터 차지해
   // (opacity로만 노출) 높이 균등·줄바꿈이 흔들리지 않는다. 카드가 보일 때 1회만.
   // ⚠️ 완료 표시는 '노드 자체'(dataset)에 — 우피가 로드 초기에 콜아웃을 갈아치우므로
   //    인덱스 플래그면 버려질 초기 노드에 소모돼 교체된 안정 노드가 건너뛰어진다.
-  function typeBody(callout) {
+  function typeBody(callout, idx) {
     if (!callout) return;
     var blocks = callout.querySelectorAll('.notion-text-block');
     if (blocks.length < 3) return;                 // 제목·태그·본문
@@ -674,27 +679,26 @@
       body.appendChild(s);
       spans.push(s);
     }
-    // 실제 타이핑(노출)은 '카드가 화면에 다 보이면' 시작 — 스크롤로 진입할 때 애니메이션이 보이게.
-    // (글자 자리는 위에서 이미 잡아둬 레이아웃은 안정)
-    var started = false;
-    function reveal() {
-      if (started) return; started = true;
+    // 실제 타이핑(노출)은 ⑨-2 순차 폴링이 시작시킨다 — 앞 카드가 다 타이핑된 뒤에만
+    // 다음 카드 차례가 온다. (글자 자리는 위에서 이미 잡아둬 레이아웃은 안정)
+    var entry = { idx: idx || 0, card: callout, started: false, finished: false, start: null };
+    entry.start = function () {
+      if (entry.started) return;
+      entry.started = true;
       var j = 0;
       var iv = setInterval(function () {
-        if (j >= spans.length) { clearInterval(iv); return; }
+        if (j >= spans.length) { clearInterval(iv); entry.finished = true; return; }
         spans[j].classList.add('on');
         j++;
       }, 42);
-    }
-    // 노출 시작 조건 = '카드 하단이 화면 안에 들어옴' — 폴링(⑨-2 인터벌)이 매번 확인해
-    // 조건 충족 시 reveal 호출. 레이아웃 안정(stepsSettled) 전에는 발동 안 함.
-    stepReveals.push({ card: callout, reveal: reveal, done: false });
+    };
+    stepReveals.push(entry);
   }
   function ensureSteps() {
     var cl = document.querySelector('[data-block-id="' + STEP_COL + '"]');
     if (!cl) { stepBlockSeen = false; return; }
     if (!stepBlockSeen) {  // 페이지 재진입 시 처음부터(타자기 완료표시는 노드 dataset이라 새 노드면 자동 재실행)
-      stepBlockSeen = true; stepsShown = 1;
+      stepBlockSeen = true;
       stepsSettled = false; stepReveals = [];    // 레이아웃 안정 타이머 재시작
       setTimeout(function () { stepsSettled = true; }, 1800);
     }
@@ -706,13 +710,12 @@
     cl.style.setProperty('width', '100%', 'important');
     cl.style.setProperty('max-width', '100%', 'important');
     var cols = cl.querySelectorAll('.notion-column-block');
-    if (cols.length < 3) return;
+    if (cols.length < 2) return;   // 카드 수가 늘어도 동작(2026-07-04)
     // 컬럼 안의 "빈 문단" 숨김 — 데스크톱에선 티 안 나지만 모바일 세로 스택에서
     // 카드 사이 간격을 벌리고 화살표를 한쪽으로 밀어낸다(2026-07-04 실측)
     cl.querySelectorAll('.notion-text-block').forEach(function (tb) {
       if (!(tb.textContent || '').trim() && !tb.querySelector('img')) tb.style.display = 'none';
     });
-    var total = cols.length;
     // 컬럼은 개별 래퍼(block)에 싸여 있고, 진짜 가로 flex 행은 그 래퍼들의 부모다.
     // → flex 행을 찾고, 각 컬럼의 "flex 행 직속 자식(래퍼)"을 기준으로 조작한다.
     // 진짜 가로 flex 행 = "모든 카드를 담은" flex 조상. (래퍼를 flex로 만들어도 오인 안 하게
@@ -740,66 +743,34 @@
     cols.forEach(function (c, i) {
       var wrap = wrapperOf(c);
       wrap.classList.add('onf-step-wrap');   // CSS로 폭·높이 제어(우피 간격 요소와 구분)
-      var visible = i < stepsShown;
-      // 숨김은 클래스로 — CSS의 display:flex !important를 인라인이 못 이기므로
-      wrap.classList.toggle('onf-step-hidden', !visible);
-      if (visible) typeBody(c.querySelector('.notion-callout-block'));  // 본문 타자기(1회)
-      // 카드 앞(i>=1) 화살표: flex 행에서 래퍼 앞에 넣고, 숨기면 뺀다
+      wrap.classList.remove('onf-step-hidden');   // 전 카드 항상 표시(클릭 전개 폐지)
+      typeBody(c.querySelector('.notion-callout-block'), i);  // 본문 타자기 등록(순차는 ⑨-2가)
+      // 카드 앞(i>=1) 화살표 — 항상 존재
       if (i >= 1) {
         var prev = wrap.previousElementSibling;
         var hasArrow = prev && prev.classList && prev.classList.contains('onf-step-arrow');
-        if (visible && !hasArrow) {
+        if (!hasArrow) {
           var ar = document.createElement('div');
           ar.className = 'onf-step-arrow';
           // 가로(데스크톱)·세로(모바일) 화살표를 둘 다 넣고 CSS 미디어쿼리가 표시를 고른다
           ar.innerHTML = '<img class="onf-arrow-h" alt="다음" src="' + STEP_EMOJI + '">' +
             '<img class="onf-arrow-v" alt="다음" src="' + STEP_EMOJI_DOWN + '">';
           flexRow.insertBefore(ar, wrap);
-        } else if (!visible && hasArrow) {
-          prev.remove();
         }
       }
-      // '다음 클릭' 대상 = 마지막으로 보이는 카드(더 남았을 때)
-      var isNext = (i === stepsShown - 1) && (stepsShown < total);
-      c.classList.toggle('onf-step-poke', isNext);
-      // 말풍선
-      var content = c.querySelector('.notion-callout-block [class*="CalloutBlock_content"]');
-      if (content) {
-        var bubble = content.querySelector('.onf-step-bubble');
-        if (isNext && !bubble) {
-          var b = document.createElement('div');
-          b.className = 'onf-step-bubble';
-          b.textContent = '눌러서 다음 단계를 확인해보세요 👆🏻';
-          content.appendChild(b);
-        } else if (!isNext && bubble) {
-          bubble.remove();
-        }
-      }
-      // 클릭 → 다음 카드 등장 (재렌더로 새 요소면 다시 바인딩)
-      if (!c.__onfStepClick) {
-        c.__onfStepClick = true;
-        c.addEventListener('click', function () {
-          var live = document.querySelector('[data-block-id="' + STEP_COL + '"]');
-          if (!live) return;
-          var all = live.querySelectorAll('.notion-column-block');
-          var idx = Array.prototype.indexOf.call(all, c);
-          if (idx === stepsShown - 1 && stepsShown < all.length) {
-            stepsShown++;
-            ensureSteps();
-          }
-        });
-      }
+      // 옛 캐시 JS가 남겼을 수 있는 클릭 유도 잔재 청소
+      c.classList.remove('onf-step-poke');
+      var bubble = c.querySelector('.onf-step-bubble');
+      if (bubble) bubble.remove();
     });
     alignCalloutIcons();  // 새로 나타난 단계 카드의 이모지도 첫 줄 중심에 재정렬
     // 높이 균등: 보이는 카드들의 '자연 높이'를 재서 가장 큰 값으로 min-height 통일.
     // ⚠️ 카드가 새로 나타나면 옆 카드 폭이 줄며 줄바꿈이 바뀌므로, rAF로 폭 반영을
     //    기다린 뒤 (min-height 비움 → 강제 리플로 → 측정 → 설정) 해야 정확하다.
     var eqContents = [];
-    cols.forEach(function (c, i) {
-      if (i < stepsShown) {
-        var ct = c.querySelector('.notion-callout-block [class*="CalloutBlock_content"]');
-        if (ct) eqContents.push(ct);
-      }
+    cols.forEach(function (c) {
+      var ct = c.querySelector('.notion-callout-block [class*="CalloutBlock_content"]');
+      if (ct) eqContents.push(ct);
     });
     requestAnimationFrame(function () {
       eqContents.forEach(function (ct) { ct.style.minHeight = ''; });

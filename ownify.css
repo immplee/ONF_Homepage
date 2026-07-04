@@ -1092,10 +1092,11 @@ body.onf-map-api-on .onf-map-link { display: block; }
 [data-block-id="d28c173e-5cd4-4e01-b514-0d4a90fe7983"] .notion-callout-block [class*="CalloutBlock_content"] {
   border: 2px solid #6F4A2F !important;
 }
-/* /how 상단 카드 2개(How to Ownify 제목 바로 아래 콜아웃): 테두리 '굵기만' 아래
-   단계·선생님 카드와 같은 2px로, 색은 기본 베이지 유지 (Peter 지시 2026-07-03) */
+/* /how 상단 카드(제목 아래 콜아웃들): 테두리 굵기를 단계·선생님 카드와 같은 2px로
+   (2026-07-03 Peter, 2026-07-04 카드3 추가) */
 [data-block-id="392d6a62-96ae-8007-ab06-c7449656faca"] [class*="CalloutBlock_content"],
-[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"] {
+[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"],
+[data-block-id="393d6a62-96ae-8088-bcdd-f3a5397b9b6e"] [class*="CalloutBlock_content"] {
   border-width: 2px !important;
 }
 /* 제목과 카드 사이 간격 (2026-07-03).
@@ -1106,23 +1107,30 @@ body.onf-map-api-on .onf-map-link { display: block; }
 [data-block-id="392d6a62-96ae-8007-ab06-c7449656faca"] {
   margin-top: 45px !important;  /* 45px — /where '오시는 길'과 동일 기준(2026-07-04 Peter) */
 }
-/* /how 상단 카드 사이 간격: 카드1↔카드2·카드2↔단계블록이 8px/5px로 제각각이던 것을
-   '다음 블록의 margin-top' 한 값(12px)으로 통일 — 항상 자동 동일(2026-07-04 Peter) */
-[data-block-id="392d6a62-96ae-8007-ab06-c7449656faca"],
-[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] {
+/* 상단 카드 사이 간격 12px 자동 통일(2026-07-04 Peter "카드가 더 추가돼도 자동으로"):
+   id 나열 대신 형제 선택자 — 본문 직속에서 콜아웃 뒤에 오는 콜아웃/컬럼(단계 카드)에
+   일괄 적용. 새 카드를 노션에서 추가하면 규칙 수정 없이 같은 간격이 잡힌다. */
+.notion-page-content > .notion-callout-block:has(+ .notion-callout-block),
+.notion-page-content > .notion-callout-block:has(+ .notion-column_list-block) {
   margin-bottom: 0 !important;
 }
-[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"],
-[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] {
+.notion-page-content > .notion-callout-block + .notion-callout-block,
+.notion-page-content > .notion-callout-block + .notion-column_list-block {
   margin-top: 12px !important;
 }
-/* /how 구분선 위아래 여백 1/3 축소(2026-07-04 Peter): 여백의 몸통은 구분선 양옆의
-   '빈 줄' 텍스트 블록(40px) — 12px로 줄여 양쪽 각각 약 28px 감소 */
+/* /how 구분선 위아래 여백 = 정확히 45px(2026-07-04 Peter):
+   빈 줄 블록 2개는 표시에서 제거하고 구분선 블록 마진으로만 제어
+   (위 44px + 앞 단계블록 잔여 마진 1px = 45px, 아래 45px + 제목 마진 0) */
 [data-block-id="392d6a62-96ae-80ad-8427-f9e00a17d415"],
 [data-block-id="392d6a62-96ae-8078-9642-e32b8076db97"] {
-  max-height: 4px !important;   /* 12px로는 -27%에 그침 — 4px에서 실측 약 -1/3 */
-  min-height: 0 !important;
-  overflow: hidden !important;
+  display: none !important;
+}
+[data-block-id="392d6a62-96ae-8090-89fc-d3c6ae9d160a"] {
+  margin-top: 44px !important;
+  margin-bottom: 45px !important;
+}
+[data-block-id="152b42e7-ab5d-472d-b33f-2b223ab000cc"] {
+  margin-top: 0 !important;
 }
 /* step1 블록은 우피 기본 margin-left:-18px + 초과 폭으로 다른 카드(콘텐츠 116~1324)보다
    왼쪽으로 삐져나감 → 콘텐츠 폭에 맞춤(왼쪽 줄 정렬, 2026-07-03) */
@@ -1176,49 +1184,8 @@ body.onf-map-api-on .onf-map-link { display: block; }
 }
 @keyframes onfArrowNudge { 0%, 100% { transform: translateX(-3px); } 50% { transform: translateX(3px); } }
 
-/* '다음 클릭' 카드 — 카드는 가만히, 커서만 포인터 (통통은 말풍선만, Peter 지시 2026-07-03) */
-.onf-step-poke { cursor: pointer; }
-.onf-step-poke [class*="CalloutBlock_content"] { cursor: pointer !important; }
-
-/* 말풍선 (활성 카드 우측 상단)
-   ⚠️ 콜아웃 내부 'div{background:none}' 규칙보다 특이도 높게(조상 클래스 3개) 지정해야 배경이 산다 */
-.notion-callout-block [class*="CalloutBlock_content"] .onf-step-bubble {
-  position: absolute;
-  top: -22px;
-  right: -8px;
-  z-index: 6;
-  background: #D2691E !important;
-  color: #FFF7EE !important;
-  font-size: 15px;
-  font-weight: 800 !important;
-  padding: 10px 18px;
-  border-radius: 16px;
-  white-space: nowrap;
-  /* 글로우 제거 — 은은한 드롭섀도만(Peter 지시 2026-07-03) */
-  box-shadow: 0 3px 8px rgba(58, 36, 21, .18) !important;
-  pointer-events: none;
-  transform-origin: center bottom;
-  /* 길고 부드러운 상하 둥실 + 아주 미세한 숨쉬기 (뚝뚝 끊김 없이) */
-  animation: onfBubblePop 2.4s ease-in-out infinite;
-}
-/* 좌측 하단 대각선 꼬리 — 몸통 바닥에 딱 붙는 삼각형(좌하향).
-   border-top(색)+border-right(투명) = 아래-왼쪽으로 뾰족. 몸통과 같은 색·맞닿아 이음새 없음 */
-.notion-callout-block [class*="CalloutBlock_content"] .onf-step-bubble::after {
-  content: "" !important;
-  position: absolute !important;
-  bottom: -11px !important;               /* 삼각형 높이만큼 내려 몸통 바닥과 맞닿게 */
-  left: 20px !important;                  /* 둥근 모서리 지나 평평한 바닥에서 나오게 */
-  width: 0 !important;
-  height: 0 !important;
-  background: none !important;
-  border-top: 12px solid #D2691E !important;
-  border-right: 12px solid transparent !important;
-}
-/* 상하 둥실 + 미세 숨쉬기 (부드럽게) */
-@keyframes onfBubblePop {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50%      { transform: translateY(-6px) scale(1.03); }
-}
+/* (클릭 전개·말풍선 폐지 — 2026-07-04 Peter. .onf-step-poke/.onf-step-bubble 스타일 제거,
+   JS ⑨도 더 이상 안 붙임) */
 
 /* 화살표 이미지 2종: 데스크톱=가로(→), 모바일=세로(↓, Peter 제공 이미지) */
 .onf-step-arrow img.onf-arrow-v { display: none; }
@@ -1327,10 +1294,11 @@ body.onf-map-api-on .onf-map-link { display: block; }
 }
 
 
-/* ---------- 13. /how 상단 안내 카드 2개 (2026-07-03 Peter 지시) ---------- */
+/* ---------- 13. /how 상단 안내 카드 (2026-07-03 Peter 지시, 2026-07-04 카드3 추가) ---------- */
 /* 테두리를 브랜드 브라운으로 또렷하게 */
 [data-block-id="392d6a62-96ae-8007-ab06-c7449656faca"] [class*="CalloutBlock_content"],
-[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"] {
+[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"],
+[data-block-id="393d6a62-96ae-8088-bcdd-f3a5397b9b6e"] [class*="CalloutBlock_content"] {
   border-color: #6F4A2F !important;
 }
 /* 오른쪽 '수업 흐름' 카드: 목록 줄간격·블록 간격을 아래 단계 카드 수준으로 정돈 */
@@ -1343,11 +1311,7 @@ body.onf-map-api-on .onf-map-link { display: block; }
   padding: 2px 0 !important;
 }
 
-/* /how 단계 카드 아래 구분선: "카드 ↔ 구분선 ↔ 제목" 실제 콘텐츠 기준
-   아래 간격은 뒤 요소 여백으로 고정(105px)이라 위를 105px로 맞춤 (2026-07-04 실측) */
-[data-block-id="392d6a62-96ae-8090-89fc-d3c6ae9d160a"] {
-  margin-top: 32px !important;
-}
+/* (구분선 여백 규칙은 위 '구분선 위아래 45px' 한 곳으로 통일 — 2026-07-04) */
 
 /* 단계 카드: 콜아웃 아래 여백 통일(2번 카드만 4px 있어 간격이 어긋남, 2026-07-04 실측) */
 .onf-step-wrap .notion-callout-block {
