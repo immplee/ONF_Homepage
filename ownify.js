@@ -378,6 +378,21 @@
     clearInterval(snsK);
   }, 400);
 
+  /* ---------- ⑥-3 블로그 아이콘 'blog' 글자 정중앙 보정 (2026-07-04 Peter) ---------- */
+  // 우피 head 위젯의 SVG가 baseline y=63이라 글자가 아래로 쳐져 보임.
+  // 잉크 중심 기준(Arial 30px: 어센더~디센더 잉크 중심 = baseline-7.5) 정중앙은 y=57.5.
+  // 위젯은 레포 밖(우피 head)이라 여기서 이미지를 교체 — 재렌더 대비 감시 재적용.
+  var ONF_BLOG_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
+    '<rect width="100" height="100" rx="24" fill="#03C75A"/>' +
+    '<text x="50" y="57.5" font-family="Arial, \'Apple SD Gothic Neo\', sans-serif" font-size="30" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-1">blog</text></svg>';
+  setInterval(function () {
+    var im = document.querySelector('.onf-sns-a img');
+    if (im && !im.dataset.onfBlogFix) {
+      im.dataset.onfBlogFix = '1';
+      im.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(ONF_BLOG_SVG);
+    }
+  }, 1200);
+
   /* ---------- ⑥-2 SNS를 탑 메뉴 항목으로 (2026-07-04 Peter 지시) ---------- */
   // 둥근 SNS 플로팅 버튼 대신 메뉴(How·Where·QnA·Reviews) 옆에 'SNS' 항목을 넣고,
   // 클릭하면 기존 위젯의 아이콘들(카카오→블로그→인스타)이 그 아래로 떨어진다.
