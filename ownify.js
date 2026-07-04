@@ -943,7 +943,11 @@
   // 우피 내부 메뉴 이동(SPA)은 pageshow가 안 뜸 → 경로 변화를 감지해 맨 위로
   var onfPath = location.pathname;
   setInterval(function () {
-    if (location.pathname !== onfPath) { onfPath = location.pathname; onfToTop(); }
+    if (location.pathname !== onfPath) {
+      onfPath = location.pathname;
+      onfToTop();
+      onfReviewTick();   // 리뷰 상세 판정도 즉시 — 확대 CSS가 첫 렌더 전에 걸리게(⑫)
+    }
   }, 250);
 
   /* ---------- ⑫ 리뷰 상세: 이미지 확대 + 뒤로/다음 내비 (2026-07-04 Peter) ---------- */
@@ -959,7 +963,10 @@
       var el = document.querySelector(sel); if (el) el.remove();
     });
   }
-  setInterval(function () {
+  // 판정을 함수로 분리해 즉시·DOMContentLoaded·경로변경 때도 호출(2026-07-04):
+  // 인터벌만으로는 첫 렌더보다 늦어 이미지가 '작게 보였다 커지는' 깜빡임이 생겼음.
+  function onfReviewTick() {
+    if (!document.body) return;
     var path = location.pathname.replace(/\/+$/, '');
     if (path === '/reviews') {
       // 갤러리 순서 수집 — '더 보기'로 카드가 늘면 다음 틱에 자동 갱신
@@ -1026,6 +1033,9 @@
     } else if (next) {
       next.remove();
     }
-  }, 600);
+  }
+  onfReviewTick();
+  document.addEventListener('DOMContentLoaded', onfReviewTick);
+  setInterval(onfReviewTick, 400);
 
 })();
