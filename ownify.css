@@ -1366,3 +1366,56 @@ body.onf-map-api-on .onf-map-link { display: block; }
 .onf-step-wrap .notion-callout-block {
   margin-bottom: 0 !important;
 }
+
+
+/* ---------- 14. 리뷰(/reviews) ---------- */
+/* 갤러리 카드 테두리: /how 카드와 동일한 2px #6F4A2F —
+   우피는 카드 테두리를 border가 아니라 인라인 box-shadow 링으로 그리므로 링을 교체 */
+.notion-collection-item > [role="button"] {
+  box-shadow: 0 0 0 2px #6F4A2F, 0 2px 6px rgba(58, 36, 21, .12) !important;
+}
+/* 리뷰 상세(body 클래스는 ownify.js ⑫가 부여): 본문 폭 제한을 풀고 이미지 크게 */
+body.onf-review-detail .notion-page-content {
+  max-width: none !important;
+}
+body.onf-review-detail .notion-image-block {
+  width: min(1400px, 94vw) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+body.onf-review-detail .notion-image-block img {
+  width: 100% !important;
+  height: auto !important;
+}
+/* 좌우 고정 내비(라이트박스식 세로 중앙): 왼쪽=리뷰 목록으로, 오른쪽=다음 리뷰 */
+.onf-rev-back, .onf-rev-next {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #FBF6EC;
+  border: 2px solid #6F4A2F;
+  box-shadow: 0 6px 16px rgba(58, 36, 21, .22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000001;   /* 우피 탑바 sticky 래퍼(z 1,000,000)보다 위 */
+  transition: transform .18s, box-shadow .18s;
+}
+.onf-rev-back { left: 22px; }
+.onf-rev-next { right: 22px; }
+.onf-rev-back:hover, .onf-rev-next:hover {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 8px 20px rgba(58, 36, 21, .3);
+}
+.onf-rev-back img, .onf-rev-next img { width: 30px; height: 30px; display: block; }
+@media (max-width: 768px) {
+  .onf-rev-back, .onf-rev-next { width: 46px; height: 46px; }
+  .onf-rev-back { left: 10px; }
+  .onf-rev-next { right: 10px; }
+  .onf-rev-back img, .onf-rev-next img { width: 24px; height: 24px; }
+}

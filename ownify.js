@@ -912,4 +912,63 @@
     if (location.pathname !== onfPath) { onfPath = location.pathname; onfToTop(); }
   }, 250);
 
+  /* ---------- ⑫ 리뷰 상세: 이미지 확대 + 뒤로/다음 내비 (2026-07-04 Peter) ---------- */
+  // /reviews 갤러리에서 카드 순서를 기억해두고(localStorage), 카드 상세(/<페이지id>)에
+  // 들어가면 좌우 고정 버튼(왼쪽=목록으로, 오른쪽=다음 리뷰)을 붙인다. 이미지 확대는
+  // CSS(body.onf-review-detail, §14)가 담당. 목록을 안 거친 직접 진입은 내비 생략.
+  var REV_KEY = 'onfReviewOrder';
+  var REV_ARROW_L = 'https://immplee.github.io/ONF_Homepage/assets/review-arrow-left.png';
+  var REV_ARROW_R = 'https://immplee.github.io/ONF_Homepage/assets/review-arrow-right.png';
+  function onfReviewNavClear() {
+    var b = document.querySelector('.onf-rev-back'); if (b) b.remove();
+    var n = document.querySelector('.onf-rev-next'); if (n) n.remove();
+  }
+  setInterval(function () {
+    var path = location.pathname.replace(/\/+$/, '');
+    if (path === '/reviews') {
+      // 갤러리 순서 수집 — '더 보기'로 카드가 늘면 다음 틱에 자동 갱신
+      var ids = Array.prototype.map.call(
+        document.querySelectorAll('.notion-collection-item'),
+        function (el) { return el.getAttribute('data-block-id'); }
+      ).filter(Boolean);
+      if (ids.length) { try { localStorage.setItem(REV_KEY, JSON.stringify(ids)); } catch (e) {} }
+      document.body.classList.remove('onf-review-detail');
+      onfReviewNavClear();
+      return;
+    }
+    var m = path.match(/^\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/);
+    var ids2 = [];
+    try { ids2 = JSON.parse(localStorage.getItem(REV_KEY) || '[]'); } catch (e) {}
+    var idx = m ? ids2.indexOf(m[1]) : -1;
+    if (idx === -1) {
+      document.body.classList.remove('onf-review-detail');
+      onfReviewNavClear();
+      return;
+    }
+    document.body.classList.add('onf-review-detail');
+    var back = document.querySelector('.onf-rev-back');
+    if (!back) {
+      back = document.createElement('a');
+      back.className = 'onf-rev-back';
+      back.href = '/reviews';
+      back.setAttribute('aria-label', '리뷰 목록으로');
+      back.innerHTML = '<img src="' + REV_ARROW_L + '" alt="뒤로">';
+      document.body.appendChild(back);
+    }
+    var nextId = (idx + 1 < ids2.length) ? ids2[idx + 1] : null;  // 마지막 리뷰면 숨김
+    var next = document.querySelector('.onf-rev-next');
+    if (nextId) {
+      if (!next) {
+        next = document.createElement('a');
+        next.className = 'onf-rev-next';
+        next.setAttribute('aria-label', '다음 리뷰');
+        next.innerHTML = '<img src="' + REV_ARROW_R + '" alt="다음">';
+        document.body.appendChild(next);
+      }
+      next.setAttribute('href', '/' + nextId);
+    } else if (next) {
+      next.remove();
+    }
+  }, 600);
+
 })();
