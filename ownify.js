@@ -698,8 +698,9 @@
       stepsSettled = false; stepReveals = [];    // 레이아웃 안정 타이머 재시작
       setTimeout(function () { stepsSettled = true; }, 1800);
     }
-    // 좌측 줄 맞춤: 우피 기본 CSS가 이 컬럼블록에 margin-left:-18px+초과폭을 걸어 다른 카드보다
-    // 왼쪽으로 삐져나감. CSS !important로도 못 이겨(우피 규칙 우선) 인라인으로 콘텐츠 폭에 맞춘다.
+    // 카드 블록 폭의 단일 정의처(2026-07-04 일원화). 과거 CSS의 '+36px 확장'(칩 한 줄용)을
+    // 우피 기본값으로 오인해 서로 덮던 혼선을 정리 — 폭은 100%(왼쪽 줄 정렬), 칩 한 줄은
+    // 화살표 칸·칩 패딩 조임(ownify.css)으로 확보한다.
     cl.style.setProperty('margin-left', '0', 'important');
     cl.style.setProperty('margin-right', '0', 'important');
     cl.style.setProperty('width', '100%', 'important');
