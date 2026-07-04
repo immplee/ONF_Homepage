@@ -696,6 +696,18 @@
     var full = body.textContent;
     if (!full.trim()) return;
     body.dataset.onfTyped = '1';
+    // 연출 스테이징(2026-07-04 Peter "부드럽게"): 아이콘·제목·칩을 숨겨뒀다가
+    // start()가 순서대로 등장시킨다 — 등록과 같은 동기 블록이라 원본이 비칠 틈 없음.
+    callout.classList.add('onf-stagecard');
+    var title = null;
+    for (var ti2 = 0; ti2 < blocks.length; ti2++) {
+      if ((blocks[ti2].textContent || '').trim()) { title = blocks[ti2]; break; }
+    }
+    if (title && title !== body) title.classList.add('onf-head-t');
+    var chips = [];
+    callout.querySelectorAll('span[style*="SFMono"]').forEach(function (ch) {
+      if (!body.contains(ch)) { ch.classList.add('onf-chip-stage'); chips.push(ch); }
+    });
     body.classList.add('onf-type');
     body.textContent = '';
     var spans = [];
@@ -706,18 +718,25 @@
       body.appendChild(s);
       spans.push(s);
     }
-    // 실제 타이핑(노출)은 ⑨-2 순차 폴링이 시작시킨다 — 앞 카드가 다 타이핑된 뒤에만
-    // 다음 카드 차례가 온다. (글자 자리는 위에서 이미 잡아둬 레이아웃은 안정)
+    // 시작은 ⑨-2 순차 폴링이 — 앞 카드가 다 끝난 뒤에만 다음 카드 차례.
+    // start() 내부 연출 순서: (카드 박스는 CSS onfCardIn이 이미 페이드인)
+    // +250ms 이모지·제목 스윽 → +700ms부터 칩 130ms 간격 팝 → 그 뒤 본문 타자기.
     var entry = { idx: idx || 0, card: callout, started: false, finished: false, start: null };
     entry.start = function () {
       if (entry.started) return;
       entry.started = true;
-      var j = 0;
-      var iv = setInterval(function () {
-        if (j >= spans.length) { clearInterval(iv); entry.finished = true; return; }
-        spans[j].classList.add('on');
-        j++;
-      }, 42);
+      setTimeout(function () { callout.classList.add('onf-head-in'); }, 250);
+      chips.forEach(function (ch, k) {
+        setTimeout(function () { ch.classList.add('onf-chip-in'); }, 700 + k * 130);
+      });
+      setTimeout(function () {
+        var j = 0;
+        var iv = setInterval(function () {
+          if (j >= spans.length) { clearInterval(iv); entry.finished = true; return; }
+          spans[j].classList.add('on');
+          j++;
+        }, 42);
+      }, 700 + chips.length * 130 + 200);
     };
     stepReveals.push(entry);
   }
@@ -871,8 +890,16 @@
         if (k.indexOf('__next_scroll') === 0) sessionStorage.removeItem(k);
       });
     } catch (e) {}
+    // ⚠️ 사용자가 스크롤을 시작하면 즉시 중단 — 버스트가 사용자 스크롤을 맨 위로
+    // 되돌려 "막혔다 다시 내려가는" 느낌을 만들었음(2026-07-04 /how 실측, Peter 리포트).
+    var stop = false;
+    function stopper() { stop = true; }
+    ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (t) {
+      window.addEventListener(t, stopper, { once: true, passive: true });
+    });
     var t0 = Date.now();
     (function tick() {
+      if (stop) return;
       if (window.scrollY > 0) window.scrollTo(0, 0);
       if (Date.now() - t0 < 700) requestAnimationFrame(tick);
     })();

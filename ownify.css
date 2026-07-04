@@ -237,7 +237,9 @@ html, body {
    페이지 배경(#F1EADE)보다 살짝 밝은 카드 + 얇은 베이지 테두리로 산뜻하게 분리. */
 .notion-callout-block [class*="CalloutBlock_content"] {
   background-color: #FBF6EC !important;
-  border: 1.5px solid #E4D6C0 !important;
+  /* 기본 테두리 = 브랜드 브라운 2px — 전 사이트 카드 통일(2026-07-04 Peter,
+     구 1.5px #E4D6C0 베이지에서 변경. /how 카드별 개별 규칙은 이 기본으로 흡수) */
+  border: 2px solid #6F4A2F !important;
   border-radius: 12px !important;
   box-shadow: 0 4px 16px rgba(111, 74, 47, .07) !important;
   padding-top: 33px !important;
@@ -1100,18 +1102,8 @@ body.onf-map-api-on .onf-map-link { display: block; }
 /* ---------- How 단계 카드 순차 등장 인터랙션 (ownify.js ⑨와 세트) ---------- */
 /* 3개 카드가 클릭으로 하나씩 가로로 등장, 카드 사이에 화살표 이모지.
    테두리 #6F4A2F, 보이는 카드끼리 높이 균등(stretch). 블록 id는 /how의 3열 카드. */
-/* 두 How 카드 섹션 모두 브라운 테두리 (2번째 = '한국인 선생님' 섹션, 2026-07-03) */
-[data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block [class*="CalloutBlock_content"],
-[data-block-id="d28c173e-5cd4-4e01-b514-0d4a90fe7983"] .notion-callout-block [class*="CalloutBlock_content"] {
-  border: 2px solid #6F4A2F !important;
-}
-/* /how 상단 카드(제목 아래 콜아웃들): 테두리 굵기를 단계·선생님 카드와 같은 2px로
-   (2026-07-03 Peter, 2026-07-04 카드3 추가) */
-[data-block-id="392d6a62-96ae-8007-ab06-c7449656faca"] [class*="CalloutBlock_content"],
-[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"],
-[data-block-id="393d6a62-96ae-8088-bcdd-f3a5397b9b6e"] [class*="CalloutBlock_content"] {
-  border-width: 2px !important;
-}
+/* (섹션별 브라운 테두리 규칙 제거 — 기본 콜아웃 테두리로 통일, 2026-07-04) */
+/* (테두리 개별 규칙 제거 — 기본 콜아웃 테두리가 2px #6F4A2F로 통일됨, 2026-07-04) */
 /* 제목과 카드 사이 간격 (2026-07-03).
    - '한국인 선생님' 섹션: 제목(152b…)↔카드 블록(d28c…) 사이
    - 'How to Ownify' 섹션: 여백을 제목↔첫 카드(392d…8007)에 준다. 단계 블록(b8fd…)엔 안 줌
@@ -1180,6 +1172,43 @@ body.onf-map-api-on .onf-map-link { display: block; }
    (2026-07-04 Peter "첫 카드만 나와도 다 나왔을 때의 크기·위치로") */
 .onf-step-wrap.onf-step-hidden,
 .onf-step-arrow.onf-step-hidden { visibility: hidden !important; }
+
+/* 연쇄 등장 연출(2026-07-04 Peter "부드럽게"): ① 카드 박스 페이드인 →
+   ② 번호 이모지·제목 스윽 → ③ 칩 하나씩 딱딱 팝 → ④ 본문 타자기(기존).
+   타이밍 지휘는 ownify.js ⑨ entry.start, 여기는 모양만. */
+.onf-step-wrap:not(.onf-step-hidden) .notion-callout-block {
+  animation: onfCardIn .45s ease-out backwards;
+}
+@keyframes onfCardIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+/* 스테이징: 아이콘·제목은 시작 전 투명 (아이콘은 transform 금지 — 정렬 transform과 충돌) */
+.onf-stagecard .notion-record-icon { opacity: 0; transition: opacity .5s ease; }
+.onf-stagecard .onf-head-t {
+  opacity: 0;
+  transform: translateX(-12px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.onf-stagecard.onf-head-in .notion-record-icon { opacity: 1; }
+.onf-stagecard.onf-head-in .onf-head-t { opacity: 1; transform: none; }
+/* 칩: 하나씩 통 튀며 등장 */
+.onf-stagecard .onf-chip-stage { opacity: 0; display: inline-block; }
+.onf-stagecard .onf-chip-stage.onf-chip-in {
+  animation: onfChipPop .32s cubic-bezier(.34, 1.56, .64, 1) forwards;
+}
+@keyframes onfChipPop {
+  from { opacity: 0; transform: scale(.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+/* 화살표: 왼쪽→오른쪽 스르륵 등장, 이후 넛지 모션(img 애니메이션)이 이어짐 */
+.onf-step-arrow:not(.onf-step-hidden) {
+  animation: onfArrowIn .5s ease-out backwards;
+}
+@keyframes onfArrowIn {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: none; }
+}
 /* 우피가 컬럼 사이에 넣는 빈 간격 요소 숨김(화살표로 대체, 이중 간격·넘침 방지) */
 .onf-steps-flex > *:not(.onf-step-wrap):not(.onf-step-arrow) { display: none !important; }
 /* 높이 균등은 ownify.js ⑨가 매 틱 '가장 큰 카드 높이'를 재서 min-height로 맞춘다
@@ -1314,13 +1343,8 @@ body.onf-map-api-on .onf-map-link { display: block; }
 }
 
 
-/* ---------- 13. /how 상단 안내 카드 (2026-07-03 Peter 지시, 2026-07-04 카드3 추가) ---------- */
-/* 테두리를 브랜드 브라운으로 또렷하게 */
-[data-block-id="392d6a62-96ae-8007-ab06-c7449656faca"] [class*="CalloutBlock_content"],
-[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"],
-[data-block-id="393d6a62-96ae-8088-bcdd-f3a5397b9b6e"] [class*="CalloutBlock_content"] {
-  border-color: #6F4A2F !important;
-}
+/* ---------- 13. /how 상단 안내 카드 (2026-07-03 Peter 지시) ---------- */
+/* (테두리 규칙 제거 — 기본 콜아웃 테두리 2px #6F4A2F로 통일, 2026-07-04) */
 /* 오른쪽 '수업 흐름' 카드: 목록 줄간격·블록 간격을 아래 단계 카드 수준으로 정돈 */
 [data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"] div,
 [data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"] span {
