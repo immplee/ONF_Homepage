@@ -919,9 +919,11 @@
   var REV_KEY = 'onfReviewOrder';
   var REV_ARROW_L = 'https://immplee.github.io/ONF_Homepage/assets/review-arrow-left.png';
   var REV_ARROW_R = 'https://immplee.github.io/ONF_Homepage/assets/review-arrow-right.png';
+  var REV_CLOSE = 'https://immplee.github.io/ONF_Homepage/assets/review-close.png';
   function onfReviewNavClear() {
-    var b = document.querySelector('.onf-rev-back'); if (b) b.remove();
-    var n = document.querySelector('.onf-rev-next'); if (n) n.remove();
+    ['.onf-rev-back', '.onf-rev-next', '.onf-rev-close'].forEach(function (sel) {
+      var el = document.querySelector(sel); if (el) el.remove();
+    });
   }
   setInterval(function () {
     var path = location.pathname.replace(/\/+$/, '');
@@ -946,14 +948,29 @@
       return;
     }
     document.body.classList.add('onf-review-detail');
+    // 왼쪽 화살표 = 이전 리뷰(2026-07-04 Peter — '나가기'에서 변경). 첫 리뷰면 숨김.
+    var prevId = (idx > 0) ? ids2[idx - 1] : null;
     var back = document.querySelector('.onf-rev-back');
-    if (!back) {
-      back = document.createElement('a');
-      back.className = 'onf-rev-back';
-      back.href = '/reviews';
-      back.setAttribute('aria-label', '리뷰 목록으로');
-      back.innerHTML = '<img src="' + REV_ARROW_L + '" alt="뒤로">';
-      document.body.appendChild(back);
+    if (prevId) {
+      if (!back) {
+        back = document.createElement('a');
+        back.className = 'onf-rev-back';
+        back.setAttribute('aria-label', '이전 리뷰');
+        back.innerHTML = '<img src="' + REV_ARROW_L + '" alt="이전">';
+        document.body.appendChild(back);
+      }
+      back.setAttribute('href', '/' + prevId);
+    } else if (back) {
+      back.remove();
+    }
+    // 우측 상단 X = 나가기(리뷰 목록으로)
+    if (!document.querySelector('.onf-rev-close')) {
+      var cl2 = document.createElement('a');
+      cl2.className = 'onf-rev-close';
+      cl2.href = '/reviews';
+      cl2.setAttribute('aria-label', '리뷰 목록으로 나가기');
+      cl2.innerHTML = '<img src="' + REV_CLOSE + '" alt="닫기">';
+      document.body.appendChild(cl2);
     }
     var nextId = (idx + 1 < ids2.length) ? ids2[idx + 1] : null;  // 마지막 리뷰면 숨김
     var next = document.querySelector('.onf-rev-next');

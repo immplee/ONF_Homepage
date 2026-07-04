@@ -1383,10 +1383,11 @@ body.onf-review-detail .notion-page-content {
    크면 flex(align-items:center)의 자동 마진이 0이 돼 왼쪽 패딩 라인부터 시작(오른쪽
    쏠림) → max-height 해제 + align-self:flex-start + 마진 calc로 정중앙 고정 */
 body.onf-review-detail .notion-image-block {
-  width: min(1100px, 94vw) !important;
+  /* 820px: 1100은 과확대(2026-07-04 Peter) — 원본(898~1178px)보다 작아 선명 */
+  width: min(820px, 92vw) !important;
   max-width: none !important;
   align-self: flex-start !important;
-  margin-left: calc((100% - min(1100px, 94vw)) / 2) !important;
+  margin-left: calc((100% - min(820px, 92vw)) / 2) !important;
   margin-right: 0 !important;
 }
 body.onf-review-detail .notion-image-block div {
@@ -1428,6 +1429,27 @@ body.onf-review-detail .notion-image-block img {
   .onf-rev-back { left: 6px; }
   .onf-rev-next { right: 6px; }
   .onf-rev-back img, .onf-rev-next img { width: 34px; height: 34px; }
+}
+/* 우측 상단 X = 나가기(리뷰 목록으로) — 탑바(100px) 바로 아래 */
+.onf-rev-close {
+  position: fixed;
+  top: 116px;
+  right: 24px;
+  padding: 8px;
+  cursor: pointer;
+  z-index: 1000001;
+  transition: transform .18s;
+}
+.onf-rev-close:hover { transform: scale(1.18); }
+.onf-rev-close img {
+  width: 38px;
+  height: 38px;
+  display: block;
+  filter: drop-shadow(0 3px 6px rgba(58, 36, 21, .28));
+}
+@media (max-width: 768px) {
+  .onf-rev-close { top: 106px; right: 10px; }
+  .onf-rev-close img { width: 30px; height: 30px; }
 }
 
 /* /reviews 카드 미리보기 상단 여백 균일화(전 카드 15.5px, 2026-07-04 픽셀 분석)
