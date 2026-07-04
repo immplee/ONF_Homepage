@@ -504,11 +504,16 @@ a.onf-sns-menu {
    끝값은 transform이 들고, 애니메이션은 backwards fill이라 끝나면 transform에 양보 →
    호버 확대·닫힘 트랜지션이 그대로 동작한다.
    순서(위→아래): 카카오톡 채널(+64, ownify.js ⑥이 주입) → 블로그(+120) → 인스타(+176) */
+/* 중력 감쇠 바운스(2026-07-04 Peter): 반동이 18→8→3px로 점점 작아지고,
+   낙하는 가속(ease-in)·반동 상승은 감속(ease-out) — 실제 공이 튀는 리듬 */
 @keyframes onfSnsDrop {
-  0%   { opacity: 0; transform: translateY(0) scale(.3) rotate(90deg); }
-  55%  { opacity: 1; transform: translateY(calc(var(--sns-y) + 12px)) scale(1.03) rotate(var(--sns-rot)); }
-  76%  { transform: translateY(calc(var(--sns-y) - 6px)) rotate(var(--sns-rot)); }
-  90%  { transform: translateY(calc(var(--sns-y) + 2px)) rotate(var(--sns-rot)); }
+  0%   { opacity: 0; transform: translateY(0) scale(.3) rotate(90deg); animation-timing-function: ease-in; }
+  38%  { opacity: 1; transform: translateY(var(--sns-y)) scale(1) rotate(var(--sns-rot)); animation-timing-function: ease-out; }
+  54%  { transform: translateY(calc(var(--sns-y) - 18px)) rotate(var(--sns-rot)); animation-timing-function: ease-in; }
+  70%  { transform: translateY(var(--sns-y)) rotate(var(--sns-rot)); animation-timing-function: ease-out; }
+  81%  { transform: translateY(calc(var(--sns-y) - 8px)) rotate(var(--sns-rot)); animation-timing-function: ease-in; }
+  90%  { transform: translateY(var(--sns-y)) rotate(var(--sns-rot)); animation-timing-function: ease-out; }
+  95%  { transform: translateY(calc(var(--sns-y) - 3px)) rotate(var(--sns-rot)); animation-timing-function: ease-in; }
   100% { opacity: 1; transform: translateY(var(--sns-y)) rotate(var(--sns-rot)); }
 }
 .onf-sns-cb:checked ~ .onf-sns-k {
@@ -516,21 +521,21 @@ a.onf-sns-menu {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(64px) rotate(-8deg);
-  animation: onfSnsDrop .6s ease-out backwards;
+  animation: onfSnsDrop .9s linear backwards;
 }
 .onf-sns-cb:checked ~ .onf-sns-a {
   --sns-y: 120px; --sns-rot: 8deg;
   opacity: 1;
   pointer-events: auto;
   transform: translateY(120px) rotate(8deg);
-  animation: onfSnsDrop .6s ease-out .07s backwards;
+  animation: onfSnsDrop .9s linear .08s backwards;
 }
 .onf-sns-cb:checked ~ .onf-sns-b {
   --sns-y: 176px; --sns-rot: -8deg;
   opacity: 1;
   pointer-events: auto;
   transform: translateY(176px) rotate(-8deg);
-  animation: onfSnsDrop .6s ease-out .14s backwards;
+  animation: onfSnsDrop .9s linear .16s backwards;
 }
 .onf-sns-cb:checked ~ .onf-sns-k:hover {
   transform: translateY(64px) rotate(0) scale(1.08);
