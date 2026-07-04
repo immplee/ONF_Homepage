@@ -1430,3 +1430,32 @@ body.onf-review-detail .notion-image-block img {
   .onf-rev-next { right: 10px; }
   .onf-rev-back img, .onf-rev-next img { width: 24px; height: 24px; }
 }
+
+/* /reviews 카드 미리보기 상단 여백 균일화(전 카드 15.5px, 2026-07-04 픽셀 분석)
+   각 카드의 현재 프레이밍을 유지한 채 '크롭 시작~첫 콘텐츠' 간격만 중앙값으로 통일.
+   ⚠️ 리뷰 추가·이미지 교체·노션 위치변경 시 그 카드는 재분석 필요(세션에 요청). */
+.notion-collection-item[data-block-id="381d6a62-96ae-8059-a76f-c0d55b69fb2b"] img { object-position: 50% 20.96% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-809b-b98b-ce18cc84df63"] img { object-position: 50% 30.34% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-8093-9f19-e51a69e894f0"] img { object-position: 50% 26.12% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-80e0-8fa0-f8558a5936a5"] img { object-position: 50% 22.02% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-802b-a9cb-f96b6284a56b"] img { object-position: 50% 16.40% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-80ec-af48-f9c98efe6b0f"] img { object-position: 50% 62.30% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-8028-a8f7-e1b4d726f603"] img { object-position: 50% 33.67% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-8020-9aa5-f9026933182c"] img { object-position: 50% 33.93% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-80df-87a1-dd4704bd3010"] img { object-position: 50% 25.96% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-80c9-ade9-f3a124c031c4"] img { object-position: 50% 35.70% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-802b-bfb7-c04d469a4423"] img { object-position: 50% 20.16% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-80a4-b6c1-d59b0c661935"] img { object-position: 50% 38.89% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-8006-8ccf-c5f40b5f09a2"] img { object-position: 50% 5.64% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-801e-a0de-c64fde84be6a"] img { object-position: 50% 50.00% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-80ee-86b9-d463b3bd2fa0"] img { object-position: 50% 24.50% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-80df-ac0b-e6b48288ae8f"] img { object-position: 50% 38.36% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-80ed-85db-ff7de99c36ab"] img { object-position: 50% 25.83% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-80e5-824d-eed94da0e06d"] img { object-position: 50% 20.70% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-80e4-849f-d9fcc8896120"] img { object-position: 50% 29.06% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-806a-89af-d4f502e8caae"] img { object-position: 50% 60.31% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-80a3-82a7-c09ba535a287"] img { object-position: 50% 26.08% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-806d-b38d-de2ab421e989"] img { object-position: 50% 27.97% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-8034-a24e-c16c20549842"] img { object-position: 50% 51.52% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-8018-90f4-d46188096298"] img { object-position: 50% 26.08% !important; }
+.notion-collection-item[data-block-id="381d6a62-96ae-8020-bad4-d2fd068c178d"] img { object-position: 50% 26.10% !important; }
