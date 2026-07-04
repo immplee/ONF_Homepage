@@ -1378,57 +1378,56 @@ body.onf-map-api-on .onf-map-link { display: block; }
 body.onf-review-detail .notion-page-content {
   max-width: none !important;
 }
+/* 확대 실패 2대 원인(2026-07-04 실측): ① img에 우피 생성 클래스의 max-height(노션
+   블록 원래 높이 405px)가 걸려 height:auto를 눌러버림 ② 확대 폭이 본문 안쪽 폭보다
+   크면 flex(align-items:center)의 자동 마진이 0이 돼 왼쪽 패딩 라인부터 시작(오른쪽
+   쏠림) → max-height 해제 + align-self:flex-start + 마진 calc로 정중앙 고정 */
 body.onf-review-detail .notion-image-block {
-  width: min(1400px, 94vw) !important;
+  width: min(1100px, 94vw) !important;
   max-width: none !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
+  align-self: flex-start !important;
+  margin-left: calc((100% - min(1100px, 94vw)) / 2) !important;
+  margin-right: 0 !important;
 }
-/* 노션에서 이미지 블록을 작게 리사이즈해 둔 경우(원본 300px대) 안쪽 래퍼가
-   원래 크기·비율 박스를 유지해 레터박스로 작게 그려짐 → 래퍼 체인을 전부 풀고
-   이미지를 자연 비율 100% 폭으로(2026-07-04 실측) */
 body.onf-review-detail .notion-image-block div {
   width: 100% !important;
   height: auto !important;
   max-width: none !important;
+  max-height: none !important;
 }
 body.onf-review-detail .notion-image-block img {
   position: static !important;
   width: 100% !important;
   height: auto !important;
+  max-height: none !important;
   aspect-ratio: auto !important;
-  object-fit: contain !important;
 }
-/* 좌우 고정 내비(라이트박스식 세로 중앙): 왼쪽=리뷰 목록으로, 오른쪽=다음 리뷰 */
+/* 좌우 고정 내비(라이트박스식 세로 중앙): 왼쪽=리뷰 목록으로, 오른쪽=다음 리뷰.
+   원 배경 없이 화살표만(2026-07-04 Peter 선택) — 드롭섀도로 배경과 살짝 분리 */
 .onf-rev-back, .onf-rev-next {
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  background: #FBF6EC;
-  border: 2px solid #6F4A2F;
-  box-shadow: 0 6px 16px rgba(58, 36, 21, .22);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 8px;               /* 클릭 영역 확보 */
   cursor: pointer;
   z-index: 1000001;   /* 우피 탑바 sticky 래퍼(z 1,000,000)보다 위 */
-  transition: transform .18s, box-shadow .18s;
+  transition: transform .18s;
 }
-.onf-rev-back { left: 22px; }
-.onf-rev-next { right: 22px; }
+.onf-rev-back { left: 20px; }
+.onf-rev-next { right: 20px; }
 .onf-rev-back:hover, .onf-rev-next:hover {
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 8px 20px rgba(58, 36, 21, .3);
+  transform: translateY(-50%) scale(1.18);
 }
-.onf-rev-back img, .onf-rev-next img { width: 30px; height: 30px; display: block; }
+.onf-rev-back img, .onf-rev-next img {
+  width: 46px;
+  height: 46px;
+  display: block;
+  filter: drop-shadow(0 3px 6px rgba(58, 36, 21, .28));
+}
 @media (max-width: 768px) {
-  .onf-rev-back, .onf-rev-next { width: 46px; height: 46px; }
-  .onf-rev-back { left: 10px; }
-  .onf-rev-next { right: 10px; }
-  .onf-rev-back img, .onf-rev-next img { width: 24px; height: 24px; }
+  .onf-rev-back { left: 6px; }
+  .onf-rev-next { right: 6px; }
+  .onf-rev-back img, .onf-rev-next img { width: 34px; height: 34px; }
 }
 
 /* /reviews 카드 미리보기 상단 여백 균일화(전 카드 15.5px, 2026-07-04 픽셀 분석)
