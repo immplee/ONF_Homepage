@@ -249,6 +249,19 @@
     document.body.classList.toggle('onf-nav-split', !!visibleBar && menuLinks <= 1);
     var home = location.pathname === '/' || location.pathname === '';
     document.body.classList.toggle('onf-sub', !home);
+    // /reviews·리뷰 상세에도 하위 배너 주입 — 노션에 커버가 없어 배너가 안 떴음(2026-07-04 Peter).
+    // 다른 하위 페이지와 같은 클래스·인라인으로 만들면 기존 커버 CSS·교체 로직이 그대로 먹는다.
+    var rp = location.pathname.replace(/\/$/, '');
+    if ((rp === '/reviews' || document.body.classList.contains('onf-review-detail')) &&
+        !document.querySelector('.page_cover')) {
+      var wp = document.querySelector('.width.padding');
+      if (wp && wp.parentElement) {
+        var ci = document.createElement('img');
+        ci.className = 'page_cover css-1xdhyk6 e5kxa4l0';
+        ci.setAttribute('style', 'display:block;object-fit:cover;border-radius:0px;width:100%;height:var(--page-cover-height)');
+        wp.parentElement.insertBefore(ci, wp);
+      }
+    }
     // 홈 포함 전 페이지 커버 통일
     var c = document.querySelector('.page_cover');
     var path = location.pathname.replace(/\/$/, '');
@@ -955,10 +968,12 @@
         function (el) { return el.getAttribute('data-block-id'); }
       ).filter(Boolean);
       if (ids.length) { try { localStorage.setItem(REV_KEY, JSON.stringify(ids)); } catch (e) {} }
+      document.body.classList.add('onf-reviews');       // 목록 전용 스타일(구분선 제거 등)
       document.body.classList.remove('onf-review-detail');
       onfReviewNavClear();
       return;
     }
+    document.body.classList.remove('onf-reviews');
     var m = path.match(/^\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/);
     var ids2 = [];
     try { ids2 = JSON.parse(localStorage.getItem(REV_KEY) || '[]'); } catch (e) {}
@@ -984,14 +999,18 @@
     } else if (back) {
       back.remove();
     }
-    // 우측 상단 X = 나가기(리뷰 목록으로)
-    if (!document.querySelector('.onf-rev-close')) {
-      var cl2 = document.createElement('a');
-      cl2.className = 'onf-rev-close';
-      cl2.href = '/reviews';
-      cl2.setAttribute('aria-label', '리뷰 목록으로 나가기');
-      cl2.innerHTML = '<img src="' + REV_CLOSE + '" alt="닫기">';
-      document.body.appendChild(cl2);
+    // X = 나가기 — 리뷰 사진 우측 상단 모서리에 부착(2026-07-04 Peter, 화면 고정에서 변경)
+    var imgBlock = document.querySelector('.notion-image-block');
+    if (imgBlock) {
+      var cl2 = document.querySelector('.onf-rev-close');
+      if (!cl2) {
+        cl2 = document.createElement('a');
+        cl2.className = 'onf-rev-close';
+        cl2.href = '/reviews';
+        cl2.setAttribute('aria-label', '리뷰 목록으로 나가기');
+        cl2.innerHTML = '<img src="' + REV_CLOSE + '" alt="닫기">';
+      }
+      if (cl2.parentElement !== imgBlock) imgBlock.appendChild(cl2);  // 재렌더로 떨어져도 재부착
     }
     var nextId = (idx + 1 < ids2.length) ? ids2[idx + 1] : null;  // 마지막 리뷰면 숨김
     var next = document.querySelector('.onf-rev-next');
