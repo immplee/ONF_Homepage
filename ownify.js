@@ -757,24 +757,24 @@
       var wrap = wrapperOf(c);
       wrap.classList.add('onf-step-wrap');   // CSS로 폭·높이 제어(우피 간격 요소와 구분)
       var visible = i < stepsShown;
-      // 숨김은 클래스로 — CSS의 display:flex !important를 인라인이 못 이기므로
+      // 숨김은 visibility 클래스 — 자리는 3장 최종 배치 그대로 차지(크기·위치 불변),
+      // 등장은 보이기만 켜는 것(2026-07-04 Peter)
       wrap.classList.toggle('onf-step-hidden', !visible);
       if (visible) typeBody(c.querySelector('.notion-callout-block'), i);  // 타자기 등록(순차는 ⑨-2가)
-      // 카드 i 앞 화살표: 다음 카드보다 한 박자 먼저 등장(arrowsShown 기준)
+      // 카드 i 앞 화살표: 처음부터 자리에 넣어두고(레이아웃 고정), 다음 카드보다
+      // 한 박자 먼저(arrowsShown 기준) 보이게 한다
       if (i >= 1) {
         var prev = wrap.previousElementSibling;
-        var hasArrow = prev && prev.classList && prev.classList.contains('onf-step-arrow');
-        var arrowVisible = i <= arrowsShown;
-        if (arrowVisible && !hasArrow) {
-          var ar = document.createElement('div');
+        var ar = (prev && prev.classList && prev.classList.contains('onf-step-arrow')) ? prev : null;
+        if (!ar) {
+          ar = document.createElement('div');
           ar.className = 'onf-step-arrow';
           // 가로(데스크톱)·세로(모바일) 화살표를 둘 다 넣고 CSS 미디어쿼리가 표시를 고른다
           ar.innerHTML = '<img class="onf-arrow-h" alt="다음" src="' + STEP_EMOJI + '">' +
             '<img class="onf-arrow-v" alt="다음" src="' + STEP_EMOJI_DOWN + '">';
           flexRow.insertBefore(ar, wrap);
-        } else if (!arrowVisible && hasArrow) {
-          prev.remove();
         }
+        ar.classList.toggle('onf-step-hidden', i > arrowsShown);
       }
       // 옛 캐시 JS가 남겼을 수 있는 클릭 유도 잔재 청소
       c.classList.remove('onf-step-poke');
@@ -785,12 +785,10 @@
     // 높이 균등: 보이는 카드들의 '자연 높이'를 재서 가장 큰 값으로 min-height 통일.
     // ⚠️ 카드가 새로 나타나면 옆 카드 폭이 줄며 줄바꿈이 바뀌므로, rAF로 폭 반영을
     //    기다린 뒤 (min-height 비움 → 강제 리플로 → 측정 → 설정) 해야 정확하다.
-    var eqContents = [];
-    cols.forEach(function (c, i) {
-      if (i < stepsShown) {
-        var ct = c.querySelector('.notion-callout-block [class*="CalloutBlock_content"]');
-        if (ct) eqContents.push(ct);
-      }
+    var eqContents = [];   // 숨김 카드도 포함 — 자리·높이가 처음부터 최종값으로 고정되게
+    cols.forEach(function (c) {
+      var ct = c.querySelector('.notion-callout-block [class*="CalloutBlock_content"]');
+      if (ct) eqContents.push(ct);
     });
     requestAnimationFrame(function () {
       eqContents.forEach(function (ct) { ct.style.minHeight = ''; });
