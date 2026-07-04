@@ -1114,9 +1114,13 @@ body.onf-map-api-on .onf-map-link { display: block; }
 .notion-page-content > .notion-callout-block:has(+ .notion-column_list-block) {
   margin-bottom: 0 !important;
 }
-.notion-page-content > .notion-callout-block + .notion-callout-block,
+.notion-page-content > .notion-callout-block + .notion-callout-block {
+  margin-top: 16px !important;  /* 12→16px 전체 약간 더 넓게(2026-07-04 Peter) */
+}
+/* 단계 카드 블록은 내부 상단 오프셋(컬럼 패딩, 실측 14px)이 있어
+   시각 간격을 위 카드들과 같게(16px) 하려면 블록 마진은 2px */
 .notion-page-content > .notion-callout-block + .notion-column_list-block {
-  margin-top: 12px !important;
+  margin-top: 2px !important;
 }
 /* /how 구분선 위아래 여백 = 정확히 45px(2026-07-04 Peter):
    빈 줄 블록 2개는 표시에서 제거하고 구분선 블록 마진으로만 제어

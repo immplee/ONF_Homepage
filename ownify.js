@@ -625,10 +625,10 @@
   setInterval(ensureCustomMap, 1000);
   ensureCustomMap();
 
-  /* ---------- ⑨ How 단계 카드 — 전체 즉시 표시 + 순차 타자기 ---------- */
-  // /how의 3열 카드: 클릭 전개·말풍선 폐지(2026-07-04 Peter) — 카드와 화살표는 처음부터
-  // 전부 표시하고, 본문 타자기만 왼쪽 카드부터 순서대로(앞 카드 완료 후 다음) 친다.
-  // 스타일·화살표 모션은 ownify.css(.onf-step-*)와 세트. 우피 재렌더 대비 매 틱 상태 재적용.
+  /* ---------- ⑨ How 단계 카드 — 타자 완료 연쇄 등장 ---------- */
+  // /how의 3열 카드(2026-07-04 Peter 확정 연출): 처음엔 카드1만 보이고 타자기.
+  // 카드1 타자 완료 → 화살표1 등장 → 카드2 등장 → 카드2 타자 → 화살표2 → 카드3 → 타자….
+  // 클릭 전개·말풍선은 폐지. 화살표 흔들림 모션은 유지(ownify.css .onf-step-*와 세트).
   var STEP_COL = 'b8fd976b-8eff-4bb5-b837-209e0c1303ea';
   var STEP_EMOJI = 'https://immplee.github.io/ONF_Homepage/assets/how-step-emoji.png';
   var STEP_EMOJI_DOWN = 'https://immplee.github.io/ONF_Homepage/assets/how-step-arrow-down.png';  // 모바일 세로 전개용(Peter 제공)
@@ -636,8 +636,11 @@
   var stepArrowCount = 0;  // 화살표 개수(바뀔 때 애니메이션 동기화)
   var stepsSettled = false;   // 레이아웃 안정 여부(타자기 시작 게이트)
   var stepReveals = [];       // 타자기 큐: {idx, card, start, started, finished}
-  // ⑨-2 폴링(순차): 첫 미완료 카드 하나만 본다 — 화면에 보이면 시작, 진행 중이면 대기,
-  // 끝났으면 다음으로. 그래서 항상 왼쪽 카드부터 차례대로 타이핑된다.
+  var stepsShown = 1;         // 보이는 카드 수 — 타자 완료에 따라 자동 증가
+  var arrowsShown = 0;        // 보이는 화살표 수 — 다음 카드보다 한 박자 먼저
+  var stepAdvancing = false;  // 화살표→카드 전환 중 이중 발동 방지
+  // ⑨-2 폴링(순차 연쇄): 첫 미완료 카드만 본다 — 화면에 보이면 타자 시작, 진행 중이면 대기.
+  // 보이는 카드가 전부 완료되면 화살표(250ms) → 다음 카드(800ms) 순서로 자동 전개.
   setInterval(function () {
     if (!stepsSettled) return;
     var q = stepReveals.slice().sort(function (a, b) { return a.idx - b.idx; });
@@ -651,6 +654,15 @@
       }
       return;  // 순차 보장: 첫 미완료 카드만 처리
     }
+    // 여기 도달 = 보이는 카드 모두 타자 완료 → 다음 단계 전개
+    if (stepAdvancing) return;
+    var cl = document.querySelector('[data-block-id="' + STEP_COL + '"]');
+    if (!cl) return;
+    var totalCols = cl.querySelectorAll('.notion-column-block').length;
+    if (stepsShown >= totalCols) return;   // 전부 나옴 — 연출 끝
+    stepAdvancing = true;
+    setTimeout(function () { arrowsShown = stepsShown; ensureSteps(); }, 250);
+    setTimeout(function () { stepsShown++; stepAdvancing = false; ensureSteps(); }, 800);
   }, 200);
   // 카드 본문(마지막 텍스트 블록)을 왼쪽부터 한 글자씩 나타냄. 글자 자리는 처음부터 차지해
   // (opacity로만 노출) 높이 균등·줄바꿈이 흔들리지 않는다. 카드가 보일 때 1회만.
@@ -699,6 +711,7 @@
     if (!cl) { stepBlockSeen = false; return; }
     if (!stepBlockSeen) {  // 페이지 재진입 시 처음부터(타자기 완료표시는 노드 dataset이라 새 노드면 자동 재실행)
       stepBlockSeen = true;
+      stepsShown = 1; arrowsShown = 0; stepAdvancing = false;   // 연쇄 처음부터
       stepsSettled = false; stepReveals = [];    // 레이아웃 안정 타이머 재시작
       setTimeout(function () { stepsSettled = true; }, 1800);
     }
@@ -743,19 +756,24 @@
     cols.forEach(function (c, i) {
       var wrap = wrapperOf(c);
       wrap.classList.add('onf-step-wrap');   // CSS로 폭·높이 제어(우피 간격 요소와 구분)
-      wrap.classList.remove('onf-step-hidden');   // 전 카드 항상 표시(클릭 전개 폐지)
-      typeBody(c.querySelector('.notion-callout-block'), i);  // 본문 타자기 등록(순차는 ⑨-2가)
-      // 카드 앞(i>=1) 화살표 — 항상 존재
+      var visible = i < stepsShown;
+      // 숨김은 클래스로 — CSS의 display:flex !important를 인라인이 못 이기므로
+      wrap.classList.toggle('onf-step-hidden', !visible);
+      if (visible) typeBody(c.querySelector('.notion-callout-block'), i);  // 타자기 등록(순차는 ⑨-2가)
+      // 카드 i 앞 화살표: 다음 카드보다 한 박자 먼저 등장(arrowsShown 기준)
       if (i >= 1) {
         var prev = wrap.previousElementSibling;
         var hasArrow = prev && prev.classList && prev.classList.contains('onf-step-arrow');
-        if (!hasArrow) {
+        var arrowVisible = i <= arrowsShown;
+        if (arrowVisible && !hasArrow) {
           var ar = document.createElement('div');
           ar.className = 'onf-step-arrow';
           // 가로(데스크톱)·세로(모바일) 화살표를 둘 다 넣고 CSS 미디어쿼리가 표시를 고른다
           ar.innerHTML = '<img class="onf-arrow-h" alt="다음" src="' + STEP_EMOJI + '">' +
             '<img class="onf-arrow-v" alt="다음" src="' + STEP_EMOJI_DOWN + '">';
           flexRow.insertBefore(ar, wrap);
+        } else if (!arrowVisible && hasArrow) {
+          prev.remove();
         }
       }
       // 옛 캐시 JS가 남겼을 수 있는 클릭 유도 잔재 청소
@@ -768,9 +786,11 @@
     // ⚠️ 카드가 새로 나타나면 옆 카드 폭이 줄며 줄바꿈이 바뀌므로, rAF로 폭 반영을
     //    기다린 뒤 (min-height 비움 → 강제 리플로 → 측정 → 설정) 해야 정확하다.
     var eqContents = [];
-    cols.forEach(function (c) {
-      var ct = c.querySelector('.notion-callout-block [class*="CalloutBlock_content"]');
-      if (ct) eqContents.push(ct);
+    cols.forEach(function (c, i) {
+      if (i < stepsShown) {
+        var ct = c.querySelector('.notion-callout-block [class*="CalloutBlock_content"]');
+        if (ct) eqContents.push(ct);
+      }
     });
     requestAnimationFrame(function () {
       eqContents.forEach(function (ct) { ct.style.minHeight = ''; });
