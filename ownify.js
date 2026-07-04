@@ -678,6 +678,9 @@
       var e = q[i];
       if (e.card && !e.card.isConnected) e.finished = true;  // 재렌더로 버려진 노드는 통과
       if (e.finished) continue;
+      // 첫 미완료가 아직 등장 전(숨김 래퍼) = 보이는 카드는 다 끝남 → 아래 전개 단계로.
+      // (스테이징 조기 등록 때문에 숨김 엔트리가 큐에 먼저 들어와 있다 — 2026-07-04)
+      if (e.card.closest('.onf-step-hidden')) break;
       if (!e.started) {
         var r = e.card.getBoundingClientRect();
         if (r.height > 0 && r.bottom > 0 && r.bottom <= window.innerHeight) e.start();
@@ -809,7 +812,10 @@
       // 숨김은 visibility 클래스 — 자리는 3장 최종 배치 그대로 차지(크기·위치 불변),
       // 등장은 보이기만 켜는 것(2026-07-04 Peter)
       wrap.classList.toggle('onf-step-hidden', !visible);
-      if (visible) typeBody(c.querySelector('.notion-callout-block'), i);  // 타자기 등록(순차는 ⑨-2가)
+      // 스테이징(제목·칩 숨김+타자 등록)은 카드가 보이기 "전"에 미리 — 등장 순간
+      // 원본 내용이 한 프레임이라도 비치면 이중 연출로 보임(2026-07-04 Peter 리포트).
+      // 숨김 카드의 조기 타이핑은 ⑨-2가 onf-step-hidden 확인으로 막는다.
+      typeBody(c.querySelector('.notion-callout-block'), i);
       // 카드 i 앞 화살표: 처음부터 자리에 넣어두고(레이아웃 고정), 다음 카드보다
       // 한 박자 먼저(arrowsShown 기준) 보이게 한다
       if (i >= 1) {

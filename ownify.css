@@ -1188,15 +1188,23 @@ body.onf-map-api-on .onf-map-link { display: block; }
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: none; }
 }
-/* 스테이징: 아이콘·제목은 시작 전 투명 (아이콘은 transform 금지 — 정렬 transform과 충돌) */
-.onf-stagecard .notion-record-icon { opacity: 0; transition: opacity .5s ease; }
+/* 스테이징: 아이콘·제목은 시작 전 투명 (아이콘은 transform 금지 — 정렬 transform과 충돌).
+   ⚠️ 트랜지션은 '등장 상태(.onf-head-in)'에만 — 숨김 상태에 있으면 스테이징이 늦게
+   붙을 때 보이던 제목이 왼쪽으로 스르륵 밀려나가는 이중 연출이 됨(2026-07-04 Peter 리포트) */
+.onf-stagecard .notion-record-icon { opacity: 0; }
 .onf-stagecard .onf-head-t {
   opacity: 0;
   transform: translateX(-12px);
+}
+.onf-stagecard.onf-head-in .notion-record-icon {
+  opacity: 1;
+  transition: opacity .5s ease;
+}
+.onf-stagecard.onf-head-in .onf-head-t {
+  opacity: 1;
+  transform: none;
   transition: opacity .5s ease, transform .5s ease;
 }
-.onf-stagecard.onf-head-in .notion-record-icon { opacity: 1; }
-.onf-stagecard.onf-head-in .onf-head-t { opacity: 1; transform: none; }
 /* 칩: 하나씩 통 튀며 등장 */
 .onf-stagecard .onf-chip-stage { opacity: 0; display: inline-block; }
 .onf-stagecard .onf-chip-stage.onf-chip-in {
