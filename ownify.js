@@ -1000,47 +1000,38 @@
       return;
     }
     document.body.classList.add('onf-review-detail');
-    // 왼쪽 화살표 = 이전 리뷰(2026-07-04 Peter — '나가기'에서 변경). 첫 리뷰면 숨김.
-    var prevId = (idx > 0) ? ids2[idx - 1] : null;
-    var back = document.querySelector('.onf-rev-back');
-    if (prevId) {
-      if (!back) {
-        back = document.createElement('a');
-        back.className = 'onf-rev-back';
-        back.setAttribute('aria-label', '이전 리뷰');
-        back.innerHTML = '<img src="' + REV_ARROW_L + '" alt="이전">';
-        document.body.appendChild(back);
-      }
-      back.setAttribute('href', '/' + prevId);
-    } else if (back) {
-      back.remove();
-    }
-    // X = 나가기 — 리뷰 사진 우측 상단 모서리에 부착(2026-07-04 Peter, 화면 고정에서 변경)
+    // 내비 3종(이전·다음·X)은 전부 '카드(이미지 블록)'에 부착 — 화면 고정이 아니라
+    // 카드와 함께 스크롤(2026-07-05 Peter). 블록이 아직 없으면 다음 틱에.
     var imgBlock = document.querySelector('.notion-image-block');
-    if (imgBlock) {
-      var cl2 = document.querySelector('.onf-rev-close');
-      if (!cl2) {
-        cl2 = document.createElement('a');
-        cl2.className = 'onf-rev-close';
-        cl2.href = '/reviews';
-        cl2.setAttribute('aria-label', '리뷰 목록으로 나가기');
-        cl2.innerHTML = '<img src="' + REV_CLOSE + '" alt="닫기">';
+    if (!imgBlock) return;
+    function onfRevBtn(cls, label, iconSrc, alt) {
+      var el = document.querySelector('.' + cls);
+      if (!el) {
+        el = document.createElement('a');
+        el.className = cls;
+        el.setAttribute('aria-label', label);
+        el.innerHTML = '<img src="' + iconSrc + '" alt="' + alt + '">';
       }
-      if (cl2.parentElement !== imgBlock) imgBlock.appendChild(cl2);  // 재렌더로 떨어져도 재부착
+      if (el.parentElement !== imgBlock) imgBlock.appendChild(el);  // 재렌더로 떨어져도 재부착
+      return el;
     }
-    var nextId = (idx + 1 < ids2.length) ? ids2[idx + 1] : null;  // 마지막 리뷰면 숨김
-    var next = document.querySelector('.onf-rev-next');
+    // 왼쪽 화살표 = 이전 리뷰. 첫 리뷰면 숨김.
+    var prevId = (idx > 0) ? ids2[idx - 1] : null;
+    if (prevId) {
+      onfRevBtn('onf-rev-back', '이전 리뷰', REV_ARROW_L, '이전').setAttribute('href', '/' + prevId);
+    } else {
+      var back = document.querySelector('.onf-rev-back');
+      if (back) back.remove();
+    }
+    // X = 나가기(리뷰 목록으로) — 사진 우측 상단 모서리
+    onfRevBtn('onf-rev-close', '리뷰 목록으로 나가기', REV_CLOSE, '닫기').setAttribute('href', '/reviews');
+    // 오른쪽 화살표 = 다음 리뷰. 마지막 리뷰면 숨김.
+    var nextId = (idx + 1 < ids2.length) ? ids2[idx + 1] : null;
     if (nextId) {
-      if (!next) {
-        next = document.createElement('a');
-        next.className = 'onf-rev-next';
-        next.setAttribute('aria-label', '다음 리뷰');
-        next.innerHTML = '<img src="' + REV_ARROW_R + '" alt="다음">';
-        document.body.appendChild(next);
-      }
-      next.setAttribute('href', '/' + nextId);
-    } else if (next) {
-      next.remove();
+      onfRevBtn('onf-rev-next', '다음 리뷰', REV_ARROW_R, '다음').setAttribute('href', '/' + nextId);
+    } else {
+      var next = document.querySelector('.onf-rev-next');
+      if (next) next.remove();
     }
   }
   onfReviewTick();
