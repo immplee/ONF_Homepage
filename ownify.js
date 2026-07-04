@@ -858,7 +858,22 @@
      앵커(#해시) 링크로 온 경우는 그 위치를 존중해 건드리지 않는다. */
   try { history.scrollRestoration = 'manual'; } catch (e) {}
   function onfToTop() { if (!location.hash) window.scrollTo(0, 0); }
-  window.addEventListener('pageshow', onfToTop);   // 첫 로드 + bfcache 복원 모두
+  // 우피(Next.js)는 복원 위치를 sessionStorage(__next_scroll_*)에 두고 pageshow "뒤에"
+  // 늦게 복원한다(새로고침 실측 2026-07-04) → 소스 제거 + 진입 후 0.7초 버스트로 방어.
+  function onfTopBurst() {
+    if (location.hash) return;
+    try {
+      Object.keys(sessionStorage).forEach(function (k) {
+        if (k.indexOf('__next_scroll') === 0) sessionStorage.removeItem(k);
+      });
+    } catch (e) {}
+    var t0 = Date.now();
+    (function tick() {
+      if (window.scrollY > 0) window.scrollTo(0, 0);
+      if (Date.now() - t0 < 700) requestAnimationFrame(tick);
+    })();
+  }
+  window.addEventListener('pageshow', onfTopBurst);   // 첫 로드 + bfcache 복원 모두
   document.addEventListener('DOMContentLoaded', onfToTop);
   // 우피 내부 메뉴 이동(SPA)은 pageshow가 안 뜸 → 경로 변화를 감지해 맨 위로
   var onfPath = location.pathname;
