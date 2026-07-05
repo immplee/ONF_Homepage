@@ -1635,8 +1635,10 @@ body.onf-review-detail .notion-image-block .onf-rev-close img,
 }
 
 @media (max-width: 768px) {
-  /* 사진 아래 한 줄: [←] [나가기] [→] */
-  .onf-rev-back, .onf-rev-next { top: auto; bottom: -60px; transform: none; }
+  /* 사진 아래 한 줄: [←] [나가기] [→].
+     화살표 anchor(패딩 포함 54px)가 나가기 pill(41px)보다 커서 같은 bottom이면
+     중심이 13px 위로 뜸 → bottom을 더 내려 나가기와 세로 중심을 맞춤(2026-07-05 Peter) */
+  .onf-rev-back, .onf-rev-next { top: auto; bottom: -73px; transform: none; }
   .onf-rev-back { left: 16px; right: auto; }
   .onf-rev-next { right: 16px; left: auto; }
   .onf-rev-back:hover, .onf-rev-next:hover { transform: scale(1.12); }
