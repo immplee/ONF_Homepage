@@ -140,7 +140,7 @@
           '<span>서울특별시 송파구 올림픽로 240, 2층 214호 (잠실동, 롯데웰빙센터)</span>' +
         '</p>' +
         '<p class="onf-footer-legal">본 사이트 모든 자료의 저작권 및 지적재산권 일체는 OWNIFY에 귀속되며, 사전 서면 동의 없는 무단 출력·복제·공유·2차 이용을 금합니다.</p>' +
-        '<p class="onf-footer-copy">© 2026 OWNIFY. All rights reserved.</p>' +
+        '<p class="onf-footer-copy">© 2026 Ownify. All rights reserved.</p>' +
       '</div>' +
       // 이미지는 jsDelivr 커밋 고정 URL 원칙(README) — 로고 파일을 바꾸면 커밋 해시도 갱신할 것
       '<img class="onf-footer-logo" alt="OWNIFY" ' +
