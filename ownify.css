@@ -1394,12 +1394,14 @@ body.onf-reviews .notion-collection-item:not(:has(img)) {
 .onf-listview-tab { margin-left: 16px !important; }
 
 /* 리스트 뷰 활성: 갤러리 그리드·Load more 숨김 */
-body.onf-rlist-on .notion-collection_view-block > div > .css-2axpky,
-body.onf-rlist-on .has-more,
-body.onf-rlist-on .has-more + [role="button"] { display: none !important; }
+/* ⚠️ 갤러리 숨김은 '리스트에 썸네일이 실제로 있을 때만' — body 클래스만으로 숨기면
+   리스트가 아직 비었을 때 빈 화면이 됨(2026-07-05 회귀). :has로 JS버전 무관하게 안전. */
+.notion-collection_view-block:has(.onf-rlist-thumb) > div > .css-2axpky,
+.notion-collection_view-block:has(.onf-rlist-thumb) .has-more,
+.notion-collection_view-block:has(.onf-rlist-thumb) .has-more + [role="button"] { display: none !important; }
 
 .onf-rlist { display: none; }
-body.onf-rlist-on .onf-rlist {
+.onf-rlist:has(.onf-rlist-thumb) {
   display: flex;
   gap: 26px;
   height: 74vh;
@@ -1480,11 +1482,11 @@ body.onf-rlist-on .onf-rlist {
   border-radius: 0 !important;
 }
 @media (max-width: 900px) {
-  body.onf-rlist-on .onf-rlist { padding: 0 20px; }
+  .onf-rlist:has(.onf-rlist-thumb) { padding: 0 20px; }
 }
 @media (max-width: 768px) {
   /* 모바일: 상단 가로 썸네일 스트립 + 아래 큰 리뷰 + 맨 아래 [←][→] */
-  body.onf-rlist-on .onf-rlist { flex-direction: column; height: auto; gap: 14px; padding: 0 16px 54px; }
+  .onf-rlist:has(.onf-rlist-thumb) { flex-direction: column; height: auto; gap: 14px; padding: 0 16px 54px; }
   .onf-rlist-side {
     flex: none;
     flex-direction: row;
