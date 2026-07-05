@@ -1396,9 +1396,9 @@ body.onf-reviews .notion-collection-item:not(:has(img)) {
 /* 리스트 뷰 활성: 갤러리 그리드·Load more 숨김 */
 /* ⚠️ 갤러리 숨김은 '리스트에 썸네일이 실제로 있을 때만' — body 클래스만으로 숨기면
    리스트가 아직 비었을 때 빈 화면이 됨(2026-07-05 회귀). :has로 JS버전 무관하게 안전. */
-.notion-collection_view-block:has(.onf-rlist-thumb) > div > .css-2axpky,
-.notion-collection_view-block:has(.onf-rlist-thumb) .has-more,
-.notion-collection_view-block:has(.onf-rlist-thumb) .has-more + [role="button"] { display: none !important; }
+body:has(.onf-rlist-thumb) .css-2axpky,
+body:has(.onf-rlist-thumb) .has-more,
+body:has(.onf-rlist-thumb) .has-more + [role="button"] { display: none !important; }
 
 .onf-rlist { display: none; }
 .onf-rlist:has(.onf-rlist-thumb) {
