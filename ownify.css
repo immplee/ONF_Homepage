@@ -1262,6 +1262,12 @@ body.onf-map-api-on .onf-map-link { display: block; }
     animation: onfArrowNudgeV 1.2s ease-in-out infinite;
   }
   @keyframes onfArrowNudgeV { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(3px); } }
+  /* 모바일 화살표는 세로(↓)라 등장도 위→아래로(데스크톱 좌→우 대신, 2026-07-06 Peter) */
+  .onf-step-arrow:not(.onf-step-hidden) { animation: onfArrowInV .5s ease-out backwards; }
+  @keyframes onfArrowInV {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: none; }
+  }
   /* 모바일: 높이 균등화(min-height) 해제 — 세로 스택에선 카드가 래퍼 밖으로
      늘어나 화살표와 겹치고 간격이 뒤틀린다(2026-07-04 실측). 폭은 JS ⑨가 단일 소유. */
   [data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block [class*="CalloutBlock_content"] {
@@ -1399,6 +1405,9 @@ div:has(> .onf-listview-tab) {
   border-bottom: none !important;   /* 밑줄 제거(우피 뷰 탭 바의 border-bottom) */
   gap: 34px !important;             /* 두 탭 사이 여백 넓게 */
 }
+/* 탭 아래 전폭 회색 줄 제거(2026-07-06 Peter): 우피 툴바(탭 조상)의 inset box-shadow 하단선.
+   해시 클래스(.css-1x5f8m8) 대신 '탭을 품은 조상 div'로 안정 겨냥 — 카드엔 탭이 없어 무영향. */
+.notion-collection_view-block div:has(.onf-listview-tab) { box-shadow: none !important; }
 .onf-listview-tab { margin-left: 0 !important; }
 div:has(> .onf-listview-tab) > [role="button"],
 div:has(> .onf-listview-tab) > [role="button"] span {
@@ -1520,11 +1529,8 @@ body.onf-rv-loading .css-2axpky { opacity: 0 !important; transition: none !impor
   }
   .onf-rlist-thumb { flex: 0 0 76px; height: 96px; }
   .onf-rlist-imgwrap { width: 100%; }
-  .onf-rlist-prev, .onf-rlist-next { top: auto; bottom: -46px; transform: none; }
-  .onf-rlist-prev { left: calc(50% - 58px); }
-  .onf-rlist-next { right: calc(50% - 58px); left: auto; }
-  .onf-rlist-prev:hover, .onf-rlist-next:hover { transform: scale(1.12); }
-  .onf-rlist-prev img, .onf-rlist-next img { width: 34px !important; height: 34px !important; }
+  /* 모바일: 하단 이전/다음 화살표 제거 → 좌우 스와이프로 넘김(2026-07-06 Peter) */
+  .onf-rlist-prev, .onf-rlist-next { display: none !important; }
 }
 
 /* ---------- 선생님 배지 — 리뷰 사진 호버 시 우상단에 아래→위 쏙 (ownify.js ⑭) 2026-07-05 ---------- */

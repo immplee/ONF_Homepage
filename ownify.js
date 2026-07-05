@@ -982,6 +982,25 @@
       var el = document.querySelector(sel); if (el) el.remove();
     });
   }
+  // 좌우 스와이프 헬퍼(모바일 리뷰 넘기기, 2026-07-06 Peter). 요소당 1회만 부착(__onfSwipe 가드).
+  // 수평 이동이 세로보다 크고 40px 넘을 때만 발동 → 세로 스크롤과 충돌 안 함.
+  function onfAddSwipe(el, onLeft, onRight) {
+    if (!el || el.__onfSwipe) return;
+    el.__onfSwipe = true;
+    var x0 = 0, y0 = 0, tracking = false;
+    el.addEventListener('touchstart', function (e) {
+      if (!e.touches || e.touches.length !== 1) { tracking = false; return; }
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; tracking = true;
+    }, { passive: true });
+    el.addEventListener('touchend', function (e) {
+      if (!tracking) return;
+      tracking = false;
+      var t = (e.changedTouches && e.changedTouches[0]); if (!t) return;
+      var dx = t.clientX - x0, dy = t.clientY - y0;
+      if (Math.abs(dx) < 40 || Math.abs(dx) <= Math.abs(dy)) return;   // 수평 스와이프만
+      if (dx < 0) { if (onLeft) onLeft(); } else { if (onRight) onRight(); }
+    }, { passive: true });
+  }
   // 판정을 함수로 분리해 즉시·DOMContentLoaded·경로변경 때도 호출(2026-07-04):
   // 인터벌만으로는 첫 렌더보다 늦어 이미지가 '작게 보였다 커지는' 깜빡임이 생겼음.
   function onfReviewTick() {
@@ -1014,6 +1033,11 @@
     // 카드와 함께 스크롤(2026-07-05 Peter). 블록이 아직 없으면 다음 틱에.
     var imgBlock = document.querySelector('.notion-image-block');
     if (!imgBlock) return;
+    // 모바일 스와이프: 왼쪽=다음 리뷰, 오른쪽=이전 리뷰(있는 화살표를 클릭해 동일 내비 재사용,
+    //   첫/끝이면 화살표가 없어 자동으로 넘어가지 않음). 화살표는 그대로 유지(2026-07-06 Peter).
+    onfAddSwipe(imgBlock,
+      function () { var n = document.querySelector('.onf-rev-next'); if (n) n.click(); },
+      function () { var p = document.querySelector('.onf-rev-back'); if (p) p.click(); });
     function onfRevBtn(cls, label, innerHTML) {
       var el = document.querySelector('.' + cls);
       if (!el) {
@@ -1147,6 +1171,10 @@
     box.querySelector('.onf-rlist-next').addEventListener('click', function () {
       if (onfRList.idx < onfRList.items.length - 1) { onfRList.idx++; onfRlRender(); }
     });
+    // 모바일 스와이프: 큰 이미지에서 왼쪽=다음, 오른쪽=이전 리뷰(하단 화살표는 모바일에서 CSS로 숨김, 2026-07-06 Peter)
+    onfAddSwipe(box.querySelector('.onf-rlist-imgwrap'),
+      function () { if (onfRList.idx < onfRList.items.length - 1) { onfRList.idx++; onfRlRender(); } },
+      function () { if (onfRList.idx > 0) { onfRList.idx--; onfRlRender(); } });
     onfRList.built = true;
   }
 
