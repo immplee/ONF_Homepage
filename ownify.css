@@ -1417,6 +1417,7 @@ body.onf-rlist-on .onf-rlist {
   gap: 22px;
   height: 74vh;
   margin-top: 20px;
+  position: relative;   /* 화살표 기준(패널 고정 — 스크롤과 무관하게 세로 중앙) */
 }
 /* 좌: 세로 썸네일 목록(스크롤) */
 .onf-rlist-side {
@@ -1472,8 +1473,8 @@ body.onf-rlist-on .onf-rlist {
   z-index: 3;
   padding: 6px;
 }
-.onf-rlist-prev { left: 2px; }
-.onf-rlist-next { right: 2px; }
+.onf-rlist-prev { left: 200px; }   /* 썸네일 열(176)+gap(22) 다음 = 메인 영역 왼쪽 */
+.onf-rlist-next { right: 4px; }
 .onf-rlist-prev:hover, .onf-rlist-next:hover { transform: translateY(-50%) scale(1.15); }
 .onf-rlist-prev img, .onf-rlist-next img {
   width: 42px !important;
@@ -1483,8 +1484,8 @@ body.onf-rlist-on .onf-rlist {
   border-radius: 0 !important;
 }
 @media (max-width: 768px) {
-  /* 모바일: 상단 가로 썸네일 스트립 + 아래 큰 리뷰 */
-  body.onf-rlist-on .onf-rlist { flex-direction: column; height: auto; gap: 14px; }
+  /* 모바일: 상단 가로 썸네일 스트립 + 아래 큰 리뷰 + 맨 아래 [←][→] */
+  body.onf-rlist-on .onf-rlist { flex-direction: column; height: auto; gap: 14px; padding-bottom: 54px; }
   .onf-rlist-side {
     flex: none;
     flex-direction: row;
@@ -1494,7 +1495,12 @@ body.onf-rlist-on .onf-rlist {
     gap: 8px;
   }
   .onf-rlist-thumb { flex: 0 0 76px; height: 96px; }
+  .onf-rlist-main { overflow: visible; }
   .onf-rlist-main-img { width: 100% !important; }
+  .onf-rlist-prev, .onf-rlist-next { top: auto; bottom: 0; transform: none; }
+  .onf-rlist-prev { left: calc(50% - 58px); }
+  .onf-rlist-next { right: calc(50% - 58px); left: auto; }
+  .onf-rlist-prev:hover, .onf-rlist-next:hover { transform: scale(1.12); }
   .onf-rlist-prev img, .onf-rlist-next img { width: 34px !important; height: 34px !important; }
 }
 /* Load more: 기본 SVG 화살표 → 커스텀 오렌지 화살표 이미지, 텍스트 #D2691E·굵게,

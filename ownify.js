@@ -1104,11 +1104,9 @@
     box.className = 'onf-rlist';
     box.innerHTML =
       '<div class="onf-rlist-side"></div>' +
-      '<div class="onf-rlist-main">' +
-        '<a class="onf-rlist-prev" aria-label="이전 리뷰"><img src="' + REV_ARROW_L + '" alt="이전"></a>' +
-        '<img class="onf-rlist-main-img" alt="선택한 리뷰">' +
-        '<a class="onf-rlist-next" aria-label="다음 리뷰"><img src="' + REV_ARROW_R + '" alt="다음"></a>' +
-      '</div>';
+      '<div class="onf-rlist-main"><img class="onf-rlist-main-img" alt="선택한 리뷰"></div>' +
+      '<a class="onf-rlist-prev" aria-label="이전 리뷰"><img src="' + REV_ARROW_L + '" alt="이전"></a>' +
+      '<a class="onf-rlist-next" aria-label="다음 리뷰"><img src="' + REV_ARROW_R + '" alt="다음"></a>';
     cv.appendChild(box);
     box.querySelector('.onf-rlist-prev').addEventListener('click', function () {
       if (onfRList.idx > 0) { onfRList.idx--; onfRlRender(); }
