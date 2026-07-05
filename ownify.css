@@ -1403,7 +1403,7 @@ body.onf-reviews .notion-collection-item:not(:has(img)) {
    ③현재 보기=오렌지+굵게(밑줄 대신 색으로). 토글 탭은 갤러리 탭 복제(css-*)라 구조 동일. */
 div:has(> .onf-listview-tab) {
   border-bottom: none !important;   /* 밑줄 제거(우피 뷰 탭 바의 border-bottom) */
-  gap: 34px !important;             /* 두 탭 사이 여백 넓게 */
+  gap: 30px !important;             /* 두 탭 사이 여백(34→30 아주 약간 좁힘, 2026-07-06 Peter) */
 }
 /* 탭 아래 전폭 회색 줄 제거(2026-07-06 Peter): 우피 툴바(탭 조상)의 inset box-shadow 하단선.
    해시 클래스(.css-1x5f8m8) 대신 '탭을 품은 조상 div'로 안정 겨냥 — 카드엔 탭이 없어 무영향. */
@@ -1431,6 +1431,12 @@ body:has(.onf-rlist-thumb) .has-more + [role="button"] { display: none !importan
    리스트를 만드는 동안(Load more 클릭 중) 그리드를 opacity로만 가린다.
    ⚠️ display:none이면 Load more를 프로그램 클릭조차 못 해 빈 목록이 됨 → opacity만. */
 body.onf-rv-loading .css-2axpky { opacity: 0 !important; transition: none !important; }
+
+/* 진입/새로고침 시 '갤러리 보기' 단일 탭 화면이 잠깐 뜨는 깜빡임 제거(2026-07-06 Peter):
+   ownify.js가 '리스트 보기' 탭(.onf-listview-tab)을 주입하기 전까지 컬렉션 뷰 자체를 숨긴다.
+   → 최종 화면(두 탭 + 리스트)만 노출. visibility라 레이아웃 유지·JS의 탭 복제/Load more 무영향
+   (탭 주입은 첫 틱에 즉시, Load more 클릭은 주입 후라 이미 보이는 상태). CSS라 JS 로드 전부터 적용. */
+.notion-collection_view-block:not(:has(.onf-listview-tab)) { visibility: hidden !important; }
 
 .onf-rlist { display: none; }
 .onf-rlist:has(.onf-rlist-thumb) {
@@ -1463,7 +1469,10 @@ body.onf-rv-loading .css-2axpky { opacity: 0 !important; transition: none !impor
   background: #fff;
   transition: border-color .15s, transform .15s, box-shadow .15s;
 }
-.onf-rlist-thumb:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(58, 36, 21, .1); }
+/* 호버 리프트는 호버 기기만 — 터치서 탭 후 '들린 채' 남는 sticky hover 방지(2026-07-06) */
+@media (hover: hover) {
+  .onf-rlist-thumb:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(58, 36, 21, .1); }
+}
 .onf-rlist-thumb img {
   width: 100% !important;
   height: 100% !important;
@@ -1552,10 +1561,16 @@ body.onf-rv-loading .css-2axpky { opacity: 0 !important; transition: none !impor
   /* 일러스트가 투명 배경이라 실루엣을 따라가는 drop-shadow(사각 box-shadow 금지) */
   filter: drop-shadow(0 3px 7px rgba(58, 36, 21, .28)) !important;
 }
-.notion-collection-item:hover .onf-teacher-badge,
-.onf-rlist-thumb:hover .onf-teacher-badge {
+.notion-collection-item:hover .onf-teacher-badge {
   opacity: 1;
   transform: translateY(0);
+}
+/* 리스트 썸네일: 선택(.on)되면 배지 표시 — 모바일서 첫 탭에 '선택+큰 리뷰+배지'가 함께 뜨게(2026-07-06 Peter) */
+.onf-rlist-thumb.on .onf-teacher-badge { opacity: 1; transform: translateY(0); }
+/* 썸네일 호버 효과는 호버 가능한 기기(데스크톱)만 — 터치선 :hover가 첫 탭을 '호버 표시'로 삼켜
+   클릭이 두 번 필요해지던 iOS 문제(배지만 뜨고 선택 안 됨)를 없앤다(2026-07-06 Peter). */
+@media (hover: hover) {
+  .onf-rlist-thumb:hover .onf-teacher-badge { opacity: 1; transform: translateY(0); }
 }
 /* 리스트 썸네일은 작으니 배지도 작게 */
 .onf-rlist-thumb .onf-teacher-badge { width: 54px; top: 5px; right: 5px; }
