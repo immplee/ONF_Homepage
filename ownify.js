@@ -1140,7 +1140,11 @@
         onfRlRender();
       });
     } else {
+      // 갤러리로 전환: 리스트 패널(썸네일)을 제거해야 :has(.onf-rlist-thumb)가 풀려
+      // 갤러리 그리드가 다시 보인다(2026-07-05). on=false면 tick이 재구성 안 함.
       onfRList.on = false;
+      var box = document.querySelector('.onf-rlist');
+      if (box) box.remove();
       document.body.classList.remove('onf-rlist-on');
     }
   }
