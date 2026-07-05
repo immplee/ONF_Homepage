@@ -1,18 +1,24 @@
 <!-- ============================================================
-  우피(Oopy) 커스텀 head 인라인 스니펫 — 정본(2026-07-06 갱신)
+  우피(Oopy) 커스텀 head 인라인 스니펫 — 정본(2026-07-06 재갱신)
   ------------------------------------------------------------
   왜 인라인인가: 아래 두 가지는 ownify.css/js(별도 파일, 브라우저 10분 캐시)로는
-  '즉시' 적용이 안 돼 깜빡임이 남는다. 인라인은 HTML 파싱 즉시 실행되고 별도 캐시가
-  없어(페이지 HTML의 일부) 항상 최신으로 동작한다.
+  '즉시·확실히' 적용이 안 돼 깜빡임이 남는다. 인라인은 HTML 파싱 즉시 실행되고
+  별도 캐시가 없어(페이지 HTML의 일부) 항상 최신으로 동작한다.
 
   (1) 리뷰 상세 탭 제목(Ownify┃Reviews┃작성자명): ownify.js가 바꾸는데 defer라
       하드 리로드 땐 0.2~0.5초 뒤 실행 → 그 사이 원제목(작성자명)이 탭에 보였음.
   (2) /reviews 진입 깜빡임: '리스트 보기' 탭을 ownify.js가 주입하기 전까지 우피 기본
-      '갤러리 보기' 단일 탭 화면이 잠깐 떴다가 두 탭 화면으로 바뀌던 문제. ownify.css에
-      숨김 규칙이 있으나 그 CSS가 캐시로 늦게 반영되면 깜빡임이 남는다 → 인라인으로
-      컬렉션 뷰를 즉시 숨겨(리스트 탭이 생기면 자동 노출) 캐시와 무관하게 제거.
+      '갤러리 보기' 단일 탭 화면이 잠깐 뜨던 문제. ownify.css에 숨김 규칙이 있으나 그
+      CSS가 브라우저 캐시로 늦게 반영되면 깜빡임이 남는다 → 인라인으로 컬렉션 뷰를
+      즉시 숨겨(리스트 탭이 생기면 자동 노출) 캐시와 무관하게 제거.
+
+  ⚠️ 중요(2026-07-06 실측): 우피(Next.js)는 hydration 때 head를 재구성하며 '그 전에
+     주입된' <style>을 지운다. 그래서 단순 1회 주입은 로드 중 사라져 무력화됐음. →
+     MutationObserver로 지워지면 즉시 재주입(자가복구)해 계속 살아있게 한다. 규칙 자체가
+     컬렉션 뷰(=현재 /reviews에만 존재)에만 적용돼 다른 페이지엔 무해하므로 경로 게이트 없이
+     항상 주입한다.
 
   적용: Oopy Console → 사이트 설정(커스텀 코드/head) →
-  기존 ownify.css/js 두 줄 "맨 위"에 아래 <script> 한 줄을 붙여넣기(교체).
+  기존 ownify.css/js 두 줄 "맨 위"에 아래 <script> 한 줄을 붙여넣기(기존 스니펫과 교체).
   ============================================================ -->
-<script>(function(){try{var f=function(){if(!/^\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/?$/.test(location.pathname))return;var t=document.querySelector("title");var v=t?t.textContent:document.title;if(v&&v.indexOf("Ownify┃")!==0){var w="Ownify┃Reviews┃"+v.trim();if(t)t.textContent=w;else document.title=w}};f();new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true,characterData:true});if(/^\/reviews\/?$/.test(location.pathname)){var s=document.createElement("style");s.textContent="body:not(:has(.onf-listview-tab)) .notion-collection_view-block{visibility:hidden!important}";(document.head||document.documentElement).appendChild(s)}}catch(e){}})();</script>
+<script>(function(){try{var css="body:not(:has(.onf-listview-tab)) .notion-collection_view-block{visibility:hidden!important}";var st=null;function ensureHide(){if(!st||!st.isConnected){st=document.createElement("style");st.textContent=css;(document.head||document.documentElement).appendChild(st)}}function fixTitle(){if(!/^\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/?$/.test(location.pathname))return;var t=document.querySelector("title");var v=t?t.textContent:document.title;if(v&&v.indexOf("Ownify┃")!==0){var w="Ownify┃Reviews┃"+v.trim();if(t)t.textContent=w;else document.title=w}}ensureHide();fixTitle();new MutationObserver(function(){ensureHide();fixTitle()}).observe(document.documentElement,{childList:true,subtree:true,characterData:true})}catch(e){}})();</script>
