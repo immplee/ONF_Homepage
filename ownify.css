@@ -1382,6 +1382,34 @@ body.onf-map-api-on .onf-map-link { display: block; }
 .notion-collection-item > [role="button"] {
   box-shadow: 0 0 0 2px #6F4A2F, 0 2px 6px rgba(58, 36, 21, .12) !important;
 }
+/* 리뷰 사진 없는 빈 카드는 숨김(마지막 열 빈 칸, 2026-07-05 Peter) — 실제 리뷰 카드는
+   항상 미리보기 img가 있고 빈 카드만 img가 없다 */
+body.onf-reviews .notion-collection-item:not(:has(img)) {
+  display: none !important;
+}
+/* Load more: 기본 SVG 화살표 → 커스텀 오렌지 화살표 이미지, 텍스트 #D2691E·굵게,
+   화살표·글자 크기 시각적으로 맞춤(2026-07-05 Peter). 우피 해시 클래스에 의존하지 않게
+   '컬렉션 뷰 안의 aria-label 없는 role=button'(= 컬렉션 타일은 aria-label 있음)으로 겨냥 */
+.notion-collection_view-block [role="button"]:not([aria-label]) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  height: auto !important;
+}
+.notion-collection_view-block [role="button"]:not([aria-label]) svg { display: none !important; }
+.notion-collection_view-block [role="button"]:not([aria-label])::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: 21px !important;
+  height: 21px !important;
+  background: url("https://immplee.github.io/ONF_Homepage/assets/review-arrow-down.png") center/contain no-repeat !important;
+}
+.notion-collection_view-block [role="button"]:not([aria-label]) > div {
+  color: #D2691E !important;
+  font-weight: 800 !important;
+  font-size: 18px !important;
+  opacity: 1 !important;
+}
 /* 리뷰 상세(body 클래스는 ownify.js ⑫가 부여): 본문 폭 제한을 풀고 이미지 크게 */
 body.onf-review-detail .notion-page-content {
   max-width: none !important;
