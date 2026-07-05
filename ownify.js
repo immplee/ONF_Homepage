@@ -926,11 +926,18 @@
   try { history.scrollRestoration = 'manual'; } catch (e) {}
   // /reviews로 '갤러리 보기'인 채 돌아오는 경우(뒤로가기)엔 맨위 강제를 건너뛴다 —
   // 저장해둔 스크롤 위치를 ⑬이 복원하게(2026-07-06 Peter). 그 외 페이지는 기존대로 맨위.
+  function onfIsReviewDetailPath() {
+    return /^\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(location.pathname.replace(/\/+$/, ''));
+  }
   function onfSkipTop() {
     try {
-      return location.pathname.replace(/\/+$/, '') === '/reviews' &&
-             sessionStorage.getItem('onfRvView') === 'gallery' &&
-             parseInt(sessionStorage.getItem('onfRvScroll') || '0', 10) > 0;
+      var rp = location.pathname.replace(/\/+$/, '');
+      // 갤러리 보기로 뒤로가기 복귀 → 저장 스크롤 복원(⑬)에 맡김
+      if (rp === '/reviews' && sessionStorage.getItem('onfRvView') === 'gallery' &&
+          parseInt(sessionStorage.getItem('onfRvScroll') || '0', 10) > 0) return true;
+      // 데스크톱 리뷰 상세: 배너 보이는 선까지 내려주므로(task1) 맨위 강제 스킵
+      if (window.innerWidth > 780 && onfIsReviewDetailPath()) return true;
+      return false;
     } catch (e) { return false; }
   }
   function onfToTop() { if (!location.hash && !onfSkipTop()) window.scrollTo(0, 0); }
@@ -982,6 +989,25 @@
       var el = document.querySelector(sel); if (el) el.remove();
     });
   }
+  // task1(2026-07-06 Peter): 데스크톱에서 갤러리 카드로 상세 진입 시 배너 보이는 선까지 스크롤
+  //   (리스트뷰 썸네일 클릭과 동일 수준 = 커버 하단 −120). onfSkipTop이 이 경로의 맨위 강제를 꺼둠.
+  var onfRvLastDetail = null;
+  function onfReviewDetailScroll() {
+    if (window.innerWidth <= 780) return;   // 데스크톱만
+    try { Object.keys(sessionStorage).forEach(function (k) { if (k.indexOf('__next_scroll') === 0) sessionStorage.removeItem(k); }); } catch (e) {}
+    var stop = false;
+    function stopper() { stop = true; }
+    ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (t) { window.addEventListener(t, stopper, { once: true, passive: true }); });
+    [50, 200, 450, 800].forEach(function (d) {
+      setTimeout(function () {
+        if (stop || !onfIsReviewDetailPath()) return;
+        var cover = document.querySelector('.page_cover');
+        var target = cover ? (cover.getBoundingClientRect().bottom + window.scrollY - 120) : 0;
+        if (target < 0) target = 0;
+        window.scrollTo(0, target);
+      }, d);
+    });
+  }
   // 좌우 스와이프 헬퍼(모바일 리뷰 넘기기, 2026-07-06 Peter). 요소당 1회만 부착(__onfSwipe 가드).
   // 수평 이동이 세로보다 크고 40px 넘을 때만 발동 → 세로 스크롤과 충돌 안 함.
   function onfAddSwipe(el, onLeft, onRight) {
@@ -1015,6 +1041,7 @@
       if (ids.length) { try { localStorage.setItem(REV_KEY, JSON.stringify(ids)); } catch (e) {} }
       document.body.classList.add('onf-reviews');       // 목록 전용 스타일(구분선 제거 등)
       document.body.classList.remove('onf-review-detail');
+      onfRvLastDetail = null;
       onfReviewNavClear();
       return;
     }
@@ -1025,10 +1052,15 @@
     var idx = m ? ids2.indexOf(m[1]) : -1;
     if (idx === -1) {
       document.body.classList.remove('onf-review-detail');
+      onfRvLastDetail = null;
       onfReviewNavClear();
       return;
     }
     document.body.classList.add('onf-review-detail');
+    if (onfRvLastDetail !== m[1]) {   // task1: 새 상세 진입 1회만 배너 보이는 선까지 스크롤(데스크톱)
+      onfRvLastDetail = m[1];
+      onfReviewDetailScroll();
+    }
     // 내비 3종(이전·다음·X)은 전부 '카드(이미지 블록)'에 부착 — 화면 고정이 아니라
     // 카드와 함께 스크롤(2026-07-05 Peter). 블록이 아직 없으면 다음 틱에.
     var imgBlock = document.querySelector('.notion-image-block');
@@ -1106,6 +1138,7 @@
   // task2(2026-07-06 Peter): 썸네일 클릭 시 리뷰 패널이 화면 상단(상단바 아래)에 오도록
   //   페이지를 아래로 스크롤 — 배너가 걷히고 선택한 리뷰가 크게 보인다.
   function onfRlScrollToPanel() {
+    if (window.innerWidth <= 780) return;   // 모바일은 썸네일 클릭 시 자동스크롤 안 함(2026-07-06 Peter task2)
     var box = document.querySelector('.onf-rlist');
     if (!box) return;
     var tb = document.querySelector('.notion-topbar');
@@ -1220,8 +1253,15 @@
   // 갤러리 보기 탭 옆에 '리스트 보기' 토글 주입 + 상태 유지(재렌더 대비)
   function onfReviewsListTick() {
     if (!onfRlOnReviews()) {
-      if (document.body.classList.contains('onf-rlist-on')) onfSetRList(false);
-      onfRvClearLoading();   // task3: /reviews를 벗어나면 로딩 가림 해제(다른 페이지에 영향 없게)
+      // /reviews 이탈: 리스트 상태만 정리하고 저장된 뷰(onfRvView)는 건드리지 않는다.
+      // ⚠️ 예전엔 onfSetRList(false)를 불러 이탈 때마다 stored='gallery'로 오염 → 리스트로 보다가
+      //    다른 메뉴 갔다 오면 갤러리로 뜨던 버그(2026-07-06 수정). defaulted 리셋으로 재진입 시
+      //    저장된 뷰(기본 리스트)대로 다시 세팅.
+      onfRList.on = false;
+      onfRList.defaulted = false;
+      var lb = document.querySelector('.onf-rlist'); if (lb) lb.remove();
+      document.body.classList.remove('onf-rlist-on');
+      onfRvClearLoading();
       return;
     }
     // 토글 주입

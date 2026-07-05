@@ -1565,15 +1565,12 @@ body:not(:has(.onf-listview-tab)) .notion-collection_view-block { visibility: hi
   /* 일러스트가 투명 배경이라 실루엣을 따라가는 drop-shadow(사각 box-shadow 금지) */
   filter: drop-shadow(0 3px 7px rgba(58, 36, 21, .28)) !important;
 }
-.notion-collection-item:hover .onf-teacher-badge {
-  opacity: 1;
-  transform: translateY(0);
-}
 /* 리스트 썸네일: 선택(.on)되면 배지 표시 — 모바일서 첫 탭에 '선택+큰 리뷰+배지'가 함께 뜨게(2026-07-06 Peter) */
 .onf-rlist-thumb.on .onf-teacher-badge { opacity: 1; transform: translateY(0); }
-/* 썸네일 호버 효과는 호버 가능한 기기(데스크톱)만 — 터치선 :hover가 첫 탭을 '호버 표시'로 삼켜
-   클릭이 두 번 필요해지던 iOS 문제(배지만 뜨고 선택 안 됨)를 없앤다(2026-07-06 Peter). */
+/* 호버 배지는 호버 가능한 기기(데스크톱)만 — 터치선 :hover가 첫 탭을 '호버 표시'로 삼켜 클릭이
+   두 번 필요해지던 iOS 문제를 없앤다. 갤러리 카드 포함 → 모바일서 카드 한 번 탭에 상세 진입(2026-07-06 Peter). */
 @media (hover: hover) {
+  .notion-collection-item:hover .onf-teacher-badge,
   .onf-rlist-thumb:hover .onf-teacher-badge { opacity: 1; transform: translateY(0); }
 }
 /* 리스트 썸네일은 작으니 배지도 작게 */
