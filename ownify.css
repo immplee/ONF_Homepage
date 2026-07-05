@@ -1434,13 +1434,19 @@ body.onf-rv-loading .css-2axpky { opacity: 0 !important; transition: none !impor
 
 /* 진입/새로고침 시 '갤러리 보기' 단일 탭 화면이 잠깐 뜨는 깜빡임 제거(2026-07-06 Peter):
    ownify.js가 '리스트 보기' 탭(.onf-listview-tab)을 주입하기 전까지 컬렉션 뷰를 숨긴다.
-   → 최종 화면(두 탭 + 리스트)만 노출. visibility라 레이아웃 유지·JS의 탭 복제/Load more 무영향.
-   ⚠️ 반드시 body 기준(:not(:has())를 body에) — 우피는 컬렉션 뷰 블록을 '바깥(툴바)+안쪽(카드 그리드)'
-   2겹 중첩으로 렌더하고 탭은 바깥에만 주입되므로, 블록별로 걸면 안쪽 블록이 영원히 숨어
-   갤러리가 빈 화면이 된다(2026-07-06 실측 회귀·수정). body에 탭이 생기는 순간 전 블록 동시 노출.
-   ⚠️ 현재 컬렉션 뷰는 /reviews에만 존재(전 페이지 0 확인) — 다른 페이지에 DB 뷰를 새로 넣으면
-   그 페이지에선 이 규칙이 오작동하니 그때 body.onf-reviews 스코프 재검토. */
-body:not(:has(.onf-listview-tab)) .notion-collection_view-block { visibility: hidden !important; }
+   → 최종 화면(두 탭 + 리스트)만 노출. 탭이 생기는 순간(:has) 노출.
+   ⚠️ 반드시 body 기준 — 우피는 컬렉션 뷰를 '바깥(툴바)+안쪽(그리드)' 2겹 중첩 렌더하고 탭은
+   바깥에만 주입되므로, 블록별로 걸면 안쪽이 영원히 숨어 갤러리 빈 화면됨(2026-07-06 실측).
+   ⚠️⚠️ **opacity로 가린다 — visibility:hidden은 안 됨**: 우피가 탭 툴바(css-11qk0aa 등)에
+   `visibility:visible`를 명시해 부모의 hidden을 덮어써 탭이 그대로 보였음(몇 번을 고쳐도
+   깜빡이던 진짜 원인, 2026-07-06 실측). opacity는 자식이 되돌릴 수 없어 그룹 전체가 투명.
+   레이아웃 유지·Load more 프로그램 클릭 가능(opacity라). pointer-events로 유령 클릭도 차단.
+   ⚠️ 컬렉션 뷰는 현재 /reviews에만 존재(전 페이지 0). */
+body:not(:has(.onf-listview-tab)) .notion-collection_view-block {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: none !important;
+}
 
 .onf-rlist { display: none; }
 .onf-rlist:has(.onf-rlist-thumb) {
