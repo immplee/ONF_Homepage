@@ -11,9 +11,11 @@ permissions:
   pages: write
   id-token: write
 
+# ⚠️ cancel-in-progress:false — 연속 push 때 진행 중 배포를 취소하면 그게 '실패'로 찍혀
+#    실패 알림 메일이 온다(2026-07-05 Peter 리포트). 취소 대신 큐에 쌓아 순서대로 완료.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -27,5 +29,10 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
+      # deploy-pages가 가끔 "try again later"(GitHub 백엔드 일시 오류)로 실패 →
+      # 자체 재시도(최대 3회)로 워크플로가 실패 처리되지 않게(메일 억제)
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          timeout: 600000
+          error_count: 15
