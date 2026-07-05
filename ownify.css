@@ -1389,24 +1389,11 @@ body.onf-reviews .notion-collection-item:not(:has(img)) {
 }
 
 /* ---------- 리뷰 '리스트 보기'(좌 목록 + 우 상세, ownify.js ⑬) 2026-07-05 Peter ---------- */
-/* 갤러리 보기 옆 토글 탭 — 우피 뷰 탭과 같은 톤 */
-.onf-listview-tab {
-  display: inline-flex !important;
-  align-items: center !important;
-  margin-left: 20px !important;
-  padding: 2px 2px 6px !important;
-  font-family: 'Paperlogy', 'Apple SD Gothic Neo', sans-serif !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  color: rgba(111, 74, 47, .5) !important;
-  cursor: pointer !important;
-  user-select: none !important;
-}
-.onf-listview-tab.on {
-  color: #D2691E !important;
-  border-bottom: 2px solid #D2691E !important;
-}
-/* 리스트 뷰 활성: 갤러리 그리드·Load more 숨기고 갤러리 탭은 톤다운 */
+/* 토글 탭은 갤러리 보기 탭을 복제한 것(css-*)이라 스타일이 완전히 동일. 여기선 간격만.
+   ⚠️ 커스텀 색·밑줄 금지 — '갤러리 보기와 똑같이'(2026-07-05 Peter) */
+.onf-listview-tab { margin-left: 16px !important; }
+
+/* 리스트 뷰 활성: 갤러리 그리드·Load more 숨김 */
 body.onf-rlist-on .notion-collection_view-block > div > .css-2axpky,
 body.onf-rlist-on .has-more,
 body.onf-rlist-on .has-more + [role="button"] { display: none !important; }
@@ -1414,31 +1401,35 @@ body.onf-rlist-on .has-more + [role="button"] { display: none !important; }
 .onf-rlist { display: none; }
 body.onf-rlist-on .onf-rlist {
   display: flex;
-  gap: 22px;
+  gap: 26px;
   height: 74vh;
   margin-top: 20px;
-  position: relative;   /* 화살표 기준(패널 고정 — 스크롤과 무관하게 세로 중앙) */
+  padding: 0 116px;        /* 갤러리 그리드와 동일 정렬(뷰포트 116px) — 왼쪽 붙음 해소 */
+  box-sizing: border-box;
 }
 /* 좌: 세로 썸네일 목록(스크롤) */
 .onf-rlist-side {
-  flex: 0 0 176px;
+  flex: 0 0 168px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 2px 10px 2px 2px;
+  padding: 2px 12px 2px 2px;
 }
+.onf-rlist-side::-webkit-scrollbar { width: 6px; }
+.onf-rlist-side::-webkit-scrollbar-thumb { background: rgba(111, 74, 47, .22); border-radius: 3px; }
+.onf-rlist-side::-webkit-scrollbar-track { background: transparent; }
 .onf-rlist-thumb {
   flex: 0 0 auto;
-  height: 116px;
+  height: 112px;
   border: 2px solid #E4D6C0;
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
   background: #fff;
-  transition: border-color .15s, transform .15s;
+  transition: border-color .15s, transform .15s, box-shadow .15s;
 }
-.onf-rlist-thumb:hover { transform: translateY(-1px); }
+.onf-rlist-thumb:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(58, 36, 21, .1); }
 .onf-rlist-thumb img {
   width: 100% !important;
   height: 100% !important;
@@ -1448,18 +1439,23 @@ body.onf-rlist-on .onf-rlist {
   border-radius: 0 !important;
   box-shadow: none !important;
 }
-.onf-rlist-thumb.on { border-color: #D2691E; box-shadow: 0 0 0 1px #D2691E; }
-/* 우: 선택 리뷰 크게 + 좌우 화살표 */
+.onf-rlist-thumb.on { border-color: #D2691E; box-shadow: 0 0 0 1.5px #D2691E; }
+/* 우: 선택 리뷰 크게. 이미지 래퍼(imgwrap)를 기준으로 화살표를 상세보기와
+   동일하게 이미지 좌우 바로 바깥(±70)에 배치 */
 .onf-rlist-main {
   flex: 1 1 auto;
-  position: relative;
   overflow-y: auto;
   display: flex;
   justify-content: center;
   align-items: flex-start;
 }
+.onf-rlist-imgwrap {
+  position: relative;
+  width: min(560px, 100%);
+  flex: 0 0 auto;
+}
 .onf-rlist-main-img {
-  width: min(560px, 100%) !important;
+  width: 100% !important;
   height: auto !important;
   border-radius: 16px !important;
   box-shadow: 0 8px 24px rgba(58, 36, 21, .14) !important;
@@ -1473,31 +1469,33 @@ body.onf-rlist-on .onf-rlist {
   z-index: 3;
   padding: 6px;
 }
-.onf-rlist-prev { left: 200px; }   /* 썸네일 열(176)+gap(22) 다음 = 메인 영역 왼쪽 */
-.onf-rlist-next { right: 4px; }
+.onf-rlist-prev { left: -70px; }   /* 상세보기 화살표와 동일 위치(이미지 바로 바깥) */
+.onf-rlist-next { right: -70px; }
 .onf-rlist-prev:hover, .onf-rlist-next:hover { transform: translateY(-50%) scale(1.15); }
 .onf-rlist-prev img, .onf-rlist-next img {
-  width: 42px !important;
-  height: 42px !important;
+  width: 46px !important;
+  height: 46px !important;
   display: block !important;
   box-shadow: none !important;
   border-radius: 0 !important;
 }
+@media (max-width: 900px) {
+  body.onf-rlist-on .onf-rlist { padding: 0 20px; }
+}
 @media (max-width: 768px) {
   /* 모바일: 상단 가로 썸네일 스트립 + 아래 큰 리뷰 + 맨 아래 [←][→] */
-  body.onf-rlist-on .onf-rlist { flex-direction: column; height: auto; gap: 14px; padding-bottom: 54px; }
+  body.onf-rlist-on .onf-rlist { flex-direction: column; height: auto; gap: 14px; padding: 0 16px 54px; }
   .onf-rlist-side {
     flex: none;
     flex-direction: row;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 2px;
+    padding: 2px 2px 6px;
     gap: 8px;
   }
   .onf-rlist-thumb { flex: 0 0 76px; height: 96px; }
-  .onf-rlist-main { overflow: visible; }
-  .onf-rlist-main-img { width: 100% !important; }
-  .onf-rlist-prev, .onf-rlist-next { top: auto; bottom: 0; transform: none; }
+  .onf-rlist-imgwrap { width: 100%; }
+  .onf-rlist-prev, .onf-rlist-next { top: auto; bottom: -46px; transform: none; }
   .onf-rlist-prev { left: calc(50% - 58px); }
   .onf-rlist-next { right: calc(50% - 58px); left: auto; }
   .onf-rlist-prev:hover, .onf-rlist-next:hover { transform: scale(1.12); }

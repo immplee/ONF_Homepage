@@ -1104,9 +1104,13 @@
     box.className = 'onf-rlist';
     box.innerHTML =
       '<div class="onf-rlist-side"></div>' +
-      '<div class="onf-rlist-main"><img class="onf-rlist-main-img" alt="선택한 리뷰"></div>' +
-      '<a class="onf-rlist-prev" aria-label="이전 리뷰"><img src="' + REV_ARROW_L + '" alt="이전"></a>' +
-      '<a class="onf-rlist-next" aria-label="다음 리뷰"><img src="' + REV_ARROW_R + '" alt="다음"></a>';
+      '<div class="onf-rlist-main">' +
+        '<div class="onf-rlist-imgwrap">' +
+          '<img class="onf-rlist-main-img" alt="선택한 리뷰">' +
+          '<a class="onf-rlist-prev" aria-label="이전 리뷰"><img src="' + REV_ARROW_L + '" alt="이전"></a>' +
+          '<a class="onf-rlist-next" aria-label="다음 리뷰"><img src="' + REV_ARROW_R + '" alt="다음"></a>' +
+        '</div>' +
+      '</div>';
     cv.appendChild(box);
     box.querySelector('.onf-rlist-prev').addEventListener('click', function () {
       if (onfRList.idx > 0) { onfRList.idx--; onfRlRender(); }
@@ -1120,8 +1124,6 @@
   function onfSetRList(on) {
     onfRList.on = on;
     document.body.classList.toggle('onf-rlist-on', on);
-    var lt = document.querySelector('.onf-listview-tab');
-    if (lt) lt.classList.toggle('on', on);
     if (on) {
       onfRlBuild();
       onfRlLoadAll(function () {
@@ -1144,20 +1146,29 @@
       if (/갤러리 보기/.test(btns[i].textContent || '')) { gTab = btns[i]; break; }
     }
     if (gTab && gTab.parentElement && !gTab.parentElement.querySelector('.onf-listview-tab')) {
-      var t = document.createElement('div');
-      t.className = 'onf-listview-tab';
-      t.setAttribute('role', 'button');
-      t.textContent = '리스트 보기';
+      // 갤러리 보기 탭을 그대로 복제 → 폰트·크기·색·간격이 완전히 동일(2026-07-05 Peter).
+      // 아이콘만 리스트(가로 3줄)로, 텍스트만 '리스트 보기'로 교체. 커스텀 밑줄 없음.
+      var t = gTab.cloneNode(true);
+      t.classList.add('onf-listview-tab');
+      t.style.opacity = '1';
+      var sp = t.querySelector('span');
+      if (sp) sp.textContent = '리스트 보기'; else t.textContent = '리스트 보기';
+      var svg = t.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('viewBox', '0 0 14 14');
+        svg.innerHTML =
+          '<rect x="0" y="1.2" width="14" height="2" rx="1"></rect>' +
+          '<rect x="0" y="6" width="14" height="2" rx="1"></rect>' +
+          '<rect x="0" y="10.8" width="14" height="2" rx="1"></rect>';
+      }
       t.addEventListener('click', function () { onfSetRList(true); });
       gTab.addEventListener('click', function () { onfSetRList(false); });
-      gTab.parentElement.appendChild(t);
+      gTab.parentElement.insertBefore(t, gTab.nextSibling);
     }
     // 리스트 뷰가 켜져 있으면 유지(재렌더로 사라졌으면 재구성)
     if (onfRList.on) {
       if (!document.querySelector('.onf-rlist')) { onfRlBuild(); onfRList.items = onfRlCollect(); }
       onfRlRender();
-      var lt = document.querySelector('.onf-listview-tab');
-      if (lt) lt.classList.add('on');
     }
   }
   onfReviewsListTick();
