@@ -1388,23 +1388,28 @@ body.onf-reviews .notion-collection-item:not(:has(img)) {
   display: none !important;
 }
 /* Load more: 기본 SVG 화살표 → 커스텀 오렌지 화살표 이미지, 텍스트 #D2691E·굵게,
-   화살표·글자 크기 시각적으로 맞춤(2026-07-05 Peter). 우피 해시 클래스에 의존하지 않게
-   '컬렉션 뷰 안의 aria-label 없는 role=button'(= 컬렉션 타일은 aria-label 있음)으로 겨냥 */
-.notion-collection_view-block [role="button"]:not([aria-label]) {
-  display: inline-flex !important;
+   화살표·글자 크기 시각 정렬, 중앙 배치+카드 여백(2026-07-05 Peter).
+   ⚠️ 겨냥은 반드시 '.has-more 바로 다음 role=button' — 이게 유일하게 Load more다.
+   (넓게 [role=button]:not([aria-label])로 잡으면 '갤러리 보기' 뷰 탭·제목 placeholder
+    까지 걸려 아이콘이 바뀌고 유령 화살표가 생겼음, 2026-07-05 실측) */
+.has-more + [role="button"] {
+  display: flex !important;
   align-items: center !important;
+  justify-content: center !important;   /* 화살표+글자 정중앙 */
   gap: 8px !important;
+  width: 100% !important;
   height: auto !important;
+  margin-top: 30px !important;          /* 위 카드와 여백 */
 }
-.notion-collection_view-block [role="button"]:not([aria-label]) svg { display: none !important; }
-.notion-collection_view-block [role="button"]:not([aria-label])::before {
+.has-more + [role="button"] svg { display: none !important; }
+.has-more + [role="button"]::before {
   content: "" !important;
   display: inline-block !important;
   width: 21px !important;
   height: 21px !important;
   background: url("https://immplee.github.io/ONF_Homepage/assets/review-arrow-down.png") center/contain no-repeat !important;
 }
-.notion-collection_view-block [role="button"]:not([aria-label]) > div {
+.has-more + [role="button"] > div {
   color: #D2691E !important;
   font-weight: 800 !important;
   font-size: 18px !important;
