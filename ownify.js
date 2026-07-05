@@ -1080,6 +1080,7 @@
         t.innerHTML = '<img src="' + r.src + '" alt="리뷰 ' + (i + 1) + '">';
         t.addEventListener('click', function () { onfRList.idx = i; onfRlRender(); });
         side.appendChild(t);
+        onfAddTeacherBadge(t, onfTeacherOf(r.id));   // 썸네일 우상단 선생님 배지(호버)
       });
     }
     if (onfRList.idx >= onfRList.items.length) onfRList.idx = 0;
@@ -1173,5 +1174,66 @@
   }
   onfReviewsListTick();
   setInterval(onfReviewsListTick, 500);
+
+  /* ---------- ⑭ 리뷰 선생님 배지 — 호버 시 우상단에 Peter/Mary 일러스트 쏙 (2026-07-05 Peter) ----------
+     판별: 리뷰 제목의 하트로 선생님 구분(실측 확정) — 🧡=Peter, 💙=Mary.
+     제목은 런타임 __NEXT_DATA__(recordMap)에서 block-id→title로 읽는다. */
+  var ONF_TEACHER_IMG = {
+    peter: 'https://immplee.github.io/ONF_Homepage/assets/review-teacher-peter.png',
+    mary:  'https://immplee.github.io/ONF_Homepage/assets/review-teacher-mary.png'
+  };
+  var onfTeacherMap = null;
+  function onfBuildTeacherMap() {
+    if (onfTeacherMap) return onfTeacherMap;
+    onfTeacherMap = {};
+    try {
+      var el = document.getElementById('__NEXT_DATA__');
+      if (!el) return onfTeacherMap;
+      var d = JSON.parse(el.textContent);
+      var rm = (function find(o) {
+        if (o && typeof o === 'object') {
+          if (o.block && typeof o.block === 'object') {
+            var k = Object.keys(o.block)[0];
+            if (k && /[0-9a-f-]{36}/.test(k)) return o;
+          }
+          for (var key in o) { var r = find(o[key]); if (r) return r; }
+        }
+      })(d);
+      if (!rm || !rm.block) return onfTeacherMap;
+      for (var id in rm.block) {
+        var v = (rm.block[id] || {}).value || {};
+        if (v.type === 'page' && v.parent_table === 'collection' && v.properties && v.properties.title) {
+          var t = v.properties.title.map(function (s) { return s[0]; }).join('');
+          if (t.indexOf('🧡') >= 0) onfTeacherMap[id] = 'peter';
+          else if (t.indexOf('💙') >= 0) onfTeacherMap[id] = 'mary';
+        }
+      }
+    } catch (e) {}
+    return onfTeacherMap;
+  }
+  function onfTeacherOf(id) { return onfBuildTeacherMap()[id] || null; }
+
+  function onfAddTeacherBadge(host, teacher) {
+    if (!teacher || !host || host.querySelector('.onf-teacher-badge')) return;
+    if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+    var b = document.createElement('div');
+    b.className = 'onf-teacher-badge';
+    var img = document.createElement('img');
+    img.src = ONF_TEACHER_IMG[teacher];
+    img.alt = teacher;
+    img.onerror = function () { b.style.display = 'none'; };   // 이미지 없으면 배지 숨김(깨진 아이콘 방지)
+    b.appendChild(img);
+    host.appendChild(b);
+  }
+
+  // 갤러리 카드에 배지(재렌더 대비 매 틱). 리스트 썸네일은 onfRlRender가 직접 붙임.
+  setInterval(function () {
+    if (location.pathname.replace(/\/+$/, '') !== '/reviews') return;
+    document.querySelectorAll('.notion-collection-item').forEach(function (it) {
+      if (!it.querySelector('img')) return;
+      var host = it.querySelector('[role="button"]') || it;
+      onfAddTeacherBadge(host, onfTeacherOf(it.getAttribute('data-block-id')));
+    });
+  }, 500);
 
 })();

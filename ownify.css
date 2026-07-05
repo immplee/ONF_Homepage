@@ -1501,6 +1501,38 @@ body.onf-rlist-on .onf-rlist {
   .onf-rlist-prev:hover, .onf-rlist-next:hover { transform: scale(1.12); }
   .onf-rlist-prev img, .onf-rlist-next img { width: 34px !important; height: 34px !important; }
 }
+
+/* ---------- 선생님 배지 — 리뷰 사진 호버 시 우상단에 아래→위 쏙 (ownify.js ⑭) 2026-07-05 ---------- */
+.onf-teacher-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 84px;                 /* 갤러리 카드 — 이름 글자 보이는 아이콘 크기 */
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .2s ease, transform .3s cubic-bezier(.34, 1.6, .64, 1);
+  z-index: 4;
+}
+.onf-teacher-badge img {
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  border-radius: 12px !important;
+  box-shadow: 0 5px 14px rgba(58, 36, 21, .2) !important;
+}
+.notion-collection-item:hover .onf-teacher-badge,
+.onf-rlist-thumb:hover .onf-teacher-badge {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* 리스트 썸네일은 작으니 배지도 작게 */
+.onf-rlist-thumb .onf-teacher-badge { width: 54px; top: 5px; right: 5px; }
+@media (max-width: 768px) {
+  .onf-teacher-badge { width: 66px; }
+  .onf-rlist-thumb .onf-teacher-badge { width: 42px; }
+}
+
 /* Load more: 기본 SVG 화살표 → 커스텀 오렌지 화살표 이미지, 텍스트 #D2691E·굵게,
    화살표·글자 크기 시각 정렬, 중앙 배치+카드 여백(2026-07-05 Peter).
    ⚠️ 겨냥은 반드시 '.has-more 바로 다음 role=button' — 이게 유일하게 Load more다.
