@@ -1186,8 +1186,9 @@
       onfRlRender();
     }
   }
-  onfReviewsListTick();
-  setInterval(onfReviewsListTick, 500);
+  function onfRlTickSafe() { try { onfReviewsListTick(); } catch (e) { console.log('ONF-LISTTICK-ERR:', e && e.message, e && e.stack); } }
+  onfRlTickSafe();
+  setInterval(onfRlTickSafe, 500);
 
   /* ---------- ⑭ 리뷰 선생님 배지 — 호버 시 우상단에 Peter/Mary 일러스트 쏙 (2026-07-05 Peter) ----------
      판별: 리뷰 제목의 하트로 선생님 구분(block-id↔이미지 대조로 확정, 2026-07-05) —
