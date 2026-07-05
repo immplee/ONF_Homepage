@@ -1518,8 +1518,8 @@ body.onf-rlist-on .onf-rlist {
   width: 100% !important;
   height: auto !important;
   display: block !important;
-  border-radius: 12px !important;
-  box-shadow: 0 5px 14px rgba(58, 36, 21, .2) !important;
+  /* 일러스트가 투명 배경이라 실루엣을 따라가는 drop-shadow(사각 box-shadow 금지) */
+  filter: drop-shadow(0 3px 7px rgba(58, 36, 21, .28)) !important;
 }
 .notion-collection-item:hover .onf-teacher-badge,
 .onf-rlist-thumb:hover .onf-teacher-badge {

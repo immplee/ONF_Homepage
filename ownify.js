@@ -1043,7 +1043,7 @@
      '갤러리 보기' 옆에 토글을 넣고, 켜면 갤러리 그리드를 숨기고 좌측 세로 썸네일
      목록 + 우측 큰 리뷰 사진(이전/다음 화살표)로 보여준다. 나가기 버튼은 이 모드엔 없음.
      데이터는 갤러리 카드의 이미지(full-res src)에서 수집 — 모두 로드 후 구성. */
-  var onfRList = { on: false, idx: 0, items: [], built: false };
+  var onfRList = { on: false, idx: 0, items: [], built: false, defaulted: false };
   function onfRlOnReviews() { return location.pathname.replace(/\/+$/, '') === '/reviews'; }
 
   function onfRlCollect() {
@@ -1164,7 +1164,10 @@
       }
       t.addEventListener('click', function () { onfSetRList(true); });
       gTab.addEventListener('click', function () { onfSetRList(false); });
-      gTab.parentElement.insertBefore(t, gTab.nextSibling);
+      // 리스트 보기를 갤러리 보기 '앞'에 — 위치 교체(2026-07-05 Peter)
+      gTab.parentElement.insertBefore(t, gTab);
+      // 리스트 보기를 기본 보기로: 최초 1회 자동 활성(이후엔 사용자 토글 존중)
+      if (!onfRList.defaulted) { onfRList.defaulted = true; onfSetRList(true); }
     }
     // 리스트 뷰가 켜져 있으면 유지(재렌더로 사라졌으면 재구성)
     if (onfRList.on) {
