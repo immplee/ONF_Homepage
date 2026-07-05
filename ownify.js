@@ -1043,7 +1043,7 @@
      '갤러리 보기' 옆에 토글을 넣고, 켜면 갤러리 그리드를 숨기고 좌측 세로 썸네일
      목록 + 우측 큰 리뷰 사진(이전/다음 화살표)로 보여준다. 나가기 버튼은 이 모드엔 없음.
      데이터는 갤러리 카드의 이미지(full-res src)에서 수집 — 모두 로드 후 구성. */
-  var onfRList = { on: false, idx: 0, items: [], built: false, defaulted: false };
+  var onfRList = { on: false, idx: 0, items: [], built: false, defaulted: false, activating: false };
   function onfRlOnReviews() { return location.pathname.replace(/\/+$/, '') === '/reviews'; }
 
   function onfRlCollect() {
@@ -1122,17 +1122,25 @@
   }
 
   function onfSetRList(on) {
-    onfRList.on = on;
     if (on) {
-      // ⚠️ 그리드를 '수집 후'에 숨긴다 — 먼저 숨기면 Load more가 display:none이라 못 눌러
-      //    전체 로드·카드 수집이 안 됨(2026-07-05 실측). 로드 완료 후 body 클래스 부여.
+      // ⚠️ 안전: '카드 수집 성공' 시에만 갤러리를 숨긴다(수집=Load more 클릭이 필요한데
+      //    먼저 숨기면 display:none이라 못 눌러 빈 목록→빈 화면. 2026-07-05 회귀 수정).
+      //    수집 0이면 갤러리 유지+defaulted 안 세워 다음 틱 재시도. activating로 중복 방지.
+      if (onfRList.activating) return;
+      onfRList.activating = true;
       onfRlBuild();
       onfRlLoadAll(function () {
-        onfRList.items = onfRlCollect();
+        onfRList.activating = false;
+        var items = onfRlCollect();
+        if (!items.length) return;                 // 수집 실패 — 갤러리 유지(빈 화면 방지)
+        onfRList.items = items;
+        onfRList.on = true;
+        onfRList.defaulted = true;
         document.body.classList.add('onf-rlist-on');
         onfRlRender();
       });
     } else {
+      onfRList.on = false;
       document.body.classList.remove('onf-rlist-on');
     }
   }
@@ -1169,9 +1177,9 @@
       gTab.addEventListener('click', function () { onfSetRList(false); });
       // 리스트 보기를 갤러리 보기 '앞'에 — 위치 교체(2026-07-05 Peter)
       gTab.parentElement.insertBefore(t, gTab);
-      // 리스트 보기를 기본 보기로: 최초 1회 자동 활성(이후엔 사용자 토글 존중)
-      if (!onfRList.defaulted) { onfRList.defaulted = true; onfSetRList(true); }
     }
+    // 리스트 보기를 기본 보기로: 수집 성공까지 매 틱 시도(성공 시 defaulted=true로 멈춤)
+    if (!onfRList.defaulted) onfSetRList(true);
     // 리스트 뷰가 켜져 있으면 유지(재렌더로 사라졌으면 재구성)
     if (onfRList.on) {
       if (!document.querySelector('.onf-rlist')) { onfRlBuild(); onfRList.items = onfRlCollect(); }
