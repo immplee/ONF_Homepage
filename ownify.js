@@ -1049,8 +1049,7 @@
   function onfRlCollect() {
     var items = [];
     document.querySelectorAll('.notion-collection-item').forEach(function (it) {
-      if (!it.querySelector('img') || getComputedStyle(it).display === 'none') return;  // 빈 카드 제외
-      var img = it.querySelector('img');
+      var img = it.querySelector('img');   // 사진 없는 빈 카드만 제외(display 체크 금지 — 그리드 숨김 상태서도 수집)
       if (img && img.src) items.push({ src: img.src, id: it.getAttribute('data-block-id') });
     });
     return items;
@@ -1124,13 +1123,17 @@
 
   function onfSetRList(on) {
     onfRList.on = on;
-    document.body.classList.toggle('onf-rlist-on', on);
     if (on) {
+      // ⚠️ 그리드를 '수집 후'에 숨긴다 — 먼저 숨기면 Load more가 display:none이라 못 눌러
+      //    전체 로드·카드 수집이 안 됨(2026-07-05 실측). 로드 완료 후 body 클래스 부여.
       onfRlBuild();
       onfRlLoadAll(function () {
         onfRList.items = onfRlCollect();
+        document.body.classList.add('onf-rlist-on');
         onfRlRender();
       });
+    } else {
+      document.body.classList.remove('onf-rlist-on');
     }
   }
 
