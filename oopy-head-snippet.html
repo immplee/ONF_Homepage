@@ -1,17 +1,18 @@
 <!-- ============================================================
-  우피(Oopy) 커스텀 head 인라인 스니펫 — 정본(2026-07-05)
+  우피(Oopy) 커스텀 head 인라인 스니펫 — 정본(2026-07-06 갱신)
   ------------------------------------------------------------
-  왜 인라인인가: 리뷰 상세 탭 제목(Ownify┃Reviews┃작성자명)은 ownify.js가
-  바꾸는데, ownify.js는 <script defer>라 하드 리로드(⌘⇧R) 땐 파일을 다시
-  내려받아 파싱이 끝난 뒤 실행된다(0.2~0.5초). 그 사이 서버가 내려준 원제목
-  (작성자명)이 탭에 보인다. 인라인 스크립트는 다운로드 없이 HTML 파싱 즉시
-  실행되므로 이 깜빡임이 사라진다.
+  왜 인라인인가: 아래 두 가지는 ownify.css/js(별도 파일, 브라우저 10분 캐시)로는
+  '즉시' 적용이 안 돼 깜빡임이 남는다. 인라인은 HTML 파싱 즉시 실행되고 별도 캐시가
+  없어(페이지 HTML의 일부) 항상 최신으로 동작한다.
 
-  판정: 경로가 bare-UUID(리뷰 카드 상세)면 접두. 메뉴 페이지(/how·/reviews 등)는
-  별칭이라 UUID가 아니므로 안 걸린다. localStorage에 의존하지 않아 콜드 로드에서도
-  동작. 이미 'Ownify┃'로 시작하면 건드리지 않아 ownify.js와 핑퐁 없음.
+  (1) 리뷰 상세 탭 제목(Ownify┃Reviews┃작성자명): ownify.js가 바꾸는데 defer라
+      하드 리로드 땐 0.2~0.5초 뒤 실행 → 그 사이 원제목(작성자명)이 탭에 보였음.
+  (2) /reviews 진입 깜빡임: '리스트 보기' 탭을 ownify.js가 주입하기 전까지 우피 기본
+      '갤러리 보기' 단일 탭 화면이 잠깐 떴다가 두 탭 화면으로 바뀌던 문제. ownify.css에
+      숨김 규칙이 있으나 그 CSS가 캐시로 늦게 반영되면 깜빡임이 남는다 → 인라인으로
+      컬렉션 뷰를 즉시 숨겨(리스트 탭이 생기면 자동 노출) 캐시와 무관하게 제거.
 
   적용: Oopy Console → 사이트 설정(커스텀 코드/head) →
-  기존 ownify.css/js 두 줄 "맨 위"에 아래 <script> 한 줄을 붙여넣기.
+  기존 ownify.css/js 두 줄 "맨 위"에 아래 <script> 한 줄을 붙여넣기(교체).
   ============================================================ -->
-<script>(function(){try{var f=function(){if(!/^\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/?$/.test(location.pathname))return;var t=document.querySelector("title");var v=t?t.textContent:document.title;if(v&&v.indexOf("Ownify┃")!==0){var w="Ownify┃Reviews┃"+v.trim();if(t)t.textContent=w;else document.title=w}};f();new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true,characterData:true})}catch(e){}})();</script>
+<script>(function(){try{var f=function(){if(!/^\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/?$/.test(location.pathname))return;var t=document.querySelector("title");var v=t?t.textContent:document.title;if(v&&v.indexOf("Ownify┃")!==0){var w="Ownify┃Reviews┃"+v.trim();if(t)t.textContent=w;else document.title=w}};f();new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true,characterData:true});if(/^\/reviews\/?$/.test(location.pathname)){var s=document.createElement("style");s.textContent="body:not(:has(.onf-listview-tab)) .notion-collection_view-block{visibility:hidden!important}";(document.head||document.documentElement).appendChild(s)}}catch(e){}})();</script>

@@ -1178,10 +1178,20 @@
     // 활성 썸네일 표시. ⚠️ scrollIntoView는 '선택이 바뀔 때만' — 매 렌더(500ms틱)마다
     //    부르면 사용자가 목록을 스크롤해도 활성 썸네일로 계속 되돌아가 튐(2026-07-06 수정).
     var idxChanged = onfRList._lastIdx !== onfRList.idx;
+    var isMobile = window.innerWidth <= 780;
     Array.prototype.forEach.call(side.children, function (t, i) {
       var on = i === onfRList.idx;
       t.classList.toggle('on', on);
-      if (on && idxChanged) t.scrollIntoView({ block: 'nearest' });
+      if (on && idxChanged) {
+        if (isMobile) {
+          // 모바일: 가로 썸네일 스트립만 스크롤(페이지 세로 스크롤 금지 — scrollIntoView가
+          //   페이지까지 끌어내려 클릭 시 화면이 내려가던 문제, 2026-07-06 Peter task2).
+          side.scrollLeft += t.getBoundingClientRect().left - side.getBoundingClientRect().left
+            - (side.clientWidth - t.clientWidth) / 2;
+        } else {
+          t.scrollIntoView({ block: 'nearest' });   // 데스크톱: 세로 목록에서 활성 썸네일 보이게
+        }
+      }
     });
     onfRList._lastIdx = onfRList.idx;
     // 이전/다음 노출(양 끝에서 숨김)
