@@ -923,11 +923,20 @@
      이전 위치가 남아 살짝 내려간 채 열리는 문제 → 진입 시 강제로 맨 위.
      앵커(#해시) 링크로 온 경우는 그 위치를 존중해 건드리지 않는다. */
   try { history.scrollRestoration = 'manual'; } catch (e) {}
-  function onfToTop() { if (!location.hash) window.scrollTo(0, 0); }
+  // /reviews로 '갤러리 보기'인 채 돌아오는 경우(뒤로가기)엔 맨위 강제를 건너뛴다 —
+  // 저장해둔 스크롤 위치를 ⑬이 복원하게(2026-07-06 Peter). 그 외 페이지는 기존대로 맨위.
+  function onfSkipTop() {
+    try {
+      return location.pathname.replace(/\/+$/, '') === '/reviews' &&
+             sessionStorage.getItem('onfRvView') === 'gallery' &&
+             parseInt(sessionStorage.getItem('onfRvScroll') || '0', 10) > 0;
+    } catch (e) { return false; }
+  }
+  function onfToTop() { if (!location.hash && !onfSkipTop()) window.scrollTo(0, 0); }
   // 우피(Next.js)는 복원 위치를 sessionStorage(__next_scroll_*)에 두고 pageshow "뒤에"
   // 늦게 복원한다(새로고침 실측 2026-07-04) → 소스 제거 + 진입 후 0.7초 버스트로 방어.
   function onfTopBurst() {
-    if (location.hash) return;
+    if (location.hash || onfSkipTop()) return;
     try {
       Object.keys(sessionStorage).forEach(function (k) {
         if (k.indexOf('__next_scroll') === 0) sessionStorage.removeItem(k);
@@ -1085,12 +1094,15 @@
     if (onfRList.idx >= onfRList.items.length) onfRList.idx = 0;
     var cur = onfRList.items[onfRList.idx];
     if (cur && main.getAttribute('src') !== cur.src) main.setAttribute('src', cur.src);
-    // 활성 썸네일 표시 + 화면 안으로
+    // 활성 썸네일 표시. ⚠️ scrollIntoView는 '선택이 바뀔 때만' — 매 렌더(500ms틱)마다
+    //    부르면 사용자가 목록을 스크롤해도 활성 썸네일로 계속 되돌아가 튐(2026-07-06 수정).
+    var idxChanged = onfRList._lastIdx !== onfRList.idx;
     Array.prototype.forEach.call(side.children, function (t, i) {
       var on = i === onfRList.idx;
       t.classList.toggle('on', on);
-      if (on) t.scrollIntoView({ block: 'nearest' });
+      if (on && idxChanged) t.scrollIntoView({ block: 'nearest' });
     });
+    onfRList._lastIdx = onfRList.idx;
     // 이전/다음 노출(양 끝에서 숨김)
     var prev = box.querySelector('.onf-rlist-prev'), next = box.querySelector('.onf-rlist-next');
     if (prev) prev.style.visibility = onfRList.idx > 0 ? 'visible' : 'hidden';
@@ -1136,6 +1148,7 @@
         onfRList.items = items;
         onfRList.on = true;
         onfRList.defaulted = true;
+        try { sessionStorage.setItem('onfRvView', 'list'); } catch (e) {}   // 뒤로가기 대비 뷰 기억
         document.body.classList.add('onf-rlist-on');
         onfRlRender();
       });
@@ -1143,6 +1156,7 @@
       // 갤러리로 전환: 리스트 패널(썸네일)을 제거해야 :has(.onf-rlist-thumb)가 풀려
       // 갤러리 그리드가 다시 보인다(2026-07-05). on=false면 tick이 재구성 안 함.
       onfRList.on = false;
+      try { sessionStorage.setItem('onfRvView', 'gallery'); } catch (e) {}
       var box = document.querySelector('.onf-rlist');
       if (box) box.remove();
       document.body.classList.remove('onf-rlist-on');
@@ -1182,13 +1196,34 @@
       // 리스트 보기를 갤러리 보기 '앞'에 — 위치 교체(2026-07-05 Peter)
       gTab.parentElement.insertBefore(t, gTab);
     }
-    // 리스트 보기를 기본 보기로: 수집 성공까지 매 틱 시도(성공 시 defaulted=true로 멈춤)
-    if (!onfRList.defaulted) onfSetRList(true);
+    // 기본 보기: 리스트. 단 직전에 사용자가 갤러리를 골랐으면(뒤로가기 등) 갤러리 유지(2026-07-06 Peter).
+    if (!onfRList.defaulted) {
+      var storedView = null; try { storedView = sessionStorage.getItem('onfRvView'); } catch (e) {}
+      if (storedView === 'gallery') { onfRList.defaulted = true; onfRvRestoreScroll(); }
+      else onfSetRList(true);
+    }
+    // 선택 표시: 현재 보기 탭을 강조(밑줄 대신 색·굵기 — .onf-tab-sel, 2026-07-06 Peter)
+    var lt2 = document.querySelector('.onf-listview-tab');
+    if (lt2 && gTab) {
+      lt2.classList.toggle('onf-tab-sel', onfRList.on);
+      gTab.classList.toggle('onf-tab-sel', !onfRList.on);
+    }
     // 리스트 뷰가 켜져 있으면 유지(재렌더로 사라졌으면 재구성)
     if (onfRList.on) {
       if (!document.querySelector('.onf-rlist')) { onfRlBuild(); onfRList.items = onfRlCollect(); }
       onfRlRender();
     }
+  }
+  // 갤러리 스크롤 위치 저장/복원(뒤로가기 시 이전 위치 유지, 2026-07-06 Peter)
+  window.addEventListener('scroll', function () {
+    if (!onfRlOnReviews() || onfRList.on) return;   // /reviews 갤러리 보기일 때만 위치 저장
+    try { sessionStorage.setItem('onfRvScroll', String(window.scrollY)); } catch (e) {}
+  }, { passive: true });
+  function onfRvRestoreScroll() {
+    var y = 0; try { y = parseInt(sessionStorage.getItem('onfRvScroll') || '0', 10); } catch (e) {}
+    if (!y) return;
+    // 갤러리 콘텐츠가 그려질 시간을 두고 여러 번 시도(레이아웃 안정 후 정확히)
+    [60, 200, 450, 800].forEach(function (d) { setTimeout(function () { if (!onfRList.on) window.scrollTo(0, y); }, d); });
   }
   // 안전망: 한 틱이 예외를 던져도 인터벌·다른 기능이 죽지 않게(2026-07-05)
   function onfRlTickSafe() { try { onfReviewsListTick(); } catch (e) {} }
@@ -1232,7 +1267,29 @@
     } catch (e) {}
     return onfTeacherMap;
   }
-  function onfTeacherOf(id) { return onfBuildTeacherMap()[id] || null; }
+  // 정적 맵: __NEXT_DATA__엔 초기 25개만 있어 Load more로 늘어난 리뷰는 판별 불가 →
+  // 전체 33개를 block-id→선생님으로 고정(2026-07-06 Notion DB 기준). 🧡=Mary, 🤎=Peter.
+  // ⚠️ 리뷰 추가·하트 변경 시 이 맵도 갱신해야 함(세션에 요청).
+  var ONF_TEACHER_STATIC = {
+    '381d6a62-96ae-8006-8ccf-c5f40b5f09a2':'mary','381d6a62-96ae-8018-90f4-d46188096298':'mary',
+    '381d6a62-96ae-801e-a0de-c64fde84be6a':'peter','381d6a62-96ae-801f-8b08-c85ab1cdd815':'peter',
+    '381d6a62-96ae-8020-9aa5-f9026933182c':'peter','381d6a62-96ae-8020-bad4-d2fd068c178d':'peter',
+    '381d6a62-96ae-8028-a8f7-e1b4d726f603':'peter','381d6a62-96ae-802b-a9cb-f96b6284a56b':'mary',
+    '381d6a62-96ae-802b-bfb7-c04d469a4423':'peter','381d6a62-96ae-8034-a24e-c16c20549842':'peter',
+    '381d6a62-96ae-8037-8398-dba3de10ac90':'mary','381d6a62-96ae-804f-9191-c57458724d6c':'mary',
+    '381d6a62-96ae-8059-a76f-c0d55b69fb2b':'mary','381d6a62-96ae-806a-89af-d4f502e8caae':'mary',
+    '381d6a62-96ae-806d-b38d-de2ab421e989':'mary','381d6a62-96ae-8093-9f19-e51a69e894f0':'mary',
+    '381d6a62-96ae-8095-a47b-df038fae553f':'peter','381d6a62-96ae-809b-b98b-ce18cc84df63':'peter',
+    '381d6a62-96ae-80a3-82a7-c09ba535a287':'mary','381d6a62-96ae-80a4-b6c1-d59b0c661935':'mary',
+    '381d6a62-96ae-80b0-b0e9-d5ddaf7b7e10':'peter','381d6a62-96ae-80c9-ade9-f3a124c031c4':'mary',
+    '381d6a62-96ae-80ce-a6d9-edeebce7ac18':'mary','381d6a62-96ae-80df-87a1-dd4704bd3010':'peter',
+    '381d6a62-96ae-80df-ac0b-e6b48288ae8f':'peter','381d6a62-96ae-80e0-8fa0-f8558a5936a5':'peter',
+    '381d6a62-96ae-80e3-8de2-e271e9a20c02':'peter','381d6a62-96ae-80e4-849f-d9fcc8896120':'peter',
+    '381d6a62-96ae-80e5-824d-eed94da0e06d':'peter','381d6a62-96ae-80ec-af48-f9c98efe6b0f':'mary',
+    '381d6a62-96ae-80ed-85db-ff7de99c36ab':'mary','381d6a62-96ae-80ee-86b9-d463b3bd2fa0':'peter',
+    '381d6a62-96ae-80f8-af83-d2a86d17e6d1':'peter'
+  };
+  function onfTeacherOf(id) { return onfBuildTeacherMap()[id] || ONF_TEACHER_STATIC[id] || null; }
 
   function onfAddTeacherBadge(host, teacher) {
     // ⚠️ ONF_TEACHER_IMG는 ⑭에서 정의 — ⑬의 즉시 tick이 ⑭보다 먼저 이 함수를 호출하면
