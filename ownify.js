@@ -1039,4 +1039,130 @@
   document.addEventListener('DOMContentLoaded', onfReviewTick);
   setInterval(onfReviewTick, 400);
 
+  /* ---------- ⑬ 리뷰 '리스트 보기' (좌 목록 + 우 상세) (2026-07-05 Peter) ----------
+     '갤러리 보기' 옆에 토글을 넣고, 켜면 갤러리 그리드를 숨기고 좌측 세로 썸네일
+     목록 + 우측 큰 리뷰 사진(이전/다음 화살표)로 보여준다. 나가기 버튼은 이 모드엔 없음.
+     데이터는 갤러리 카드의 이미지(full-res src)에서 수집 — 모두 로드 후 구성. */
+  var onfRList = { on: false, idx: 0, items: [], built: false };
+  function onfRlOnReviews() { return location.pathname.replace(/\/+$/, '') === '/reviews'; }
+
+  function onfRlCollect() {
+    var items = [];
+    document.querySelectorAll('.notion-collection-item').forEach(function (it) {
+      if (!it.querySelector('img') || getComputedStyle(it).display === 'none') return;  // 빈 카드 제외
+      var img = it.querySelector('img');
+      if (img && img.src) items.push({ src: img.src, id: it.getAttribute('data-block-id') });
+    });
+    return items;
+  }
+  // Load more를 끝까지 눌러 전부 로드한 뒤 콜백
+  function onfRlLoadAll(cb, guard) {
+    guard = guard || 0;
+    var more = document.querySelector('.has-more + [role="button"]');
+    if (more && more.offsetHeight > 0 && guard < 15) {
+      more.click();
+      setTimeout(function () { onfRlLoadAll(cb, guard + 1); }, 350);
+    } else { cb(); }
+  }
+
+  function onfRlRender() {
+    var box = document.querySelector('.onf-rlist');
+    if (!box) return;
+    var side = box.querySelector('.onf-rlist-side');
+    var main = box.querySelector('.onf-rlist-main-img');
+    if (!side || !main) return;
+    // 썸네일 목록(개수 바뀔 때만 다시 그림)
+    if (side.children.length !== onfRList.items.length) {
+      side.innerHTML = '';
+      onfRList.items.forEach(function (r, i) {
+        var t = document.createElement('div');
+        t.className = 'onf-rlist-thumb';
+        t.innerHTML = '<img src="' + r.src + '" alt="리뷰 ' + (i + 1) + '">';
+        t.addEventListener('click', function () { onfRList.idx = i; onfRlRender(); });
+        side.appendChild(t);
+      });
+    }
+    if (onfRList.idx >= onfRList.items.length) onfRList.idx = 0;
+    var cur = onfRList.items[onfRList.idx];
+    if (cur && main.getAttribute('src') !== cur.src) main.setAttribute('src', cur.src);
+    // 활성 썸네일 표시 + 화면 안으로
+    Array.prototype.forEach.call(side.children, function (t, i) {
+      var on = i === onfRList.idx;
+      t.classList.toggle('on', on);
+      if (on) t.scrollIntoView({ block: 'nearest' });
+    });
+    // 이전/다음 노출(양 끝에서 숨김)
+    var prev = box.querySelector('.onf-rlist-prev'), next = box.querySelector('.onf-rlist-next');
+    if (prev) prev.style.visibility = onfRList.idx > 0 ? 'visible' : 'hidden';
+    if (next) next.style.visibility = onfRList.idx < onfRList.items.length - 1 ? 'visible' : 'hidden';
+  }
+
+  function onfRlBuild() {
+    var cv = document.querySelector('.notion-collection_view-block');
+    if (!cv || document.querySelector('.onf-rlist')) return;
+    var box = document.createElement('div');
+    box.className = 'onf-rlist';
+    box.innerHTML =
+      '<div class="onf-rlist-side"></div>' +
+      '<div class="onf-rlist-main">' +
+        '<a class="onf-rlist-prev" aria-label="이전 리뷰"><img src="' + REV_ARROW_L + '" alt="이전"></a>' +
+        '<img class="onf-rlist-main-img" alt="선택한 리뷰">' +
+        '<a class="onf-rlist-next" aria-label="다음 리뷰"><img src="' + REV_ARROW_R + '" alt="다음"></a>' +
+      '</div>';
+    cv.appendChild(box);
+    box.querySelector('.onf-rlist-prev').addEventListener('click', function () {
+      if (onfRList.idx > 0) { onfRList.idx--; onfRlRender(); }
+    });
+    box.querySelector('.onf-rlist-next').addEventListener('click', function () {
+      if (onfRList.idx < onfRList.items.length - 1) { onfRList.idx++; onfRlRender(); }
+    });
+    onfRList.built = true;
+  }
+
+  function onfSetRList(on) {
+    onfRList.on = on;
+    document.body.classList.toggle('onf-rlist-on', on);
+    var lt = document.querySelector('.onf-listview-tab');
+    if (lt) lt.classList.toggle('on', on);
+    if (on) {
+      onfRlBuild();
+      onfRlLoadAll(function () {
+        onfRList.items = onfRlCollect();
+        onfRlRender();
+      });
+    }
+  }
+
+  // 갤러리 보기 탭 옆에 '리스트 보기' 토글 주입 + 상태 유지(재렌더 대비)
+  function onfReviewsListTick() {
+    if (!onfRlOnReviews()) {
+      if (document.body.classList.contains('onf-rlist-on')) onfSetRList(false);
+      return;
+    }
+    // 토글 주입
+    var gTab = null;
+    var btns = document.querySelectorAll('.notion-collection_view-block [role="button"]');
+    for (var i = 0; i < btns.length; i++) {
+      if (/갤러리 보기/.test(btns[i].textContent || '')) { gTab = btns[i]; break; }
+    }
+    if (gTab && gTab.parentElement && !gTab.parentElement.querySelector('.onf-listview-tab')) {
+      var t = document.createElement('div');
+      t.className = 'onf-listview-tab';
+      t.setAttribute('role', 'button');
+      t.textContent = '리스트 보기';
+      t.addEventListener('click', function () { onfSetRList(true); });
+      gTab.addEventListener('click', function () { onfSetRList(false); });
+      gTab.parentElement.appendChild(t);
+    }
+    // 리스트 뷰가 켜져 있으면 유지(재렌더로 사라졌으면 재구성)
+    if (onfRList.on) {
+      if (!document.querySelector('.onf-rlist')) { onfRlBuild(); onfRList.items = onfRlCollect(); }
+      onfRlRender();
+      var lt = document.querySelector('.onf-listview-tab');
+      if (lt) lt.classList.add('on');
+    }
+  }
+  onfReviewsListTick();
+  setInterval(onfReviewsListTick, 500);
+
 })();
