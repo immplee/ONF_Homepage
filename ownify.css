@@ -323,7 +323,11 @@ html, body {
 .onf-directions-frame {
   border: 0;
   display: block;
-  width: calc(100% + 453px);
+  /* 루트 중앙정렬(2026-07-06 Peter task4): iframe을 넓게 렌더해 네이버가 경로 패널을
+     접지 않고(좁으면 접혀 루트가 왼쪽으로 쏠렸음) 일관되게 프레이밍하게 한 뒤, 왼쪽 패널
+     453px만 크롭. 배율 1.424는 컨테이너 폭이 달라도 루트가 가시영역 중앙에 오도록 실측으로
+     맞춘 값(C=581→W=1280, C=481→W=1138 모두 중앙 확인). */
+  width: calc(100% * 1.424 + 453px);
   max-width: none;
   height: 100%;
   margin-left: -453px;
