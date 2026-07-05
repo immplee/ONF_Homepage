@@ -1338,6 +1338,20 @@
     // 갤러리 콘텐츠가 그려질 시간을 두고 여러 번 시도(레이아웃 안정 후 정확히)
     [60, 200, 450, 800].forEach(function (d) { setTimeout(function () { if (!onfRList.on) window.scrollTo(0, y); }, d); });
   }
+  // Reviews '탑 메뉴' 링크로 진입하면 항상 기본 보기(리스트)로(2026-07-06 Peter):
+  //   저장된 뷰/스크롤을 초기화 → 다음 /reviews 로드의 기본 로직이 리스트를 켠다.
+  //   ⚠️ 뒤로가기(브라우저 back)는 링크 클릭이 아니라 발동 안 됨 → 갤러리+스크롤 복원은 그대로 유지.
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    if (a.classList.contains('onf-rev-close')) return;   // 상세 '나가기'는 이전 뷰(갤러리) 복원 유지 — 제외
+    try {
+      if (new URL(a.href, location.origin).pathname.replace(/\/+$/, '') === '/reviews') {
+        sessionStorage.removeItem('onfRvView');
+        sessionStorage.removeItem('onfRvScroll');
+      }
+    } catch (err) {}
+  }, true);
   // 안전망: 한 틱이 예외를 던져도 인터벌·다른 기능이 죽지 않게(2026-07-05)
   function onfRlTickSafe() { try { onfReviewsListTick(); } catch (e) {} }
   onfRlTickSafe();
