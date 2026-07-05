@@ -966,7 +966,7 @@
   var REV_KEY = 'onfReviewOrder';
   var REV_ARROW_L = 'https://immplee.github.io/ONF_Homepage/assets/review-arrow-left.png';
   var REV_ARROW_R = 'https://immplee.github.io/ONF_Homepage/assets/review-arrow-right.png';
-  var REV_CLOSE = 'https://immplee.github.io/ONF_Homepage/assets/review-close.png';
+  var REV_EXIT = 'https://immplee.github.io/ONF_Homepage/assets/review-exit-emoji.png';
   function onfReviewNavClear() {
     ['.onf-rev-back', '.onf-rev-next', '.onf-rev-close'].forEach(function (sel) {
       var el = document.querySelector(sel); if (el) el.remove();
@@ -1004,13 +1004,13 @@
     // 카드와 함께 스크롤(2026-07-05 Peter). 블록이 아직 없으면 다음 틱에.
     var imgBlock = document.querySelector('.notion-image-block');
     if (!imgBlock) return;
-    function onfRevBtn(cls, label, iconSrc, alt) {
+    function onfRevBtn(cls, label, innerHTML) {
       var el = document.querySelector('.' + cls);
       if (!el) {
         el = document.createElement('a');
         el.className = cls;
         el.setAttribute('aria-label', label);
-        el.innerHTML = '<img src="' + iconSrc + '" alt="' + alt + '">';
+        el.innerHTML = innerHTML;
       }
       if (el.parentElement !== imgBlock) imgBlock.appendChild(el);  // 재렌더로 떨어져도 재부착
       return el;
@@ -1018,17 +1018,18 @@
     // 왼쪽 화살표 = 이전 리뷰. 첫 리뷰면 숨김.
     var prevId = (idx > 0) ? ids2[idx - 1] : null;
     if (prevId) {
-      onfRevBtn('onf-rev-back', '이전 리뷰', REV_ARROW_L, '이전').setAttribute('href', '/' + prevId);
+      onfRevBtn('onf-rev-back', '이전 리뷰', '<img src="' + REV_ARROW_L + '" alt="이전">').setAttribute('href', '/' + prevId);
     } else {
       var back = document.querySelector('.onf-rev-back');
       if (back) back.remove();
     }
-    // X = 나가기(리뷰 목록으로) — 사진 우측 상단 모서리
-    onfRevBtn('onf-rev-close', '리뷰 목록으로 나가기', REV_CLOSE, '닫기').setAttribute('href', '/reviews');
+    // 나가기 버튼(리뷰 목록으로) — 사진 하단 정중앙 pill, 이모티콘+글자(2026-07-05 Peter)
+    onfRevBtn('onf-rev-close', '리뷰 목록으로 나가기',
+      '<img src="' + REV_EXIT + '" alt=""><span>나가기</span>').setAttribute('href', '/reviews');
     // 오른쪽 화살표 = 다음 리뷰. 마지막 리뷰면 숨김.
     var nextId = (idx + 1 < ids2.length) ? ids2[idx + 1] : null;
     if (nextId) {
-      onfRevBtn('onf-rev-next', '다음 리뷰', REV_ARROW_R, '다음').setAttribute('href', '/' + nextId);
+      onfRevBtn('onf-rev-next', '다음 리뷰', '<img src="' + REV_ARROW_R + '" alt="다음">').setAttribute('href', '/' + nextId);
     } else {
       var next = document.querySelector('.onf-rev-next');
       if (next) next.remove();
