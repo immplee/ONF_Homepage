@@ -765,9 +765,10 @@
     entry.start = function () {
       if (entry.started) return;
       entry.started = true;
-      setTimeout(function () { callout.classList.add('onf-head-in'); }, 250);
+      // 빈칸 시간 단축(2026-07-06 Peter): 카드가 보이면 이모지·제목→칩→본문이 바로 순서대로.
+      setTimeout(function () { callout.classList.add('onf-head-in'); }, 100);
       chips.forEach(function (ch, k) {
-        setTimeout(function () { ch.classList.add('onf-chip-in'); }, 700 + k * 130);
+        setTimeout(function () { ch.classList.add('onf-chip-in'); }, 300 + k * 90);
       });
       setTimeout(function () {
         var j = 0;
@@ -776,7 +777,7 @@
           spans[j].classList.add('on');
           j++;
         }, 42);
-      }, 700 + chips.length * 130 + 200);
+      }, 300 + chips.length * 90 + 120);
     };
     stepReveals.push(entry);
   }
@@ -787,7 +788,7 @@
       stepBlockSeen = true;
       stepsShown = 1; arrowsShown = 0; stepAdvancing = false;   // 연쇄 처음부터
       stepsSettled = false; stepReveals = [];    // 레이아웃 안정 타이머 재시작
-      setTimeout(function () { stepsSettled = true; }, 1800);
+      setTimeout(function () { stepsSettled = true; }, 500);   // 1800→500: 첫 카드 빈칸 시간 단축(2026-07-06 Peter)
     }
     // 카드 블록 폭의 단일 정의처(2026-07-04 일원화). 과거 CSS의 '+36px 확장'(칩 한 줄용)을
     // 우피 기본값으로 오인해 서로 덮던 혼선을 정리 — 폭은 100%(왼쪽 줄 정렬), 칩 한 줄은
@@ -1053,6 +1054,11 @@
      목록 + 우측 큰 리뷰 사진(이전/다음 화살표)로 보여준다. 나가기 버튼은 이 모드엔 없음.
      데이터는 갤러리 카드의 이미지(full-res src)에서 수집 — 모두 로드 후 구성. */
   var onfRList = { on: false, idx: 0, items: [], built: false, defaulted: false, activating: false };
+  var onfRvLoadingGuard = null;   // task3: 갤러리 깜빡임 방지용 로딩 클래스 안전해제 타이머
+  function onfRvClearLoading() {
+    document.body.classList.remove('onf-rv-loading');
+    if (onfRvLoadingGuard) { clearTimeout(onfRvLoadingGuard); onfRvLoadingGuard = null; }
+  }
   function onfRlOnReviews() { return location.pathname.replace(/\/+$/, '') === '/reviews'; }
 
   function onfRlCollect() {
@@ -1073,6 +1079,17 @@
     } else { cb(); }
   }
 
+  // task2(2026-07-06 Peter): 썸네일 클릭 시 리뷰 패널이 화면 상단(상단바 아래)에 오도록
+  //   페이지를 아래로 스크롤 — 배너가 걷히고 선택한 리뷰가 크게 보인다.
+  function onfRlScrollToPanel() {
+    var box = document.querySelector('.onf-rlist');
+    if (!box) return;
+    var tb = document.querySelector('.notion-topbar');
+    var off = (tb ? tb.getBoundingClientRect().height : 64) + 16;
+    var target = window.scrollY + box.getBoundingClientRect().top - off;
+    if (target < 0) target = 0;
+    window.scrollTo({ top: target, behavior: 'smooth' });
+  }
   function onfRlRender() {
     var box = document.querySelector('.onf-rlist');
     if (!box) return;
@@ -1086,7 +1103,7 @@
         var t = document.createElement('div');
         t.className = 'onf-rlist-thumb';
         t.innerHTML = '<img src="' + r.src + '" alt="리뷰 ' + (i + 1) + '">';
-        t.addEventListener('click', function () { onfRList.idx = i; onfRlRender(); });
+        t.addEventListener('click', function () { onfRList.idx = i; onfRlRender(); onfRlScrollToPanel(); });
         side.appendChild(t);
         onfAddTeacherBadge(t, onfTeacherOf(r.id));   // 썸네일 우상단 선생님 배지(호버)
       });
@@ -1150,6 +1167,7 @@
         onfRList.defaulted = true;
         try { sessionStorage.setItem('onfRvView', 'list'); } catch (e) {}   // 뒤로가기 대비 뷰 기억
         document.body.classList.add('onf-rlist-on');
+        onfRvClearLoading();   // task3: 리스트 준비 완료 → 로딩 가림 해제(이후엔 :has로 갤러리 숨김)
         onfRlRender();
       });
     } else {
@@ -1160,6 +1178,7 @@
       var box = document.querySelector('.onf-rlist');
       if (box) box.remove();
       document.body.classList.remove('onf-rlist-on');
+      onfRvClearLoading();   // task3: 갤러리로 갈 땐 로딩 가림도 확실히 해제
     }
   }
 
@@ -1167,6 +1186,7 @@
   function onfReviewsListTick() {
     if (!onfRlOnReviews()) {
       if (document.body.classList.contains('onf-rlist-on')) onfSetRList(false);
+      onfRvClearLoading();   // task3: /reviews를 벗어나면 로딩 가림 해제(다른 페이지에 영향 없게)
       return;
     }
     // 토글 주입
@@ -1200,7 +1220,15 @@
     if (!onfRList.defaulted) {
       var storedView = null; try { storedView = sessionStorage.getItem('onfRvView'); } catch (e) {}
       if (storedView === 'gallery') { onfRList.defaulted = true; onfRvRestoreScroll(); }
-      else onfSetRList(true);
+      else {
+        // task3(2026-07-06 Peter): 리스트가 뜨기 전 갤러리 그리드가 잠깐 보이는 깜빡임 제거.
+        //   opacity로만 가리므로 Load more .click()은 계속 됨. 5s 안에 못 뜨면 안전 해제(갤러리 폴백).
+        document.body.classList.add('onf-rv-loading');
+        if (!onfRvLoadingGuard) {
+          onfRvLoadingGuard = setTimeout(function () { document.body.classList.remove('onf-rv-loading'); }, 5000);
+        }
+        onfSetRList(true);
+      }
     }
     // 선택 표시: 현재 보기 탭을 강조(밑줄 대신 색·굵기 — .onf-tab-sel, 2026-07-06 Peter)
     var lt2 = document.querySelector('.onf-listview-tab');

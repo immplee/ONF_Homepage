@@ -1414,6 +1414,11 @@ body:has(.onf-rlist-thumb) .css-2axpky,
 body:has(.onf-rlist-thumb) .has-more,
 body:has(.onf-rlist-thumb) .has-more + [role="button"] { display: none !important; }
 
+/* 진입/새로고침 시 갤러리 그리드 깜빡임 방지(2026-07-06 Peter task3):
+   리스트를 만드는 동안(Load more 클릭 중) 그리드를 opacity로만 가린다.
+   ⚠️ display:none이면 Load more를 프로그램 클릭조차 못 해 빈 목록이 됨 → opacity만. */
+body.onf-rv-loading .css-2axpky { opacity: 0 !important; transition: none !important; }
+
 .onf-rlist { display: none; }
 .onf-rlist:has(.onf-rlist-thumb) {
   display: flex;
