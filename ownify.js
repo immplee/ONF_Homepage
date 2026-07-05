@@ -1186,7 +1186,8 @@
       onfRlRender();
     }
   }
-  function onfRlTickSafe() { try { onfReviewsListTick(); } catch (e) { console.log('ONF-LISTTICK-ERR:', e && e.message, e && e.stack); } }
+  // 안전망: 한 틱이 예외를 던져도 인터벌·다른 기능이 죽지 않게(2026-07-05)
+  function onfRlTickSafe() { try { onfReviewsListTick(); } catch (e) {} }
   onfRlTickSafe();
   setInterval(onfRlTickSafe, 500);
 
@@ -1230,6 +1231,9 @@
   function onfTeacherOf(id) { return onfBuildTeacherMap()[id] || null; }
 
   function onfAddTeacherBadge(host, teacher) {
+    // ⚠️ ONF_TEACHER_IMG는 ⑭에서 정의 — ⑬의 즉시 tick이 ⑭보다 먼저 이 함수를 호출하면
+    //    undefined 접근으로 throw돼 setInterval·⑭ 전체가 죽었음(2026-07-05 SSR 렌더 시 실측).
+    if (typeof ONF_TEACHER_IMG === 'undefined' || !ONF_TEACHER_IMG) return;
     if (!teacher || !host || host.querySelector('.onf-teacher-badge')) return;
     if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
     var b = document.createElement('div');
