@@ -1467,13 +1467,17 @@ body.onf-review-detail .notion-image-block {
   transform: translateY(-50%) scale(1.18);
 }
 /* 이미지 블록의 'img 100%' 확대 규칙이 화살표 아이콘까지 키우지 않게 고특이도로 고정.
-   filter(그림자) 없음 — 화살표만 깔끔하게 */
+   ⚠️ §4의 '모든 .notion-image-block img'에 걸린 그림자·둥근모서리를 여기서 해제 —
+   화살표가 이미지 블록 자식이라 리뷰 사진용 box-shadow(0 14px 40px)가 배경처럼 보였음
+   (2026-07-05 Peter). filter도 없음 — 화살표만 깔끔하게 */
 body.onf-review-detail .notion-image-block .onf-rev-back img,
 body.onf-review-detail .notion-image-block .onf-rev-next img,
 .onf-rev-back img, .onf-rev-next img {
   width: 46px !important;
   height: 46px !important;
   display: block;
+  box-shadow: none !important;
+  border-radius: 0 !important;
 }
 
 /* 나가기 버튼: 리뷰 사진 하단 정중앙 pill — 둥근 모서리·#D2691E·이모티콘+글자(Paperlogy)
@@ -1510,6 +1514,8 @@ body.onf-review-detail .notion-image-block .onf-rev-close img,
   width: 22px !important;
   height: 22px !important;
   display: block !important;
+  box-shadow: none !important;   /* §4 이미지 그림자 해제(pill 안 이모티콘) */
+  border-radius: 0 !important;
 }
 
 @media (max-width: 768px) {
