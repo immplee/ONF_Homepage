@@ -1402,8 +1402,10 @@ div:has(> .onf-listview-tab) > [role="button"] span {
   font-weight: 400 !important;
 }
 div:has(> .onf-listview-tab) > [role="button"] svg { fill: rgba(55, 53, 47, .45) !important; }
-.onf-tab-sel, .onf-tab-sel span { color: #D2691E !important; font-weight: 700 !important; }
-.onf-tab-sel svg { fill: #D2691E !important; }
+/* 선택 탭: 위 비선택 규칙보다 특이도 높게([role].onf-tab-sel) — 안 그러면 회색이 이김(2026-07-06 실측) */
+div:has(> .onf-listview-tab) > [role="button"].onf-tab-sel,
+div:has(> .onf-listview-tab) > [role="button"].onf-tab-sel span { color: #D2691E !important; font-weight: 700 !important; }
+div:has(> .onf-listview-tab) > [role="button"].onf-tab-sel svg { fill: #D2691E !important; }
 
 /* 리스트 뷰 활성: 갤러리 그리드·Load more 숨김 */
 /* ⚠️ 갤러리 숨김은 '리스트에 썸네일이 실제로 있을 때만' — body 클래스만으로 숨기면
