@@ -1176,7 +1176,8 @@
   setInterval(onfReviewsListTick, 500);
 
   /* ---------- ⑭ 리뷰 선생님 배지 — 호버 시 우상단에 Peter/Mary 일러스트 쏙 (2026-07-05 Peter) ----------
-     판별: 리뷰 제목의 하트로 선생님 구분(실측 확정) — 🧡=Peter, 💙=Mary.
+     판별: 리뷰 제목의 하트로 선생님 구분(block-id↔이미지 대조로 확정, 2026-07-05) —
+     🧡=Mary, 🤎(구 💙)=Peter. 노션 이모지 전환(💙→🤎) 전후 모두 대응해 둘 다 Peter.
      제목은 런타임 __NEXT_DATA__(recordMap)에서 block-id→title로 읽는다. */
   var ONF_TEACHER_IMG = {
     peter: 'https://immplee.github.io/ONF_Homepage/assets/review-teacher-peter.png',
@@ -1204,8 +1205,8 @@
         var v = (rm.block[id] || {}).value || {};
         if (v.type === 'page' && v.parent_table === 'collection' && v.properties && v.properties.title) {
           var t = v.properties.title.map(function (s) { return s[0]; }).join('');
-          if (t.indexOf('🧡') >= 0) onfTeacherMap[id] = 'peter';
-          else if (t.indexOf('💙') >= 0) onfTeacherMap[id] = 'mary';
+          if (t.indexOf('🧡') >= 0) onfTeacherMap[id] = 'mary';
+          else if (t.indexOf('🤎') >= 0 || t.indexOf('💙') >= 0) onfTeacherMap[id] = 'peter';
         }
       }
     } catch (e) {}
