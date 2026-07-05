@@ -1111,6 +1111,13 @@
     var tb = document.querySelector('.notion-topbar');
     var off = (tb ? tb.getBoundingClientRect().height : 64) + 16;
     var target = window.scrollY + box.getBoundingClientRect().top - off;
+    // 배너(커버)가 보이는 선까지만 스크롤(2026-07-06 Peter): 커버 하단 기준 ~120px는 남겨 상한을 둔다.
+    //   기존엔 패널을 상단바 바로 아래로 올려 배너가 완전히 가려졌음. 커버가 없으면 상한 없음.
+    var cover = document.querySelector('.page_cover');
+    if (cover) {
+      var cap = cover.getBoundingClientRect().bottom + window.scrollY - 120;
+      if (target > cap) target = cap;
+    }
     if (target < 0) target = 0;
     window.scrollTo({ top: target, behavior: 'smooth' });
   }
