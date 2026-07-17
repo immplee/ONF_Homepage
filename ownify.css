@@ -1800,7 +1800,7 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child {
   width: fit-content;
   max-width: 76%;
   background: #D2691E;
-  border-radius: 20px 20px 20px 5px;
+  border-radius: 20px 20px 20px 0;   /* 왼쪽 아래 = 꼬리가 이어지는 모서리라 각지게 */
   padding: 12px 20px;
   cursor: pointer;
   position: relative;          /* 꼬리(::after) 기준 */
@@ -1810,21 +1810,21 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child:hover
   background: #e0761f;
   transform: translateY(-1px);
 }
-/* 질문 꼬리: 왼쪽으로 뾰족하게 (💬 모양) */
+/* 질문 꼬리: 말풍선 '왼쪽 아래 모서리'에서 바닥선을 그대로 이어 왼쪽으로 흘러나감.
+   (모서리에서 떨어진 삼각형은 선이 꺾여 보임 — 2026-07-04 Peter) */
 body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child::after {
   content: '';
   position: absolute;
-  left: -8px;
-  bottom: 9px;
-  width: 0;
-  height: 0;
-  border: 9px solid transparent;
-  border-left: 0;
-  border-right-color: #D2691E;
-  transition: border-right-color .2s;
+  left: -10px;
+  bottom: 0;
+  width: 11px;
+  height: 17px;
+  background: #D2691E;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);   /* 오른쪽 세로변이 말풍선에 붙고 바닥은 일직선 */
+  transition: background .2s;
 }
 body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child:hover::after {
-  border-right-color: #e0761f;
+  background: #e0761f;
 }
 body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child,
 body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child * {
@@ -1834,27 +1834,27 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child * {
 }
 
 /* 답변 = 오른쪽 크림 말풍선 (콜아웃 카드와 같은 톤) */
-/* 답변 꼬리: 오른쪽으로 뾰족하게. 테두리 있는 말풍선이라 2겹(::before=테두리색, ::after=면색) */
+/* 답변 꼬리: 말풍선 '오른쪽 아래 모서리'에서 바닥선을 이어 오른쪽으로 흘러나감.
+   테두리 있는 말풍선이라 2겹(::before=테두리색 밑판, ::after=면색 덮개) */
 body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2)::before,
 body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2)::after {
   content: '';
   position: absolute;
-  bottom: 9px;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-color: transparent;
-  border-right: 0;
+  clip-path: polygon(0 0, 0 100%, 100% 100%);      /* 왼쪽 세로변이 말풍선에 붙고 바닥은 일직선 */
 }
 body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2)::before {
-  right: -10px;
-  border-width: 10px;
-  border-left-color: #E4D6C0;
+  right: -12px;
+  bottom: -1.5px;
+  width: 13px;
+  height: 19px;
+  background: #E4D6C0;
 }
 body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2)::after {
-  right: -8px;
-  border-width: 9px;
-  border-left-color: #FBF6EC;
+  right: -10px;
+  bottom: 0;
+  width: 11px;
+  height: 17px;
+  background: #FBF6EC;
 }
 body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) {
   position: relative;          /* 꼬리(::before/::after) 기준 */
@@ -1864,7 +1864,7 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) {
   margin: 10px 0 0 auto !important;
   background: #FBF6EC;
   border: 1.5px solid #E4D6C0;
-  border-radius: 20px 20px 5px 20px;
+  border-radius: 20px 20px 0 20px;   /* 오른쪽 아래 = 꼬리가 이어지는 모서리라 각지게 */
   padding: 16px 22px;
   box-shadow: 0 2px 10px rgba(58, 36, 21, .06);
 }
