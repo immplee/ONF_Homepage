@@ -1813,7 +1813,7 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child,
 body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child * {
   color: #FFF7EE !important;
   font-weight: 700 !important;
-  line-height: 1.6 !important;
+  line-height: 1.85 !important;   /* 줄 간격 (2026-07-04 Peter — 1.6은 답답) */
 }
 
 /* 답변 = 오른쪽 크림 말풍선 (콜아웃 카드와 같은 톤) */
@@ -1831,10 +1831,11 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) {
 body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2),
 body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) * {
   color: #4A3220 !important;
+  line-height: 2 !important;      /* 줄 간격 (2026-07-04 Peter — 좁아서 안 읽힘) */
 }
-/* 답변 안 문단 간격 — 노션 기본 16px는 말풍선 안에서 과함 */
+/* 답변 안 문단 사이 간격 */
 body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) .notion-text-block {
-  margin: 0 0 10px !important;
+  margin: 0 0 16px !important;
 }
 body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) .notion-text-block:last-child {
   margin-bottom: 0 !important;

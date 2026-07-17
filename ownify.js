@@ -1486,10 +1486,14 @@
       .filter(function (b) { return (b.textContent || '').trim(); });
     if (!blocks.length) return;
     var texts = blocks.map(function (b) { return b.textContent; });
+    // 가로 폭은 '완성 상태'로 먼저 고정 — 말풍선이 오른쪽 정렬이라 폭이 자라면
+    // 왼쪽 모서리가 밀려나 첫 줄이 오른쪽→왼쪽으로 써지는 것처럼 보인다(2026-07-04 Peter).
+    // 높이는 그대로 글자 따라 늘어남. 타이핑이 끝나면 고정 해제(창 크기 변화 대응).
+    ans.style.width = Math.ceil(ans.getBoundingClientRect().width) + 'px';
     blocks.forEach(function (b) { b.style.display = 'none'; });   // 안 쓴 문단은 자리도 차지 않게
     var bi = 0;
     (function typeBlock() {
-      if (bi >= blocks.length) return;
+      if (bi >= blocks.length) { ans.style.width = ''; return; }
       var b = blocks[bi], full = texts[bi], ci = 0;
       b.style.display = '';
       b.textContent = '';
