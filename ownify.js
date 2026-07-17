@@ -1447,10 +1447,10 @@
   }, 500);
 
 
-  /* ---------- ⑪ QnA: 질문 말풍선 클릭 → 답변 말풍선 + 타자기 ---------- */
-  // 토글 화살표는 CSS(§14)로 숨기고 질문 말풍선 자체가 스위치. 화살표 노드는 DOM에 남겨
-  // 클릭을 대신 전달한다(우피 토글 상태는 그 버튼이 소유).
-  // ⚠️ 우피 토글은 .click()·MouseEvent로 안 열림 — PointerEvent 시퀀스여야 반응(2026-07-11 실측).
+  /* ---------- ⑪ QnA: 질문 말풍선 클릭 → 답변 타자기 ---------- */
+  // 화살표는 CSS(§14)로 숨김. 열고 닫기는 **우피가 원래 제목 줄 클릭으로 처리** —
+  // ⚠️ 여기서 화살표 버튼에 클릭을 대신 보내면 우피 것과 겹쳐 열자마자 닫힌다(2026-07-11 실측:
+  //    dispatch로 open → 진짜 클릭이 React에 도달 → 재토글 → close). 전달 금지, 타이핑만 건다.
   var QNA_TYPE_MS = 9;   // 글자당 간격 — 여기만 바꾸면 타이핑 속도 조절
 
   // 답변 문단을 위에서부터 한 글자씩 실제로 채워 넣는다(= 말풍선이 글자 따라 커짐).
@@ -1487,16 +1487,13 @@
     var col = block.children[0] && block.children[0].children[1];
     var q = col && col.children[0];
     if (!q || !q.contains(e.target)) return;             // 답변 안 클릭(링크 등)은 무시
-    var btn = block.querySelector('[role="button"]');
-    if (!btn) return;
-    ['pointerdown', 'pointerup'].forEach(function (ty) {
-      btn.dispatchEvent(new PointerEvent(ty, { bubbles: true, cancelable: true, isPrimary: true, pointerId: 1, pointerType: 'mouse' }));
-    });
-    btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-    // 답변 노드는 클릭 직후(실측 ~11ms) 생김 — 다음 프레임에 잡아 바로 타이핑 시작
+    // 열기는 우피가 함 — 답변 노드가 생기면(실측 ~11ms) 바로 타이핑 시작.
+    // 두 프레임까지 기다렸다 없으면 접는 클릭이었던 것.
     requestAnimationFrame(function () {
-      var ans = col.children[1];
-      if (ans) typeAnswer(ans);
+      requestAnimationFrame(function () {
+        var ans = col.children[1];
+        if (ans) typeAnswer(ans);
+      });
     });
   });
 
