@@ -719,10 +719,14 @@
   // 보이는 카드가 전부 완료되면 화살표(250ms) → 다음 카드(800ms) 순서로 자동 전개.
   setInterval(function () {
     if (!stepsSettled) return;
+    // 우피는 로드 중 콜아웃을 통째로 갈아치운다 → 버려진 노드의 큐 항목을 남겨두면
+    // '전부 완료'로 오인해 화살표·다음 카드가 먼저 튀어나가고, 뒤늦게 등록된 새 노드가
+    // 그제서야 타자를 시작한다(2026-07-06 Peter 리포트: 카드1→화살표→카드2→카드1 제목…).
+    // → 죽은 항목은 큐에서 제거하고, 전개 전에 '살아있는 카드가 실제로 끝났는지' 확인한다.
+    stepReveals = stepReveals.filter(function (e) { return e.card && e.card.isConnected; });
     var q = stepReveals.slice().sort(function (a, b) { return a.idx - b.idx; });
     for (var i = 0; i < q.length; i++) {
       var e = q[i];
-      if (e.card && !e.card.isConnected) e.finished = true;  // 재렌더로 버려진 노드는 통과
       if (e.finished) continue;
       // 첫 미완료가 아직 등장 전(숨김 래퍼) = 보이는 카드는 다 끝남 → 아래 전개 단계로.
       // (스테이징 조기 등록 때문에 숨김 엔트리가 큐에 먼저 들어와 있다 — 2026-07-04)
@@ -733,8 +737,17 @@
       }
       return;  // 순차 보장: 첫 미완료 카드만 처리
     }
-    // 여기 도달 = 보이는 카드 모두 타자 완료 → 다음 단계 전개
+    // 여기 도달 = 보이는 카드 모두 타자 완료 → 다음 단계 전개.
+    // 단, 지금 보이는 카드(0..stepsShown-1)마다 '살아있고 완료된' 항목이 실제로 있어야 한다.
+    // 없으면 아직 등록 전(또는 재렌더 직후)이므로 기다린다 — 전개가 타자를 앞지르는 걸 막음.
     if (stepAdvancing) return;
+    for (var s = 0; s < stepsShown; s++) {
+      var done = false;
+      for (var k = 0; k < q.length; k++) {
+        if (q[k].idx === s && q[k].finished) { done = true; break; }
+      }
+      if (!done) return;
+    }
     var cl = document.querySelector('[data-block-id="' + STEP_COL + '"]');
     if (!cl) return;
     var totalCols = cl.querySelectorAll('.notion-column-block').length;
