@@ -198,6 +198,16 @@
     if (bar) {
       var logo = bar.querySelector('img:not(.onf-band-arrow)');
       if (logo) {
+        // 메뉴 구역(2026-07-04 Peter): [로고 오른쪽 + 로고 왼쪽여백] ~ 화면 오른쪽 끝.
+        // 그 구역 한가운데에 메뉴 6개가 오도록 CSS가 padding-left로 잡는다.
+        // ⚠️ 로고 PNG 안에 투명 여백 12px — 눈에 보이는 글자 기준으로 재야 함(픽셀 실측).
+        var LOGO_INK = 12;
+        var lrect = logo.getBoundingClientRect();
+        var inkLeft = Math.round(lrect.left) + LOGO_INK;      // 보이는 로고 시작 (보통 52)
+        var inkRight = Math.round(lrect.right) - LOGO_INK;    // 보이는 로고 끝
+        if (lrect.width > 0 && inkLeft > 0 && inkLeft <= 132) {
+          document.documentElement.style.setProperty('--onf-nav-left', (inkRight + inkLeft) + 'px');
+        }
         var lx = Math.round(logo.getBoundingClientRect().left);
         // 우피가 탑바를 다 그리기 전에 재면 로고가 임시 위치라 수백 px이 나와
         // SNS 버튼이 Reviews 위에 얹혔다 우측으로 튀는 원인이 됨(2026-07-03 Peter).
