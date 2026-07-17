@@ -1447,23 +1447,57 @@
   }, 500);
 
 
-  /* ---------- ⑪ QnA 질문 말풍선 클릭 → 토글 ---------- */
-  // 말풍선(질문)을 누르면 노션 토글 화살표를 대신 눌러 답변을 편다.
+  /* ---------- ⑪ QnA: 질문 말풍선 클릭 → 답변 말풍선 + 타자기 ---------- */
+  // 토글 화살표는 CSS(§14)로 숨기고 질문 말풍선 자체가 스위치. 화살표 노드는 DOM에 남겨
+  // 클릭을 대신 전달한다(우피 토글 상태는 그 버튼이 소유).
   // ⚠️ 우피 토글은 .click()·MouseEvent로 안 열림 — PointerEvent 시퀀스여야 반응(2026-07-11 실측).
+  var QNA_TYPE_MS = 9;   // 글자당 간격 — 여기만 바꾸면 타이핑 속도 조절
+
+  // 답변 문단을 위에서부터 한 글자씩 실제로 채워 넣는다(= 말풍선이 글자 따라 커짐).
+  // /how의 typeBody와 반대 방식: 거긴 자리를 미리 잡고 opacity만 켜서 크기 고정,
+  // 여기선 Peter 요청대로 높이·너비가 함께 늘어야 해서 텍스트를 진짜로 넣는다.
+  // ⚠️ textContent를 다시 쓰므로 답변 안의 링크·볼드는 평문이 됨(현재 QnA 본문은 평문).
+  function typeAnswer(ans) {
+    if (ans.dataset.onfTyped) return;
+    ans.dataset.onfTyped = '1';
+    var blocks = [].slice.call(ans.querySelectorAll('.notion-text-block'))
+      .filter(function (b) { return (b.textContent || '').trim(); });
+    if (!blocks.length) return;
+    var texts = blocks.map(function (b) { return b.textContent; });
+    blocks.forEach(function (b) { b.style.display = 'none'; });   // 안 쓴 문단은 자리도 차지 않게
+    var bi = 0;
+    (function typeBlock() {
+      if (bi >= blocks.length) return;
+      var b = blocks[bi], full = texts[bi], ci = 0;
+      b.style.display = '';
+      b.textContent = '';
+      var iv = setInterval(function () {
+        if (!b.isConnected) { clearInterval(iv); return; }        // 페이지 이동 시 중단
+        b.textContent = full.slice(0, ++ci);
+        if (ci >= full.length) { clearInterval(iv); bi++; typeBlock(); }
+      }, QNA_TYPE_MS);
+    })();
+  }
+
   document.addEventListener('click', function (e) {
     if (!document.body.classList.contains('onf-qna')) return;
     if (!e.target || !e.target.closest) return;
     var block = e.target.closest('.notion-toggle-block');
     if (!block) return;
-    var btn = block.querySelector('[role="button"]');
-    if (!btn || btn.contains(e.target)) return;          // 화살표 자체 클릭은 그대로
     var col = block.children[0] && block.children[0].children[1];
     var q = col && col.children[0];
     if (!q || !q.contains(e.target)) return;             // 답변 안 클릭(링크 등)은 무시
+    var btn = block.querySelector('[role="button"]');
+    if (!btn) return;
     ['pointerdown', 'pointerup'].forEach(function (ty) {
       btn.dispatchEvent(new PointerEvent(ty, { bubbles: true, cancelable: true, isPrimary: true, pointerId: 1, pointerType: 'mouse' }));
     });
     btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+    // 답변 노드는 클릭 직후(실측 ~11ms) 생김 — 다음 프레임에 잡아 바로 타이핑 시작
+    requestAnimationFrame(function () {
+      var ans = col.children[1];
+      if (ans) typeAnswer(ans);
+    });
   });
 
 })();

@@ -1780,13 +1780,18 @@ body.onf-review-detail .width.padding div[style*="height: 1px"] {
 body.onf-qna .notion-toggle-block {
   margin: 0 0 22px !important;
 }
-/* 화살표: 질문 말풍선 첫 줄에 맞춰 살짝 내림 */
-body.onf-qna .notion-toggle-block [role="button"] {
-  margin-top: 8px;
-  opacity: .5;
-  transition: opacity .2s;
+/* 토글 화살표 숨김(2026-07-11 Peter) — 질문 말풍선 자체가 스위치.
+   ⚠️ display:none이라도 노드는 남아 ownify.js ⑪이 클릭을 대신 전달할 수 있다. */
+body.onf-qna .notion-toggle-block > div > div:first-child {
+  display: none !important;
 }
-body.onf-qna .notion-toggle-block:hover [role="button"] { opacity: 1; }
+/* 답변 문단의 등장 애니메이션 해제 — 답변이 뒤늦게 페이드되던 딜레이의 원인.
+   등장 연출은 타자기가 대신한다(ownify.js ⑪). */
+body.onf-qna .notion-toggle-block .onf-reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
 
 /* 질문 = 왼쪽 오렌지 말풍선 (클릭하면 답변 열림 — ownify.js ⑪) */
 body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child {
@@ -1812,8 +1817,9 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child * {
 
 /* 답변 = 오른쪽 크림 말풍선 (콜아웃 카드와 같은 톤) */
 body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) {
-  width: fit-content;
+  width: fit-content;          /* 타이핑되는 글자 따라 가로·세로 자동 성장 */
   max-width: 80%;
+  min-width: 0;
   margin: 10px 0 0 auto !important;
   background: #FBF6EC;
   border: 1.5px solid #E4D6C0;
