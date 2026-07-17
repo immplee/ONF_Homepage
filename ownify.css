@@ -117,10 +117,12 @@ html, body {
   position: relative !important;
 }
 .notion-topbar[style*="grid-template"] > div:nth-child(2) {
-  /* 오른쪽 여백 = 로고 왼쪽 여백. --onf-cta-right는 ownify.js ④가 로고 위치를 재서 넣음.
-     -28px 보정: 탑바 자체 padding-right 12px + 마지막 메뉴 항목의 좌우 padding 16px
-     (로고는 padding이 없어 이미지 가장자리가 곧 여백 시작 — 눈에 보이는 글자 끝을 맞추려면 뺀다) */
-  margin: 0 calc(var(--onf-cta-right, 40px) - 28px) 0 0 !important;
+  /* 오른쪽 여백(SNS 글자 끝 ~ 화면 오른쪽) = 로고 '잉크' 왼쪽 여백 52px.
+     --onf-cta-right(=로고 이미지 상자 왼쪽, 보통 40px) + 12px:
+       ⚠️ 로고 PNG 안에 투명 여백이 12px 있어 눈에 보이는 글자는 52px에서 시작(픽셀 실측 2026-07-04).
+     -28px: 탑바 자체 padding-right 12px + 마지막 메뉴 항목의 좌우 padding 16px 상쇄.
+     합계 = var + 12 - 28 */
+  margin: 0 calc(var(--onf-cta-right, 40px) - 16px) 0 0 !important;
   display: flex !important;
   align-items: center !important;
   gap: 60px !important;                   /* 메뉴 간격 — 유지 */
