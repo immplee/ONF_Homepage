@@ -113,14 +113,15 @@ html, body {
 .notion-topbar[style*="grid-template"] {
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
+  justify-content: flex-end !important;   /* 메뉴가 늘어 가운데 정렬은 로고와 겹칠 위험 → 우측 정렬(2026-07-04 Peter) */
   position: relative !important;
 }
 .notion-topbar[style*="grid-template"] > div:nth-child(2) {
-  margin: 0 !important;
+  /* 오른쪽 여백 = 로고 왼쪽 여백 (--onf-cta-right는 ownify.js ④가 로고 위치를 재서 넣음) */
+  margin: 0 var(--onf-cta-right, 40px) 0 0 !important;
   display: flex !important;
   align-items: center !important;
-  gap: 60px !important;
+  gap: 60px !important;                   /* 메뉴 간격 — 유지 */
 }
 .notion-topbar[style*="grid-template"] > div:first-child {
   position: absolute !important;
@@ -194,7 +195,7 @@ html, body {
   }
   .notion-topbar[style*="grid-template"] > div:nth-child(2) {
     margin-left: auto !important;
-    margin-right: 40px !important;
+    margin-right: var(--onf-cta-right, 40px) !important;   /* 로고 왼쪽 여백과 동일 */
     gap: 36px !important;
   }
 }
