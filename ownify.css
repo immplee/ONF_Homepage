@@ -1769,3 +1769,72 @@ body.onf-review-detail .width.padding div[style*="height: 1px"] {
 .notion-collection-item[data-block-id="381d6a62-96ae-8034-a24e-c16c20549842"] img { object-position: 50% 51.52% !important; }
 .notion-collection-item[data-block-id="381d6a62-96ae-8018-90f4-d46188096298"] img { object-position: 50% 26.08% !important; }
 .notion-collection-item[data-block-id="381d6a62-96ae-8020-bad4-d2fd068c178d"] img { object-position: 50% 26.10% !important; }
+
+
+/* ---------- 14. QnA 말풍선 대화 (body.onf-qna — ownify.js ⑤가 토글) ---------- */
+/* 노션 토글 그대로 두고 CSS로만 대화처럼 그린다(내용 수정은 계속 노션에서).
+   구조(실측 2026-07-11): .notion-toggle-block > div(flex) > [화살표 24px][col]
+                          col > div:first-child = 질문 / col > div:nth-child(2) = 답변
+   ⚠️ 클래스가 없어 구조 셀렉터 — 우피가 토글 DOM을 바꾸면 여기도 갱신 */
+
+body.onf-qna .notion-toggle-block {
+  margin: 0 0 22px !important;
+}
+/* 화살표: 질문 말풍선 첫 줄에 맞춰 살짝 내림 */
+body.onf-qna .notion-toggle-block [role="button"] {
+  margin-top: 8px;
+  opacity: .5;
+  transition: opacity .2s;
+}
+body.onf-qna .notion-toggle-block:hover [role="button"] { opacity: 1; }
+
+/* 질문 = 왼쪽 오렌지 말풍선 (클릭하면 답변 열림 — ownify.js ⑪) */
+body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child {
+  display: inline-block;
+  width: fit-content;
+  max-width: 76%;
+  background: #D2691E;
+  border-radius: 20px 20px 20px 5px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+}
+body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child:hover {
+  background: #e0761f;
+  transform: translateY(-1px);
+}
+body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child,
+body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child * {
+  color: #FFF7EE !important;
+  font-weight: 700 !important;
+  line-height: 1.6 !important;
+}
+
+/* 답변 = 오른쪽 크림 말풍선 (콜아웃 카드와 같은 톤) */
+body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) {
+  width: fit-content;
+  max-width: 80%;
+  margin: 10px 0 0 auto !important;
+  background: #FBF6EC;
+  border: 1.5px solid #E4D6C0;
+  border-radius: 20px 20px 5px 20px;
+  padding: 16px 22px;
+  box-shadow: 0 2px 10px rgba(58, 36, 21, .06);
+}
+body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2),
+body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) * {
+  color: #4A3220 !important;
+}
+/* 답변 안 문단 간격 — 노션 기본 16px는 말풍선 안에서 과함 */
+body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) .notion-text-block {
+  margin: 0 0 10px !important;
+}
+body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) .notion-text-block:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* 모바일: 말풍선 폭 넓히고 여백 조임 */
+@media (max-width: 768px) {
+  body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child { max-width: 90%; padding: 10px 16px; }
+  body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) { max-width: 92%; padding: 14px 16px; }
+}

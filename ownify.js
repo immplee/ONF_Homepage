@@ -249,6 +249,8 @@
     document.body.classList.toggle('onf-nav-split', !!visibleBar && menuLinks <= 1);
     var home = location.pathname === '/' || location.pathname === '';
     document.body.classList.toggle('onf-sub', !home);
+    // /qna는 토글을 말풍선 대화로 그림(ownify.css §14) — 다른 페이지 토글은 노션 기본 유지
+    document.body.classList.toggle('onf-qna', location.pathname.replace(/\/$/, '') === '/qna');
     // /reviews·리뷰 상세에도 하위 배너 주입 — 노션에 커버가 없어 배너가 안 떴음(2026-07-04 Peter).
     // 다른 하위 페이지와 같은 클래스·인라인으로 만들면 기존 커버 CSS·교체 로직이 그대로 먹는다.
     var rp = location.pathname.replace(/\/$/, '');
@@ -1443,5 +1445,25 @@
       onfAddTeacherBadge(host, onfTeacherOf(it.getAttribute('data-block-id')));
     });
   }, 500);
+
+
+  /* ---------- ⑪ QnA 질문 말풍선 클릭 → 토글 ---------- */
+  // 말풍선(질문)을 누르면 노션 토글 화살표를 대신 눌러 답변을 편다.
+  // ⚠️ 우피 토글은 .click()·MouseEvent로 안 열림 — PointerEvent 시퀀스여야 반응(2026-07-11 실측).
+  document.addEventListener('click', function (e) {
+    if (!document.body.classList.contains('onf-qna')) return;
+    if (!e.target || !e.target.closest) return;
+    var block = e.target.closest('.notion-toggle-block');
+    if (!block) return;
+    var btn = block.querySelector('[role="button"]');
+    if (!btn || btn.contains(e.target)) return;          // 화살표 자체 클릭은 그대로
+    var col = block.children[0] && block.children[0].children[1];
+    var q = col && col.children[0];
+    if (!q || !q.contains(e.target)) return;             // 답변 안 클릭(링크 등)은 무시
+    ['pointerdown', 'pointerup'].forEach(function (ty) {
+      btn.dispatchEvent(new PointerEvent(ty, { bubbles: true, cancelable: true, isPrimary: true, pointerId: 1, pointerType: 'mouse' }));
+    });
+    btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+  });
 
 })();
