@@ -450,7 +450,8 @@ html, body {
 }
 .onf-sns-cb { display: none; }  /* 토글용 숨김 체크박스 */
 
-/* SNS 메뉴 항목 (ownify.js ⑥-2가 메뉴에 주입) — 다른 메뉴와 같은 톤 */
+/* 주입 메뉴 항목 (Home=ownify.js ⑥-3 / SNS=⑥-2) — 우피 기본 메뉴와 같은 톤·간격 */
+a.onf-home-menu,
 a.onf-sns-menu {
   color: #D2691E !important;
   font-family: 'Paperlogy', 'Apple SD Gothic Neo', sans-serif !important;
@@ -1778,7 +1779,7 @@ body.onf-review-detail .width.padding div[style*="height: 1px"] {
    ⚠️ 클래스가 없어 구조 셀렉터 — 우피가 토글 DOM을 바꾸면 여기도 갱신 */
 
 body.onf-qna .notion-toggle-block {
-  margin: 0 0 22px !important;
+  margin: 0 0 44px !important;   /* 질문+답변 한 세트 간 간격 — 22→44 (2026-07-04 Peter) */
 }
 /* 토글 화살표 숨김(2026-07-11 Peter) — 질문 말풍선 자체가 스위치.
    ⚠️ display:none이라도 노드는 남아 ownify.js ⑪이 클릭을 대신 전달할 수 있다. */

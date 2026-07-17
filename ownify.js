@@ -287,7 +287,7 @@
       if (na.querySelector('img')) { na.classList.remove('onf-current'); continue; } // 로고 제외
       var lp;
       try { lp = new URL(na.href, location.origin).pathname.replace(/\/$/, '') || '/'; } catch (e) { continue; }
-      na.classList.toggle('onf-current', lp === norm && lp !== '/');
+      na.classList.toggle('onf-current', lp === norm);   // 로고는 위 img 검사로 제외됨
     }
   }
   // 색칠(젖빛 유리) 전환 기준: 커버 배너가 탑바 뒤에서 완전히 벗어나는 지점
@@ -422,29 +422,49 @@
     sns.style.setProperty('right', 'auto', 'important');
     sns.style.setProperty('bottom', 'auto', 'important');
   }
+  // 진짜 메뉴 행(flex 컨테이너) 찾기 — Home·SNS 주입이 공유.
+  // ⚠️ 메뉴 링크의 직속 부모는 '개별 링크 래퍼'라 거기 넣으면 간격(gap)이 안 붙는다.
+  //    링크 3개 이상을 담은 flex 조상까지 올라가야 다른 항목과 같은 간격·가운데 정렬을
+  //    그대로 받는다(2026-07-04 실측).
+  function findNavHost() {
+    var links = document.querySelectorAll('.notion-topbar a[href], .notion-topbar ~ div a[href]');
+    var anchor = null;
+    for (var i = 0; i < links.length; i++) {
+      if (/How|Where|QnA|Reviews/.test(links[i].textContent || '') && links[i].offsetHeight > 0) { anchor = links[i]; break; }
+    }
+    if (!anchor) return null;
+    var host = anchor.parentElement;
+    while (host && host !== document.body) {
+      var hcs = getComputedStyle(host);
+      if ((hcs.display === 'flex' || hcs.display === 'inline-flex') &&
+          host.querySelectorAll('a[href]').length >= 3) return host;
+      host = host.parentElement;
+    }
+    return null;
+  }
+
+  /* ---------- ⑥-3 Home 메뉴 (2026-07-04 Peter 지시) ---------- */
+  // 메뉴 맨 앞(How 왼쪽)에 Home 항목 주입 → 홈으로 이동. 간격은 메뉴 행의 리듬을 그대로 받음.
+  function ensureHomeMenu() {
+    var host = findNavHost();
+    if (!host) return;
+    var item = document.querySelector('.onf-home-menu');
+    if (item && item.parentElement === host && item === host.firstElementChild) return;
+    if (item) item.remove();
+    item = document.createElement('a');
+    item.className = 'onf-home-menu';
+    item.href = '/';
+    item.textContent = 'Home';
+    host.insertBefore(item, host.firstElementChild);   // How 왼쪽
+  }
+
   function ensureSnsMenu() {
     var sns = document.querySelector('.onf-sns');
     if (!sns) return;
     var cb = sns.querySelector('.onf-sns-cb');
     if (!cb) return;
-    // 보이는 메뉴에서 Reviews 링크를 찾아 그 컨테이너에 SNS 항목을 붙인다
-    var links = document.querySelectorAll('.notion-topbar a[href], .notion-topbar ~ div a[href]');
-    var reviews = null;
-    for (var i = 0; i < links.length; i++) {
-      if (/Reviews/.test(links[i].textContent || '') && links[i].offsetHeight > 0) { reviews = links[i]; break; }
-    }
-    if (!reviews) return;
-    // ⚠️ Reviews의 직속 부모는 '개별 링크 래퍼'라 거기 넣으면 간격(gap)이 안 붙는다.
-    //    메뉴 링크 3개 이상을 담은 flex 컨테이너(진짜 메뉴 행)까지 올라가서 넣어야
-    //    다른 항목과 같은 간격·가운데 정렬을 그대로 받는다(2026-07-04 실측).
-    var host = reviews.parentElement;
-    while (host && host !== document.body) {
-      var hcs = getComputedStyle(host);
-      if ((hcs.display === 'flex' || hcs.display === 'inline-flex') &&
-          host.querySelectorAll('a[href]').length >= 3) break;
-      host = host.parentElement;
-    }
-    if (!host || host === document.body) return;
+    var host = findNavHost();
+    if (!host) return;
     var item = document.querySelector('.onf-sns-menu');
     if (!item || item.parentElement !== host) {
       if (item) item.remove();
@@ -469,16 +489,18 @@
     cb.checked = false;
   });
   window.addEventListener('scroll', positionSnsDropdown, true);
+  ensureHomeMenu();
   ensureSnsMenu();
-  // 메뉴가 그려지는 '즉시' SNS 항목을 붙인다 — 타이머만 쓰면 최대 0.8초 늦게 나타나
+  // 메뉴가 그려지는 '즉시' 항목을 붙인다 — 타이머만 쓰면 최대 0.8초 늦게 나타나
   // 깜빡이듯 보임(2026-07-04 Peter). DOM 변화를 감지해 없을 때만 재시도(rAF로 묶음).
-  var snsMenuPending = false;
+  var navMenuPending = false;
   new MutationObserver(function () {
-    if (snsMenuPending || document.querySelector('.onf-sns-menu')) return;
-    snsMenuPending = true;
-    requestAnimationFrame(function () { snsMenuPending = false; ensureSnsMenu(); });
+    if (navMenuPending) return;
+    if (document.querySelector('.onf-sns-menu') && document.querySelector('.onf-home-menu')) return;
+    navMenuPending = true;
+    requestAnimationFrame(function () { navMenuPending = false; ensureHomeMenu(); ensureSnsMenu(); });
   }).observe(document.documentElement, { childList: true, subtree: true });
-  setInterval(ensureSnsMenu, 800);   // SPA 이동·위치 보정용 백스톱
+  setInterval(function () { ensureHomeMenu(); ensureSnsMenu(); }, 800);   // SPA 이동·위치 보정용 백스톱
 
   /* ---------- ⑦ 브라우저 탭 제목 ---------- */
   // 우피가 페이지 이동 때마다 탭 제목을 노션 페이지 제목으로 다시 쓰므로 주기적으로 강제.
