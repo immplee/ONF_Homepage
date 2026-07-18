@@ -1907,3 +1907,9 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) .not
   will-change: transform;
 }
 .onf-lb img.onf-lb-drag { cursor: grabbing; }
+
+
+/* ---------- /where 제목-콘텐츠 간격을 /how 기준(49px)에 통일 (2026-07-04 Peter) ---------- */
+/* ⚠️ 제목 블록 id 하드코딩 — 노션에서 지웠다 다시 만들면 갱신. */
+[data-block-id="392d6a62-96ae-804e-9a14-eab50ad5a3db"] { margin-bottom: -15px !important; }  /* 오시는 길 → 주소 (68→49) */
+[data-block-id="3a0d6a62-96ae-80fd-91ec-f87672b393c9"] { margin-bottom: 32px !important; }   /* 내부 사진 → 사진 (21→49) */
