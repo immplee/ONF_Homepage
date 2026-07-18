@@ -1881,7 +1881,8 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) .not
   max-height: none !important;
   width: 100% !important;
   height: auto !important;
-  border-radius: 8px !important;   /* 전역 22px는 티나서 8px로(2026-07-04 Peter) */
+  border-radius: 0 !important;     /* 각지게 — 라운드 티 완전 제거(2026-07-04 Peter) */
+  box-shadow: none !important;     /* 전역 §4 그림자도 제거 */
   cursor: zoom-in;
 }
 /* 마지막 세로사진 2장: 비율이 서로 달라(0.75 vs 0.71) 폭·높이 둘 다 맞추면 찌그러짐 →
