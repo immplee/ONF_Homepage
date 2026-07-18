@@ -1893,7 +1893,7 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) .not
 
 /* ---------- 사진 라이트박스 (ownify.js ⑫와 세트) ---------- */
 .onf-lb {
-  position: fixed; inset: 0; z-index: 100000;
+  position: fixed; inset: 0; z-index: 1000003;   /* 우피 탑바 sticky(1,000,000)·QR(1000002) 위 */
   background: rgba(20, 12, 6, .82);
   display: flex; align-items: center; justify-content: center;
   overflow: hidden; touch-action: none; cursor: zoom-out;
