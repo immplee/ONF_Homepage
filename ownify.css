@@ -1881,4 +1881,27 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) .not
   max-height: none !important;
   width: 100% !important;
   height: auto !important;
+  cursor: zoom-in;
 }
+/* 마지막 세로사진 2장: 비율이 서로 달라 폭을 맞추면 높이가 어긋남 →
+   높이 기준으로 통일(비율 유지, 폭은 자동). 오른쪽 사진 높이에 맞춤(2026-07-04 Peter) */
+[data-block-id="3a0d6a62-96ae-8000-8408-eddc042c6e89"] .notion-image-block img {
+  width: auto !important;
+  height: 817px !important;
+  max-width: 100% !important;
+}
+
+/* ---------- 사진 라이트박스 (ownify.js ⑫와 세트) ---------- */
+.onf-lb {
+  position: fixed; inset: 0; z-index: 100000;
+  background: rgba(20, 12, 6, .82);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; touch-action: none; cursor: zoom-out;
+}
+.onf-lb img {
+  max-width: 92vw; max-height: 92vh;
+  border-radius: 8px; box-shadow: 0 12px 48px rgba(0,0,0,.5);
+  transform-origin: 0 0; cursor: grab; user-select: none; -webkit-user-drag: none;
+  will-change: transform;
+}
+.onf-lb img.onf-lb-drag { cursor: grabbing; }

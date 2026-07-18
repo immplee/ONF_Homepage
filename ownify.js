@@ -1525,4 +1525,66 @@
     });
   });
 
+
+  /* ---------- ⑫ /where 사진 라이트박스 (클릭 확대·휠 줌·드래그 이동) ---------- */
+  // 사진 클릭 → 가운데 크게, 휠로 확대/축소, 드래그로 이동, 바깥 클릭·ESC로 닫기.
+  // 라이브러리 없이(YAGNI) transform 하나로 pan+zoom. /where 사진(3a0d6a62)만 대상.
+  document.addEventListener('click', function (e) {
+    if (location.pathname.replace(/\/$/, '') !== '/where') return;
+    var img = e.target.closest && e.target.closest('.notion-image-block img');
+    if (!img || !img.closest('[data-block-id^="3a0d6a62"]')) return;
+    if (document.querySelector('.onf-lb')) return;
+    e.preventDefault();
+    openLightbox(img.currentSrc || img.src);
+  });
+
+  function openLightbox(src) {
+    var lb = document.createElement('div');
+    lb.className = 'onf-lb';
+    var big = document.createElement('img');
+    big.src = src;
+    lb.appendChild(big);
+    document.body.appendChild(lb);
+
+    var scale = 1, tx = 0, ty = 0;          // 현재 변환
+    function apply() { big.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')'; }
+
+    // 휠 = 커서 기준 줌
+    lb.addEventListener('wheel', function (ev) {
+      ev.preventDefault();
+      var rect = big.getBoundingClientRect();
+      var cx = ev.clientX - rect.left, cy = ev.clientY - rect.top;   // 이미지 안 커서 위치
+      var factor = ev.deltaY < 0 ? 1.15 : 1 / 1.15;
+      var ns = Math.min(8, Math.max(1, scale * factor));
+      if (ns === scale) return;
+      // 커서 아래 지점이 고정되도록 tx/ty 보정
+      tx -= cx * (ns / scale - 1);
+      ty -= cy * (ns / scale - 1);
+      scale = ns;
+      if (scale === 1) { tx = 0; ty = 0; }
+      apply();
+    }, { passive: false });
+
+    // 드래그 = 이동
+    var dragging = false, sx = 0, sy = 0, stx = 0, sty = 0;
+    big.addEventListener('pointerdown', function (ev) {
+      ev.preventDefault(); dragging = true; big.classList.add('onf-lb-drag');
+      sx = ev.clientX; sy = ev.clientY; stx = tx; sty = ty;
+      big.setPointerCapture(ev.pointerId);
+    });
+    big.addEventListener('pointermove', function (ev) {
+      if (!dragging) return;
+      tx = stx + (ev.clientX - sx); ty = sty + (ev.clientY - sy); apply();
+    });
+    big.addEventListener('pointerup', function (ev) {
+      dragging = false; big.classList.remove('onf-lb-drag');
+    });
+
+    function close() { lb.remove(); document.removeEventListener('keydown', onKey); }
+    function onKey(ev) { if (ev.key === 'Escape') close(); }
+    // 바깥(이미지 아닌 곳) 클릭 = 닫기. 드래그 끝의 클릭은 이동으로 소비돼 안 닫힘.
+    lb.addEventListener('click', function (ev) { if (ev.target === lb) close(); });
+    document.addEventListener('keydown', onKey);
+  }
+
 })();
