@@ -1872,3 +1872,13 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) .not
   body.onf-qna .notion-toggle-block > div > div:last-child > div:first-child { max-width: 90%; padding: 10px 16px; }
   body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) { max-width: 92%; padding: 14px 16px; }
 }
+
+
+/* ---------- /where 내부 사진 = 지도 폭에 맞춤 (2026-07-04 Peter) ---------- */
+/* 전역 이미지 max-height:45vh가 사진을 폭보다 좁게 가둠 → 컬럼 폭(지도와 동일) 꽉 채움.
+   ⚠️ 컬럼리스트 id 하드코딩(내부사진 전용) — 노션에서 이 블록 지웠다 다시 만들면 갱신. */
+[data-block-id="3a0d6a62-96ae-80a9-bf23-d1281be70088"] .notion-image-block img {
+  max-height: none !important;
+  width: 100% !important;
+  height: auto !important;
+}
