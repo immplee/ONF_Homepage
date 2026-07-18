@@ -318,27 +318,6 @@ html, body {
 }
 
 /* ---------- 도보 길찾기 임베드 (ownify.js ⑧-3과 세트, PC 전용) ---------- */
-/* 네이버 길찾기 웹페이지를 iframe으로 끼우고 왼쪽 경로 패널(453px)을 크롭해 지도만 보이게.
-   모바일 UA에선 네이버가 iframe을 거부하므로 JS가 아예 주입하지 않음. */
-.onf-directions {
-  overflow: hidden;
-  border-radius: 22px;
-  box-shadow: 0 14px 40px rgba(111, 74, 47, .18);
-  height: 420px;
-  margin-top: 18px;
-}
-.onf-directions-frame {
-  border: 0;
-  display: block;
-  /* 루트 중앙정렬(2026-07-06 Peter task4): iframe을 넓게 렌더해 네이버가 경로 패널을
-     접지 않고(좁으면 접혀 루트가 왼쪽으로 쏠렸음) 일관되게 프레이밍하게 한 뒤, 왼쪽 패널
-     453px만 크롭. 배율 1.424는 컨테이너 폭이 달라도 루트가 가시영역 중앙에 오도록 실측으로
-     맞춘 값(C=581→W=1280, C=481→W=1138 모두 중앙 확인). */
-  width: calc(100% * 1.424 + 453px);
-  max-width: none;
-  height: 100%;
-  margin-left: -453px;
-}
 
 
 /* ---------- 4. 이미지 ---------- */

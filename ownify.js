@@ -636,36 +636,15 @@
       if (cls.indexOf('onf-map-') === -1) c.remove();
     });
   }
-  // ⑧-3 지도 아래 도보 길찾기 임베드 (잠실역 2호선 → 오니파이). PC 전용 —
-  // 네이버 길찾기 웹페이지를 iframe으로 끼우고 왼쪽 경로 패널은 CSS(.onf-directions)로 크롭.
-  // (모바일 UA는 네이버가 iframe을 거부해 빈 화면이 되므로 아예 주입하지 않음)
-  var ONF_DIRECTIONS = 'https://map.naver.com/p/directions/3zmKkz,2AJN93,%EC%9E%A0%EC%8B%A4%EC%97%AD(%EB%A0%88%EC%9D%B4%ED%81%AC%ED%8C%B0%EB%A6%AC%EC%8A%A4)4%EB%B2%88%EC%B6%9C%EA%B5%AC,21405356,PLACE_POI/3zmDLo,2AJGJW,%EC%98%A4%EB%8B%88%ED%8C%8C%EC%9D%B4,2094664237,PLACE_POI/-/walk?c=16.00,0,0,0,dh';
-  function ensureDirections(block) {
-    if (onfIsMobileDevice()) return;
-    var wrapEx = document.querySelector('.onf-directions');
-    if (wrapEx) {
-      // 위치가 틀어졌으면 재배치(중복 생성 방지), URL은 원문 비교
-      // (.src는 브라우저가 정규화해 항상 불일치 → 매초 리로드되던 버그, 2026-07-04)
-      if (block.nextElementSibling !== wrapEx) block.insertAdjacentElement('afterend', wrapEx);
-      var ex = wrapEx.querySelector('.onf-directions-frame');
-      if (ex && ex.getAttribute('src') !== ONF_DIRECTIONS) ex.setAttribute('src', ONF_DIRECTIONS);
-      return;
-    }
-    var wrap = document.createElement('div');
-    wrap.className = 'onf-directions';
-    var f = document.createElement('iframe');
-    f.className = 'onf-directions-frame';
-    f.loading = 'lazy';
-    f.src = ONF_DIRECTIONS;
-    wrap.appendChild(f);
-    block.insertAdjacentElement('afterend', wrap);
-  }
+  // ⑧-3 도보 길찾기 임베드 ⛔제거(2026-07-04 Peter — 지도 아래 두 번째 지도 삭제).
+  // 남아 있던 .onf-directions 요소가 있으면 청소.
   function ensureCustomMap() {
     var block = document.querySelector('[data-block-id="2a11866f-119c-4e50-9a8e-058529413e1e"]');
     if (!block) return;
     document.body.classList.add('onf-map-custom');
     cleanBlock(block);
-    ensureDirections(block);
+    var oldDir = document.querySelector('.onf-directions');
+    if (oldDir) oldDir.remove();
     // 우피가 원본 지도를 다시 그려 넣는 즉시 또 제거 (같은 프레임 → 깜빡임 없음, 1회만 등록)
     if (!block.__onfMapGuard) {
       block.__onfMapGuard = new MutationObserver(function () { cleanBlock(block); });
