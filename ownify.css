@@ -1904,18 +1904,20 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) .not
    가운데 정렬된 글자와 맞물려 아이콘↔글자가 123px 벌어져 있었다(2026-08-28 Peter).
    아이콘을 흐름 안으로 되돌리고 아이콘+글자를 한 덩어리로 가운데 정렬 — 사이 10px. */
 [data-block-id="382d6a62-96ae-809a-80df-d2f3ed6d2e08"] [data-root="true"] {
-  padding-left: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 10px !important;
+  padding-left: 0 !important;   /* 절대배치 아이콘 자리로 비워두던 40px */
+  text-align: center !important;
 }
 [data-block-id="382d6a62-96ae-809a-80df-d2f3ed6d2e08"] img {
   position: static !important;
   top: auto !important;
-  transform: none !important;
-  flex: 0 0 auto !important;
+  transform: none !important;   /* 절대배치용 translateY(-50%) 잔재 — 흐름 안에선 아이콘을 15px 밀어올린다 */
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin: 0 10px 0 0 !important;
   height: 30px !important;
   width: 30px !important;
 }
+/* ⚠️ flex 로 감싸지 마라(2026-08-28 실측): 데스크톱 한 줄에선 멀쩡하지만 모바일에서
+   주소가 3줄로 접히면 글자 아이템이 남은 폭을 다 먹고 그 안에서 다시 가운데 정렬돼
+   아이콘과 또 벌어진다. 인라인이라야 아이콘이 첫 줄 바로 앞에 붙는다. */
 [data-block-id="3a0d6a62-96ae-80fd-91ec-f87672b393c9"] { margin-bottom: 32px !important; }   /* 내부 사진 → 사진 (21→49) */
