@@ -393,7 +393,7 @@ html, body {
 }
 .notion-page-content > .notion-header-block h1,
 .notion-page-content > .notion-header-block h2,
-.notion-page-content > .notion-text-block .css-1g4vl24 {
+.notion-page-content > .notion-text-block [data-root="true"] {   /* 옛 해시 .css-1g4vl24 — 우피 빌드 바뀌며 사라짐(2026-08-28) */
   justify-content: center !important;
   text-align: center !important;
 }
@@ -1395,14 +1395,19 @@ div:has(> .onf-listview-tab) > [role="button"].onf-tab-sel svg { fill: #D2691E !
 /* 리스트 뷰 활성: 갤러리 그리드·Load more 숨김 */
 /* ⚠️ 갤러리 숨김은 '리스트에 썸네일이 실제로 있을 때만' — body 클래스만으로 숨기면
    리스트가 아직 비었을 때 빈 화면이 됨(2026-07-05 회귀). :has로 JS버전 무관하게 안전. */
-body:has(.onf-rlist-thumb) .css-2axpky,
+/* ⚠️ 그리드를 우피 해시 클래스(.css-2axpky)로 겨냥하던 옛 규칙은 우피가 빌드를 바꾸며
+   죽었다(2026-08-28 전 페이지 실측 0개) → 리스트를 켜도 갤러리 카드가 위에 남았다.
+   구조로 겨냥한다: 그리드 = '카드(.notion-collection-item)를 직계 자식으로 가진 div'.
+   .has-more 쪽 두 줄은 멀쩡하니 그대로 둔다(Load more는 여전히 이걸로만 겨냥 — 넓히면
+   뷰 탭까지 걸려 유령 화살표가 생긴다, 2026-07-05 실측). */
+body:has(.onf-rlist-thumb) div:has(> .notion-collection-item),
 body:has(.onf-rlist-thumb) .has-more,
 body:has(.onf-rlist-thumb) .has-more + [role="button"] { display: none !important; }
 
 /* 진입/새로고침 시 갤러리 그리드 깜빡임 방지(2026-07-06 Peter task3):
    리스트를 만드는 동안(Load more 클릭 중) 그리드를 opacity로만 가린다.
    ⚠️ display:none이면 Load more를 프로그램 클릭조차 못 해 빈 목록이 됨 → opacity만. */
-body.onf-rv-loading .css-2axpky { opacity: 0 !important; transition: none !important; }
+body.onf-rv-loading div:has(> .notion-collection-item) { opacity: 0 !important; transition: none !important; }
 
 /* 진입/새로고침 시 '갤러리 보기' 단일 탭 화면이 잠깐 뜨는 깜빡임 제거(2026-07-06 Peter):
    ownify.js가 '리스트 보기' 탭(.onf-listview-tab)을 주입하기 전까지 컬렉션 뷰를 숨긴다.
