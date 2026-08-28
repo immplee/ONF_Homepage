@@ -41,9 +41,9 @@
      카드마다 첫 블록 구조(칩 제목/헤딩/본문)가 달라 고정값 CSS로는 안 맞음 —
      실측해서 카드별로 자동 보정 (2026-07-03 Peter 지시 "항상 자동으로"). */
   function alignCalloutIcons() {
-    document.querySelectorAll('.notion-callout-block [class*="CalloutBlock_content"]').forEach(function (c) {
+    document.querySelectorAll('.notion-callout-block [class*="CalloutBlock"][class*="content"]').forEach(function (c) {
       var icon = c.querySelector('.notion-record-icon');
-      var blocks = c.querySelector('[class*="CalloutBlock_blocks"]');
+      var blocks = c.querySelector('[class*="CalloutBlock"][class*="blocks"]');
       if (!icon || !blocks) return;
       var first = null;
       for (var i = 0; i < blocks.children.length; i++) {
@@ -891,7 +891,7 @@
     //    기다린 뒤 (min-height 비움 → 강제 리플로 → 측정 → 설정) 해야 정확하다.
     var eqContents = [];   // 숨김 카드도 포함 — 자리·높이가 처음부터 최종값으로 고정되게
     cols.forEach(function (c) {
-      var ct = c.querySelector('.notion-callout-block [class*="CalloutBlock_content"]');
+      var ct = c.querySelector('.notion-callout-block [class*="CalloutBlock"][class*="content"]');
       if (ct) eqContents.push(ct);
     });
     requestAnimationFrame(function () {
@@ -930,7 +930,7 @@
     var cl = document.querySelector('[data-block-id="' + STEP2_COL + '"]');
     if (!cl) return;
     var contents = [];
-    cl.querySelectorAll('.notion-callout-block [class*="CalloutBlock_content"]').forEach(function (ct) {
+    cl.querySelectorAll('.notion-callout-block [class*="CalloutBlock"][class*="content"]').forEach(function (ct) {
       if (ct.offsetParent !== null) contents.push(ct);
     });
     if (contents.length < 2) return;

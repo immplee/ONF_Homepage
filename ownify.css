@@ -242,7 +242,7 @@ html, body {
 
 /* 콜아웃 → 밝은 크림 카드 + 브라운 글자 (2026-07-03: 다크 브라운이 답답해 밝게 전환).
    페이지 배경(#F1EADE)보다 살짝 밝은 카드 + 얇은 베이지 테두리로 산뜻하게 분리. */
-.notion-callout-block [class*="CalloutBlock_content"] {
+.notion-callout-block [class*="CalloutBlock"][class*="content"] {
   background-color: #FBF6EC !important;
   /* 기본 테두리 = 브랜드 브라운 2px — 전 사이트 카드 통일(2026-07-04 Peter,
      구 1.5px #E4D6C0 베이지에서 변경. /how 카드별 개별 규칙은 이 기본으로 흡수) */
@@ -254,30 +254,30 @@ html, body {
   position: relative !important;
   transition: background-color .2s, box-shadow .2s, transform .2s !important;
 }
-.notion-callout-block [class*="CalloutBlock_content"]:hover {
+.notion-callout-block [class*="CalloutBlock"][class*="content"]:hover {
   background-color: #FFFCF6 !important;
   box-shadow: 0 8px 22px rgba(111, 74, 47, .14) !important;
   transform: translateY(-2px) !important;
 }
 
 /* 밝은 카드 위 글자는 브라운 (제목·본문) */
-.notion-callout-block [class*="CalloutBlock_content"],
-.notion-callout-block [class*="CalloutBlock_content"] div,
-.notion-callout-block [class*="CalloutBlock_content"] span,
+.notion-callout-block [class*="CalloutBlock"][class*="content"],
+.notion-callout-block [class*="CalloutBlock"][class*="content"] div,
+.notion-callout-block [class*="CalloutBlock"][class*="content"] span,
 .notion-callout-block a, .notion-callout-block a span {
   color: #4A3220 !important;
 }
 /* 카드 본문 줄간격 넓혀 답답함 완화 (Peter 지시 2026-07-03) — 안쪽 텍스트 요소까지 지정 */
-.notion-callout-block [class*="CalloutBlock_content"],
-.notion-callout-block [class*="CalloutBlock_content"] div,
-.notion-callout-block [class*="CalloutBlock_content"] span {
+.notion-callout-block [class*="CalloutBlock"][class*="content"],
+.notion-callout-block [class*="CalloutBlock"][class*="content"] div,
+.notion-callout-block [class*="CalloutBlock"][class*="content"] span {
   line-height: 1.85 !important;
 }
 /* 카드 안 태그(인라인 코드 — 우피는 span[style*=SFMono]로 렌더링)는
    은은한 오렌지 칩 (브랜드 포인트, 밝은 카드에서 또렷하게) */
-.notion-callout-block [class*="CalloutBlock_content"] code,
-.notion-callout-block [class*="CalloutBlock_content"] code span,
-.notion-callout-block [class*="CalloutBlock_content"] span[style*="SFMono"] {
+.notion-callout-block [class*="CalloutBlock"][class*="content"] code,
+.notion-callout-block [class*="CalloutBlock"][class*="content"] code span,
+.notion-callout-block [class*="CalloutBlock"][class*="content"] span[style*="SFMono"] {
   color: #B9591A !important;
   background: rgba(210, 105, 30, .12) !important;
   border-radius: 6px !important;
@@ -288,7 +288,7 @@ html, body {
 /* 카드 안 링크 밑줄·배경 제거 */
 .notion-callout-block a, .notion-callout-block a:hover,
 .notion-callout-block a span,
-.notion-callout-block [class*="CalloutBlock_content"] div {
+.notion-callout-block [class*="CalloutBlock"][class*="content"] div {
   text-decoration: none !important;
   border-bottom: none !important;
   box-shadow: none !important;
@@ -296,7 +296,7 @@ html, body {
 }
 
 /* 카드 안에 링크가 있으면 카드 전체를 클릭 영역으로 확장 */
-.notion-callout-block [class*="CalloutBlock_content"] a::after {
+.notion-callout-block [class*="CalloutBlock"][class*="content"] a::after {
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
@@ -1257,7 +1257,7 @@ body.onf-map-api-on .onf-map-link { display: block; }
   }
   /* 모바일: 높이 균등화(min-height) 해제 — 세로 스택에선 카드가 래퍼 밖으로
      늘어나 화살표와 겹치고 간격이 뒤틀린다(2026-07-04 실측). 폭은 JS ⑨가 단일 소유. */
-  [data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block [class*="CalloutBlock_content"] {
+  [data-block-id="b8fd976b-8eff-4bb5-b837-209e0c1303ea"] .notion-callout-block [class*="CalloutBlock"][class*="content"] {
     min-height: 0 !important;
   }
   /* 모바일: 단계 카드를 세로 스택으로(우피는 모바일에서도 컬럼을 안 쌓음) */
@@ -1356,8 +1356,8 @@ body.onf-map-api-on .onf-map-link { display: block; }
 /* ---------- 13. /how 상단 안내 카드 (2026-07-03 Peter 지시) ---------- */
 /* (테두리 규칙 제거 — 기본 콜아웃 테두리 2px #6F4A2F로 통일, 2026-07-04) */
 /* 오른쪽 '수업 흐름' 카드: 목록 줄간격·블록 간격을 아래 단계 카드 수준으로 정돈 */
-[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"] div,
-[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock_content"] span {
+[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock"][class*="content"] div,
+[data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] [class*="CalloutBlock"][class*="content"] span {
   line-height: 1.7 !important;
 }
 [data-block-id="392d6a62-96ae-8048-b374-e43a8e7aa580"] .notion-bulleted_list-block {
