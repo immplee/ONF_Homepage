@@ -1302,25 +1302,10 @@ body.onf-map-api-on .onf-map-link { display: block; }
 .onf-type .onf-type-c { opacity: 0; }
 .onf-type .onf-type-c.on { opacity: 1; transition: opacity .08s ease; }
 
-/* ---------- /where 타이틀: 이모지만 크게(30px), 텍스트는 본문 크기 ---------- */
-/* 노션 블록 타입(텍스트/제목)과 무관하게 앞의 커스텀 이모지를 제목2급으로 키우고
-   절대배치(왼쪽 고정·세로 중앙)해서, 우측 텍스트가 이모지 정중앙 기준으로 놓인다.
-   (인라인 정렬은 줄박스가 함께 커져서 계속 어긋남 — 실측 -1px로 이 방식 확정, 2026-07-03)
-   ⚠️ 블록을 지웠다 다시 만들면 data-block-id 갱신 필요 */
-[data-block-id="382d6a62-96ae-809a-80df-d2f3ed6d2e08"] > div > *,
-[data-block-id="391d6a62-96ae-808b-be27-fe42dd34c11a"] > div > * {
-  position: relative !important;
-  padding-left: 40px !important;
-}
-[data-block-id="382d6a62-96ae-809a-80df-d2f3ed6d2e08"] img,
-[data-block-id="391d6a62-96ae-808b-be27-fe42dd34c11a"] img {
-  position: absolute !important;
-  left: 0 !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  height: 30px !important;
-  width: 30px !important;
-}
+/* (옛 /where 타이틀 이모지 절대배치 규칙 제거 — 2026-08-28.
+   왼쪽 고정 + 가운데 정렬 글자 조합이라 아이콘↔글자가 123px 벌어져 있었다.
+   대체 규칙은 아래 "/where 여백" 섹션. 같이 걸려 있던 391d6a62… 블록은
+   사이트 어디에도 없어(전 페이지 실측) 죽은 규칙이라 함께 삭제.) */
 
 /* ---------- /where 여백 (2026-07-04 Peter 지시) ----------
    ① '오시는 길' 제목 ↔ 본문 2열: /how의 제목↔첫 카드 여백과 동일(46px 마진 → 실측 50px)
@@ -1911,5 +1896,26 @@ body.onf-qna .notion-toggle-block > div > div:last-child > div:nth-child(2) .not
 
 /* ---------- /where 제목-콘텐츠 간격을 /how 기준(49px)에 통일 (2026-07-04 Peter) ---------- */
 /* ⚠️ 제목 블록 id 하드코딩 — 노션에서 지웠다 다시 만들면 갱신. */
-[data-block-id="392d6a62-96ae-804e-9a14-eab50ad5a3db"] { margin-bottom: -15px !important; }  /* 오시는 길 → 주소 (68→49) */
+/* 제목 '오시는 길' ↔ 주소 줄 = 45px(/how 제목↔첫 카드와 동일).
+   ⚠️ 2026-08-28: 우피가 텍스트 블록 여백을 바꿔 옛 -15px가 실측 1px(=여백 없음)이 됐다.
+   주소 블록 margin-top 16px과 collapse가 안 되는 구조라 둘이 더해진다 → 29 + 16 = 45px. */
+[data-block-id="392d6a62-96ae-804e-9a14-eab50ad5a3db"] { margin-bottom: 29px !important; }
+/* 주소 줄: 📍 아이콘을 왼쪽 절대배치로 고정하던 옛 우리 규칙(2026-07-03)이
+   가운데 정렬된 글자와 맞물려 아이콘↔글자가 123px 벌어져 있었다(2026-08-28 Peter).
+   아이콘을 흐름 안으로 되돌리고 아이콘+글자를 한 덩어리로 가운데 정렬 — 사이 10px. */
+[data-block-id="382d6a62-96ae-809a-80df-d2f3ed6d2e08"] [data-root="true"] {
+  padding-left: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+}
+[data-block-id="382d6a62-96ae-809a-80df-d2f3ed6d2e08"] img {
+  position: static !important;
+  top: auto !important;
+  transform: none !important;
+  flex: 0 0 auto !important;
+  height: 30px !important;
+  width: 30px !important;
+}
 [data-block-id="3a0d6a62-96ae-80fd-91ec-f87672b393c9"] { margin-bottom: 32px !important; }   /* 내부 사진 → 사진 (21→49) */
