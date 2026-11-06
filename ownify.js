@@ -3,7 +3,7 @@
    - 정본은 이 파일(GitHub immplee/ONF_Homepage). 우피 <head>에는
      jsDelivr <script> 한 줄만 넣는다.
    - 역할: ① 스크롤 등장 애니메이션(ownify.css의 .onf-reveal와 세트)
-           ② 인스타 버튼 "준비 중" 알림
+           ② 인스타 버튼 → 실제 계정 새 탭
            ③ 사이트 푸터 주입(ownify.css의 .onf-footer와 세트)
            ④ 탑바 우측 상담 CTA 주입(ownify.css의 .onf-top-cta와 세트)
    ============================================================ */
@@ -41,9 +41,9 @@
      카드마다 첫 블록 구조(칩 제목/헤딩/본문)가 달라 고정값 CSS로는 안 맞음 —
      실측해서 카드별로 자동 보정 (2026-07-03 Peter 지시 "항상 자동으로"). */
   function alignCalloutIcons() {
-    document.querySelectorAll('.notion-callout-block [class*="CalloutBlock"][class*="content"]').forEach(function (c) {
+    document.querySelectorAll('.notion-callout-block > div > div').forEach(function (c) {
       var icon = c.querySelector('.notion-record-icon');
-      var blocks = c.querySelector('[class*="CalloutBlock"][class*="blocks"]');
+      var blocks = c.lastElementChild;
       if (!icon || !blocks) return;
       var first = null;
       for (var i = 0; i < blocks.children.length; i++) {
@@ -354,17 +354,17 @@
   }).observe(document.body, { childList: true, subtree: true });
   updateClearTop();
 
-  /* ---------- ②-2 SNS 인스타 버튼 — 오픈 전 알림 (페이지 이동 차단) ---------- */
-  // SNS 위젯(우피 head 인라인)의 인스타(a.onf-sns-b)는 아직 실제 계정이 없어
-  // 자리표시 href 상태 → 클릭해도 이동하지 않고 준비 중 알림만 띄운다.
-  // 인스타 오픈하면: 이 블록을 지우고 우피 head의 .onf-sns-b href를 실제 주소로 교체.
+  /* ---------- ②-2 SNS 인스타 버튼 → 실제 계정으로 (2026-11-06 Peter) ---------- */
+  // SNS 위젯(우피 head 인라인)의 인스타(a.onf-sns-b)는 href 가 자리표시('여기에_인스타_주소')다.
+  // head 는 레포 밖이라 여기서 주소를 박아 새 탭으로 연다(옛 「오픈 준비 중」 알림 대체).
+  var ONF_INSTA = 'https://www.instagram.com/ownify.co.kr/';
   document.addEventListener('click', function (e) {
     if (!e.target || !e.target.closest) return;
     var b = e.target.closest('.onf-sns-b') || e.target.closest('#onfInsta');
     if (!b) return;
     e.preventDefault();
     e.stopPropagation();
-    alert('📸 인스타그램 오픈 준비 중입니다 🙏🏻');
+    window.open(ONF_INSTA, '_blank', 'noopener');
   }, true);
 
   /* ---------- ⑥ SNS 플로팅에 카카오톡 채널 추가 ---------- */
@@ -891,7 +891,7 @@
     //    기다린 뒤 (min-height 비움 → 강제 리플로 → 측정 → 설정) 해야 정확하다.
     var eqContents = [];   // 숨김 카드도 포함 — 자리·높이가 처음부터 최종값으로 고정되게
     cols.forEach(function (c) {
-      var ct = c.querySelector('.notion-callout-block [class*="CalloutBlock"][class*="content"]');
+      var ct = c.querySelector('.notion-callout-block > div > div');
       if (ct) eqContents.push(ct);
     });
     requestAnimationFrame(function () {
@@ -930,7 +930,7 @@
     var cl = document.querySelector('[data-block-id="' + STEP2_COL + '"]');
     if (!cl) return;
     var contents = [];
-    cl.querySelectorAll('.notion-callout-block [class*="CalloutBlock"][class*="content"]').forEach(function (ct) {
+    cl.querySelectorAll('.notion-callout-block > div > div').forEach(function (ct) {
       if (ct.offsetParent !== null) contents.push(ct);
     });
     if (contents.length < 2) return;
